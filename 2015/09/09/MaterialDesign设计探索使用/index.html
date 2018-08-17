@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>MaterialDesign设计探索使用 | Garvin&#39;s Blogs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="MaterialDesign">
+    <meta name="description" content="在Android5.0之后，Google就开始推崇一门新的设计语言MaterialDesign，它更加新鲜和简洁，且能够非常有效的激发应用开发者的创作热情，也能够降低开发者自主开发设计UI的难度，对于MD风格的实现，Google后续完善了下面几个库，一步步的实现MD标准的交互效果。需要在AndroidStudio引入的库： compile ‘com.android.support:design:2">
+<meta name="keywords" content="MaterialDesign">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MaterialDesign设计探索使用">
+<meta property="og:url" content="https://hjw541988478.github.io/2015/09/09/MaterialDesign设计探索使用/index.html">
+<meta property="og:site_name" content="Garvin&#39;s Blogs">
+<meta property="og:description" content="在Android5.0之后，Google就开始推崇一门新的设计语言MaterialDesign，它更加新鲜和简洁，且能够非常有效的激发应用开发者的创作热情，也能够降低开发者自主开发设计UI的难度，对于MD风格的实现，Google后续完善了下面几个库，一步步的实现MD标准的交互效果。需要在AndroidStudio引入的库： compile ‘com.android.support:design:2">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-08-17T09:25:58.039Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MaterialDesign设计探索使用">
+<meta name="twitter:description" content="在Android5.0之后，Google就开始推崇一门新的设计语言MaterialDesign，它更加新鲜和简洁，且能够非常有效的激发应用开发者的创作热情，也能够降低开发者自主开发设计UI的难度，对于MD风格的实现，Google后续完善了下面几个库，一步步的实现MD标准的交互效果。需要在AndroidStudio引入的库： compile ‘com.android.support:design:2">
+    
+        <link rel="alternate" type="application/atom+xml" title="Garvin&#39;s Blogs" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Garvin</h5>
+          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/hjw541988478" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/custom" target="_blank" >
+                <i class="icon icon-lg icon-link"></i>
+                测试
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">MaterialDesign设计探索使用</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">MaterialDesign设计探索使用</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-09-09T11:24:14.000Z" itemprop="datePublished" class="page-time">
+  2015-09-09
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+
+<article id="post-MaterialDesign设计探索使用"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">MaterialDesign设计探索使用</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015-09-09 19:24:14" datetime="2015-09-09T11:24:14.000Z"  itemprop="datePublished">2015-09-09</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>在Android5.0之后，Google就开始推崇一门新的设计语言MaterialDesign，它更加新鲜和简洁，且能够非常有效的激发应用开发者的创作热情，也能够降低开发者自主开发设计UI的难度，对于MD风格的实现，Google后续完善了下面几个库，一步步的实现MD标准的交互效果。<br>需要在AndroidStudio引入的库：</p>
+<p>compile ‘com.android.support:design:23.0.0’<br>compile ‘com.android.support:appcompat-v7:23.0.0’<br>compile ‘com.android.support:recyclerview-v7:23.0.0’<br>compile ‘com.android.support:cardview-v7:23.0.0’<br>新的UI组件<br>CoordinatorLayout<br>CoordinatorLayout在android.support.deisgn中，是一种增强型的FrameLayout，主要有以下两大基础性作用：</p>
+<p>作为顶级应用的装饰器；<br>作为给多个子View之间进行特定交互的协调器；<br>通过对子View的Behaviors的指定，可以实现子View之间的通信，从而确定它们具体的交互行为。</p>
+<p>Behavior<br>官方提供的Behavior<br>Behaivor是CoordinatorLayout子View之间进行交互的插件，包括了一种或多种交互行为，如拖拉、滑动、下拉等各种手势。已知的子类有AppBarLayout.Behavior，AppBarLayout.ScrollingViewBehavior， FloatingActionButton.Behavior和SwipeDismissBehavior<v extends="" view="">,这些可以直接使用@string/**的形式在layout_behavior属性中使用。<br>自定义Behavior<br>自定义的Behavior需要重新实现的回调方法有：<br>public boolean layoutDependsOn (CoordinatorLayout parent, View child, View dependency)<br>该方法确定是否有另一个指定的兄弟View作为依赖布局，并且作为对布局请求的响应，至少会调用一次。如果指定的child和dependency返回为true,父ViewCoordinatorLayout可能会做以下两件事：<br>不管子View的命令，始终在dependencyView后展示child；<br>当dependency视图布局或位置发生变化时，调用onDepentViewChanged方法；<br>public boolean onDependentViewChanged (CoordinatorLayout parent, View child, View dependency)<br>无论dependency尺寸或者布局改变，该方法都会被调用。Behavor可能会合适地使用该方法来更新视图以此作为回应。当layoutDependsOn被调用时或者child设置了以一个锚视图，dependency也会改变。如果Behavor改变了child的位置或者大小，则返回true。<br>NestingScrolling<br>原始触摸事件分发<br>目前的触摸事件的分发机制都是从父View传递给子View，会经历dispatchTouchEvent、onInterceptTouchEvent、onTouchEvent，但是如果触摸事件分发给子View的时候，而子View想根据实际情况将事件向上层传递给父View，而这个时候子View并没有办法通知父View，只能将事件抛弃。</v></p>
+<p>嵌套滑动处理流程<br>在行的嵌套滑动机制中，可以使用到supportv4包中NestedScrollingChild类，包括下面几个关键的方法：</p>
+<p>public boolean startNestedScroll(int axes)<br>子View寻找能够接受嵌套滑动事件的ParentView，然后通知父View，配合处理触摸事件；<br>public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow)<br>在子View中的onInterceptTouch或者onTouch事件中，通过调用该方法通知父View滑动的距离。其中第三个参数父View消费掉的滑动长度，第四个参数返回子View的窗体偏移量。由于窗体进行了移动，为了下一次触摸事件计算正确，还需要根据第四个参数来计算偏移量。整个方法返回的值是根据父View是否有接受子View滚动参数的消费来决定返回true或者false；<br>public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow)<br>在子View进行了scroll后，如果父View接受到了它的滚动参数并进行了消费，则返回true，否则返回false；<br>public void stopNestedScroll()<br>整个嵌套处理流程结束。<br>AppBarLayout<br>AppBarLayout是实现了众多MD设计概念特性的垂直方向的LinearLayout，其中一个很重要的概念就是滚动手势。子View可以通过方法setScrollFlags(int)或者XML属性app:layout_scrollFlags去提供期望的滚动行为。该布局应该直接放在CoordinateLayout节点下，同时也需要兄弟View去决定何时滚动，但必须是AppBarLayout.ScrollingViewBehavior的实例。</p>
+<p>layout_scrollFlags<br>作为触发特定交互事件的标志，主要有四种：</p>
+<p>SCROLL_FLAG_ENTER_ALWAYS<br>这个flag让任意向下的滚动使得View可见；<br>SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED<br>当View既设置了minHeight属性又设置了此flag，只有滚动到顶部的时候才会时View可见；<br>SCROLL_FLAG_EXIT_UNTIL_COLLAPSED<br>当View离开屏幕时，保持折叠的状态；<br>SCROLL_FLAG_SCROLL<br>View会直接离开屏幕。<br>常用属性<br>属性名    解释<br>layout_scrollFlags    设置滚动出发事件的标志<br>layout_scrollInterpolator    设置滚动发生时的插值器<br>CollapsingToolbarLayout<br>CollapsingToolbarLayout是实现了折叠的ToolBar的包装，它用来设计作为AppBarLayout的直接子View，可以用来设置众多属性，包括折叠状态的标题、位置等。</p>
+<p>常用属性<br>属性名    解释<br>collapsedTitleGravity    指定折叠状态的标题如何放置，可选值:top、bottom等<br>collapsedTitleTextAppearance    指定折叠状态标题文字的样貌<br>contentScrim    指定CollapsingToolbarLayout完全被滚出到屏幕外时的ColorDrawable<br>expandedTitleGravity    指定展开状态的标题如何放置<br>title    指定标题文本<br>titleEnabled    指定是否显示标题文本<br>toolbarId    指定与之关联的ToolBar，如果未指定则默认使用第一个被发现的ToolBar子View<br>layout_collapseMode    COLLAPSE_MODE_OFF:View表现的像没有折叠行为一样； COLLAPSE_MODE_PARALLAX：View会以视差的样式滚动；<br>COLLAPSE_MODE_PIN：View会直到达到CollapsingToolbarLayout底部的时候固定；</p>
+<p>实例<br>特性<br>新的UI组件：Toolbar、DrawerLayout、DrawerNavigationView、SwipeRefreshLayout、RecyclerView、TabLayout、CollapsingToolbarLayout、AppBarLayout、CoordinateLayout、FloatingActionButton、SnackBar、CardView;<br>已实现效果<br>下拉刷新<br>抽屉菜单导航<br>Tab选项卡导航<br>视差折叠Toolbar<br>效果图<br>抽屉菜单和Tab布局效果图<br>视差效果图</p>
+<p>实现过程<br>下拉刷新<br>布局</p>
+<p>&lt;android.support.v4.widget.SwipeRefreshLayout<br>    android:id=”@+id/id_refresh”<br>    android:layout_width=”match_parent”<br>    android:layout_height=”match_parent”&gt;<br>    &lt;android.support.v7.widget.RecyclerView<br>        android:id=”@+id/id_list”<br>        android:layout_width=”match_parent”<br>        android:layout_height=”match_parent” /&gt;<br>&lt;/android.support.v4.widget.SwipeRefreshLayout&gt;<br>代码</p>
+<p>// 视图初始化设置刷新监听和适配器<br>RecyclerView recyclerView = (RecyclerView) root.findViewById(R.id.id_list);<br>        final SwipeRefreshLayout swipeRefresh = (SwipeRefreshLayout) root.findViewById(R.id.id_refresh);<br>        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {<br>            @Override<br>            public void onRefresh() {<br>                adapter.data.add(0, “onRefresh”);<br>                adapter.notifyDataSetChanged();<br>                swipeRefresh.setRefreshing(false);<br>            }<br>        });<br>        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));<br>        recyclerView.setHasFixedSize(true);<br>        recyclerView.setAdapter(adapter);<br>// 适配器<br>class RecyclerViewListAdapter extends RecyclerView.Adapter&lt;RecyclerViewListAdapter.MyViewHolder&gt; {<br>        private List<string> data = new ArrayList&lt;&gt;();<br>        public RecyclerViewListAdapter(List<string> data) {<br>            this.data.clear();<br>            this.data.addAll(data);<br>        }<br>        @Override<br>        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {<br>            View itemView = LayoutInflater.from(parent.getContext())<br>                    .inflate(R.layout.item_fragment_list, parent, false);<br>            return new MyViewHolder(itemView);<br>        }<br>        @Override<br>        public void onBindViewHolder(MyViewHolder holder, final int position) {<br>            holder.itemText.setText(data.get(position));<br>            holder.rootView.setOnClickListener(new View.OnClickListener() {<br>                @Override<br>                public void onClick(View v) {<br>                    Intent intent = new Intent(v.getContext(), DetailActivity.class);<br>                    intent.putExtra(“title”, data.get(position));<br>                    v.getContext().startActivity(intent);<br>                }<br>            });<br>        }<br>        @Override<br>        public int getItemCount() {<br>            return data.size();<br>        }<br>        class MyViewHolder extends RecyclerView.ViewHolder {<br>            @Bind(R.id.id_item_text)<br>            TextView itemText;<br>            View rootView;</string></string></p>
+<pre><code>        public MyViewHolder(View itemView) {
+            super(itemView);
+            rootView = itemView;
+            ButterKnife.bind(this, itemView);
+        }
+    }
+}
+</code></pre><p>关于下拉刷新部分的详细实现可参考上一篇博文：HarvestRecyclerView-RecyclerView下拉刷新上拉加载的封装 。</p>
+<p>抽屉菜单导航<br>布局</p>
+<p>&lt;android.support.v4.widget.DrawerLayout xmlns:android=”<a href="http://schemas.android.com/apk/res/android&quot;" target="_blank" rel="noopener">http://schemas.android.com/apk/res/android&quot;</a><br>    xmlns:app=”<a href="http://schemas.android.com/apk/res-auto&quot;" target="_blank" rel="noopener">http://schemas.android.com/apk/res-auto&quot;</a><br>    android:id=”@+id/id_drawer_layout”<br>    android:layout_width=”match_parent”<br>    android:layout_height=”match_parent”<br>    android:fitsSystemWindows=”true”&gt;<br>    <include layout="..."><br>    &lt;android.support.design.widget.NavigationView<br>        android:id=”@+id/id_drawer_nav_view”<br>        android:layout_width=”wrap_content”<br>        android:layout_height=”match_parent”<br>        android:layout_gravity=”start”<br>        android:fitsSystemWindows=”true”<br>        app:headerLayout=”@layout/nav_header”<br>        app:menu=”@menu/menu_drawer” /&gt;<br>&lt;/android.support.v4.widget.DrawerLayout&gt;<br>需要注意的是，对于抽屉菜单，分为头布局和菜单两部分，头布局是layout资源，而菜单是menu资源，极大地降低了使用的难度，降低了各自的耦合度。<br>抽屉菜单分解图<br>nav_header.xml</include></p>
+<p><relativelayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="200dp" android:background="?attr/colorPrimaryDark" android:padding="16dp"><br>    <textview android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centervertical="true" android:text="Hi, Doge!" android:textcolor="@android:color/white"><br>    <imageview android:layout_width="120dp" android:layout_height="120dp" android:layout_centerinparent="true" android:scaletype="centerCrop" android:src="@mipmap/doge_head"><br></imageview></textview></relativelayout><br>menu_drawer.xml</p>
+<p><menu xmlns:android="http://schemas.android.com/apk/res/android"><br>    <group android:checkablebehavior="single"><br>        <item android:icon="@mipmap/ic_dashboard" android:title="Home"><br>        <item android:icon="@mipmap/ic_forum" android:title="Setting"><br>        <item android:icon="@mipmap/ic_event" android:title="Like"><br>        <item android:icon="@mipmap/ic_headset" android:title="Music"><br>    </item></item></item></item></group><br></menu><br>布局中android:layout_gravity=”start”属性代表着抽屉菜单放在左边，此时通过设置抽屉菜单视图选中的监听器，可以边缘右滑和左上角的菜单图标打开抽屉，点击空白区域或者选中菜单项便可以关闭菜单。</p>
+<p>navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {<br>            @Override<br>            public boolean onNavigationItemSelected(MenuItem menuItem) {<br>                menuItem.setCheckable(true);<br>                navDrawer.closeDrawers();<br>                return true;<br>            }<br>        });<br>@Override<br>public boolean onOptionsItemSelected(MenuItem item) {<br>    int id = item.getItemId();<br>    if (id == android.R.id.home) {<br>        navDrawer.openDrawer(GravityCompat.START);<br>        return true;<br>    }<br>    return super.onOptionsItemSelected(item);<br>}<br>Tab选项卡导航<br>布局</p>
+<p>&lt;android.support.design.widget.CoordinatorLayout<br>    android:layout_width=”match_parent”<br>    android:layout_height=”match_parent”&gt;<br>    &lt;android.support.design.widget.AppBarLayout<br>        android:layout_width=”match_parent”<br>        android:layout_height=”wrap_content”<br>        android:theme=”@style/ThemeOverlay.AppCompat.Dark.ActionBar”&gt;<br>        &lt;android.support.v7.widget.Toolbar<br>            android:id=”@+id/id_toolbar”<br>            android:layout_width=”match_parent”<br>            android:layout_height=”?attr/actionBarSize”<br>            android:background=”?attr/colorPrimary”<br>            app:layout_scrollFlags=”scroll|enterAlways”<br>            app:popupTheme=”@style/ThemeOverlay.AppCompat.Light” /&gt;<br>        &lt;android.support.design.widget.TabLayout<br>            android:id=”@+id/id_tabs”<br>            android:layout_width=”match_parent”<br>            android:layout_height=”wrap_content” /&gt;<br>    &lt;/android.support.design.widget.AppBarLayout&gt;<br>    &lt;android.support.v4.view.ViewPager<br>        android:id=”@+id/id_pager”<br>        android:layout_width=”match_parent”<br>        android:layout_height=”match_parent”<br>        app:layout_behavior=”@string/appbar_scrolling_view_behavior” /&gt;<br>    &lt;android.support.design.widget.FloatingActionButton<br>        android:id=”@+id/id_fab”<br>        android:layout_width=”wrap_content”<br>        android:layout_height=”wrap_content”<br>        android:layout_gravity=”end|bottom”<br>        android:layout_margin=”16dp”<br>        android:src=”@mipmap/ic_done”<br>        app:layout_behavior=”.QuickReturnFooterBehavior” /&gt;<br>&lt;/android.support.design.widget.CoordinatorLayout&gt;<br>布局中使用到了CoordinateLayout作为根节点，辅以ViewPager作为事件行为触发器，再通过AppBarLayout的嵌套，便可以实现了向下滑动自动隐藏Toolbar，上滑恢复显示的功能，这里FloatingActionButton同时也用到了一个自定义的Behavior，可以实现自动隐藏与出现的功能，整个过程显得协调一致。<br>TabLayout一般是与ViewPager一起使用的，在ViewPager初始化并设置了适配器后，让TabLayout与之联动，最后达到一致的工作的效果。<br>TabLayout实现效果图</p>
+<p>这里只实现了3个Tab栏，按照实际情况需要可以通过对ViewPager适配器，来控制Tab栏的标题和个数。</p>
+<p>pager.setAdapter(new ListPagerAdapter(getSupportFragmentManager(), initData()));<br>tabs.setupWithViewPager(pager);<br>此外TabLayout还有一些其他可在布局文件自定义的属性，如下：</p>
+<!--Tab被选中字体的颜色-->
+<p>app:tabSelectedTextColor=@android:color/holo_blue_bright<br><!--Tab未被选中字体的颜色--><br>app:tabTextColor=@android:color/black<br><!--Tab指示器下标的颜色--><br>app:tabIndicatorColor=@android:color/holo_blue_bright<br>视差折叠效果视图<br>布局</p>
+<p>&lt;android.support.design.widget.CollapsingToolbarLayout<br>        android:id=”@+id/collapsing_toolbar”<br>        android:layout_width=”match_parent”<br>        android:layout_height=”match_parent”<br>        android:fitsSystemWindows=”true”<br>        app:contentScrim=”?attr/colorPrimary”<br>        app:expandedTitleMarginEnd=”64dp”<br>        app:expandedTitleMarginStart=”48dp”<br>        app:layout_scrollFlags=”scroll|exitUntilCollapsed”<br>        app:title=”doge”&gt;</p>
+<pre><code>    &lt;ImageView
+        android:layout_width=&quot;match_parent&quot;
+        android:layout_height=&quot;match_parent&quot;
+        android:fitsSystemWindows=&quot;true&quot;
+        android:scaleType=&quot;centerCrop&quot;
+        android:src=&quot;@mipmap/doge&quot;
+        app:layout_collapseMode=&quot;parallax&quot; /&gt;
+    &lt;android.support.v7.widget.Toolbar
+        android:id=&quot;@+id/toolbar&quot;
+        android:layout_width=&quot;match_parent&quot;
+        android:layout_height=&quot;?attr/actionBarSize&quot;
+        app:layout_collapseMode=&quot;pin&quot;
+        app:popupTheme=&quot;@style/ThemeOverlay.AppCompat.Light&quot; /&gt;
+
+&lt;/android.support.design.widget.CollapsingToolbarLayout&gt;
+</code></pre><p>CollapsingToolbarLayout直面意思就是可折叠的Toolbar布局，通过向下滚动可以使图片逐渐变大，向下滚动使得逐渐以视差效果的形式逐渐变小，最后只剩下Toolbar，在5.0(v21)版本上，通过Style的设置，可以让状态栏也变得透明，让图片和状态栏融为一体。</p>
+<p><style name="AppTheme" parent="BaseAppTheme"><br>    <item name="android:windowDrawsSystemBarBackgrounds">true</item><br>    <item name="android:statusBarColor">@android:color/transparent</item><br></style><br>展开状态</p>
+<p>折叠状态</p>
+<p>具体实现的关键点在于对layout_collapseMode、layout_scrollFlags和layout_behavior属性的设置，具体设置模式上面有说。</p>
+<p>综合使用范例<br>Google有给出的使用范例：</p>
+<p>&lt;android.support.design.widget.CoordinatorLayout<br>     xmlns:android=”<a href="http://schemas.android.com/apk/res/android&quot;" target="_blank" rel="noopener">http://schemas.android.com/apk/res/android&quot;</a><br>     xmlns:app=”<a href="http://schemas.android.com/apk/res-auto&quot;" target="_blank" rel="noopener">http://schemas.android.com/apk/res-auto&quot;</a><br>     android:layout_width=”match_parent”<br>     android:layout_height=”match_parent”&gt;<br> &lt;android.support.v4.widget.NestedScrollView<br>         android:layout_width=”match_parent”<br>         android:layout_height=”match_parent”<br>         app:layout_behavior=”@string/appbar_scrolling_view_behavior”&gt;<br>     <!-- Your scrolling content --><br> &lt;/android.support.v4.widget.NestedScrollView&gt;<br> &lt;android.support.design.widget.AppBarLayout<br>         android:layout_height=”wrap_content”<br>         android:layout_width=”match_parent”&gt;<br>     &lt;android.support.v7.widget.Toolbar<br>             …<br>             app:layout_scrollFlags=”scroll|enterAlways”/&gt;<br>     &lt;android.support.design.widget.TabLayout<br>             …<br>             app:layout_scrollFlags=”scroll|enterAlways”/&gt;<br> &lt;/android.support.design.widget.AppBarLayout&gt;<br>&lt;/android.support.design.widget.CoordinatorLayout&gt;<br>其他组件<br>CardView<br>布局</p>
+<p>&lt;android.support.v7.widget.CardView<br>    android:layout_width=”match_parent”<br>    android:layout_height=”wrap_content”<br>    android:layout_margin=”8dp”<br>    app:cardElevation=”8dp”<br>    app:contentPadding=”16dp”&gt;<br>    <textview android:layout_width="match_parent" android:layout_height="wrap_content" android:text="这只可爱的柴犬叫Kabosu（かぼす，一种类似于日本柚子的水果，果汁很酸却有种独特的芳香，经常被用作烤鱼或生鱼片的调料）"><br>&lt;/android.support.v7.widget.CardView&gt;<br>item即为卡片视图<br>CardView继承于Framelayout，所以Framelayout的属性都有，同时也有其它可自定义的属性，app:cardElevation表示在Z轴上的阴影，app:contentPadding表示卡片内容的内边距，app:cardCornerRadius表示卡片四个角的圆角矩形的程度。</textview></p>
+<p>Toolbar<br>布局</p>
+<p>&lt;android.support.v7.widget.Toolbar<br>    android:id=”@+id/toolbar”<br>    android:layout_width=”match_parent”<br>    android:layout_height=”?attr/actionBarSize”<br>    app:layout_collapseMode=”pin”<br>    app:popupTheme=”@style/ThemeOverlay.AppCompat.Light” /&gt;<br>作为未来ActionBar的替代品，Google为了统一MD设计的风格和AppBar的设计规范，Toolbar是为了更灵活的ActionBar而生的。通过Style设置NoActionBar，然后再代码中使用setSupportedActionBar方法来使用Toolbar替代ActionBar,此外还可以对其他属性，如标题，背景，LOGO等进行自定义的设置，但请记得要取得ActionBar，请使用getSupportedActionBar方法。</p>
+<p>FloatingActionButton<br>布局</p>
+<p>&lt;android.support.design.widget.FloatingActionButton<br>    android:layout_width=”wrap_content”<br>    android:layout_height=”wrap_content”<br>    android:layout_margin=”16dp”<br>    android:clickable=”true”<br>    android:src=”@mipmap/ic_heart_outline_white_24dp”<br>    app:layout_anchor=”@id/appbar”<br>    app:layout_anchorGravity=”bottom|right|end|center_vertical” /&gt;<br>上面的布局代码在设置完其基本属性后，同时还配置了layout_anchor和layout_anchorGravity属性，表示固定在某个视图上，同时也确定了在视图上的位置。</p>
+<p>SnackBar<br>使用<br>Snackbar.make(fab, “hey , it’s SnackBar”, Snackbar.LENGTH_SHORT).setAction(“Dismiss”, null).show();<br>SnackBar的用法与Toast很类似，但是它可以构造一个动作，监听动作后接受回调，执行自定义的事件。</p>
+<p>总结<br>目前对于MaterialDesign设计的实现，Google官方已经提供了足够多的第三方库了，而且使用起来相对灵活的自由，可以根据需求，适时使用一些新的特性，对于开发来说也减少了设计成本，能够提高开发效率和统一风格。<br>已将代码上传至Github：<a href="https://github.com/hjw541988478/materialdeisgn_tutorial" target="_blank" rel="noopener">https://github.com/hjw541988478/materialdeisgn_tutorial</a></p>
+<p>参考<br>Material Design 中文版<br>Material Design 原版(需FQ)<br>直接拿来用!十大Material Design开源项目-CSDN.NET<br>Android Support Design 中 CoordinatorLayout 与 Behaviors 初探<br>android：ToolBar详解<br>Android的材料设计兼容库（Design Support Library）<br>Github库<br>MaterialDesignLibrary<br>MaterialDesign</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2018-08-17T09:25:58.039Z" itemprop="dateUpdated">2018-08-17 17:25:58</time>
+</span><br>
+
+
+        
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2015/09/09/MaterialDesign设计探索使用/" target="_blank" rel="external">https://hjw541988478.github.io/2015/09/09/MaterialDesign设计探索使用/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://hjw541988478.github.io">
+            <img src="/img/avatar.jpg" alt="Garvin">
+            Garvin
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MaterialDesign/">MaterialDesign</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/09/09/MaterialDesign设计探索使用/&title=《MaterialDesign设计探索使用》 — Garvin's Blogs&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/09/09/MaterialDesign设计探索使用/&title=《MaterialDesign设计探索使用》 — Garvin's Blogs&source=生活与工作的感悟" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/09/09/MaterialDesign设计探索使用/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《MaterialDesign设计探索使用》 — Garvin's Blogs&url=https://hjw541988478.github.io/2015/09/09/MaterialDesign设计探索使用/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/09/09/MaterialDesign设计探索使用/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2015/09/02/RecyclerView下拉刷新上拉加载的封装/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">RecyclerView下拉刷新上拉加载的封装</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Garvin &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/09/09/MaterialDesign设计探索使用/&title=《MaterialDesign设计探索使用》 — Garvin's Blogs&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/09/09/MaterialDesign设计探索使用/&title=《MaterialDesign设计探索使用》 — Garvin's Blogs&source=生活与工作的感悟" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/09/09/MaterialDesign设计探索使用/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《MaterialDesign设计探索使用》 — Garvin's Blogs&url=https://hjw541988478.github.io/2015/09/09/MaterialDesign设计探索使用/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/09/09/MaterialDesign设计探索使用/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtUlEQVR42u3aQY7jMAwEwPz/09nL3gbWNkkxEyzKpyAxbJUMWB1Sr1d8vH8cT7+ez386p3ffawceHh7eeOjn4SbX+fn90zfnyUrG848pwMPDw1vjPQ33fM55YUim5h0c+Xjw8PDwvpPXWx6q04eHh4f3f/PyV391cMkigYeHh/dbvDzO9oJyuYgQTPflWgseHh5e/zqv3iLxyc8r/T08PDy8cVc9f+FW2/+9om35Onh4eHgLvPyF28NXN2PlxYhCERkPDw/vKq9XSsjPP09N9ZrVycLDw8Pb4CXNp+Tz3Wg+j+BR6sfDw8Mb85KXeLU11duGNQnc0TPEw8PDG/PygJvcLCdNJqXQDMPDw8Nb4CVBOYdVB3ee3JViBB4eHt5VXvmFG7epJqXe6ps/a/zh4eHh3eHdCse95lY16BceDB4eHt4lXjUK54WDapOsWiKJwjQeHh7eAq/6hz8Px3lReL5gRM8QDw8Pb4FXLStUiwj5wjDZ1NVsfeHh4eG1eMmwzgG3OrheXM7Px8PDw9vgVTc55U2sedtssvng7zd4eHh4H+fljfxq5O0tEvmygYeHh7fNq5YJ8ld51KBqxfqoNIyHh4e3wKuWWZO43GuVTZpnUZTHw8PDu8SrtrI2vu9tQYh+xcPDw1vgVQumSQm1t7211wCLFiE8PDy8Nd780nutsmYBAg8PD++DvFul3l44noznMVLj4eHhLfDyS9+K16OGVlCMxsPDw9vgvYtH3prqFQ6a5Yb8ueHh4eGNeb0Xbn7LXtROprW6oQEPDw/vLq+6GNwKxElkz+N4oRiBh4eHd4nX6xz1Wv7X1qtkbHh4eHhfwMsH2mtfJVsQ8jvi4eHhfSdvHpSrsGSC8PDw8LZ5+UXz8kRe5K22uAqlZDw8PLwF3vwPfzV85xu8tgsZeHh4eEXeH6/ekpduuokMAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
