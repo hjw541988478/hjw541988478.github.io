@@ -14,7 +14,7 @@
     
     
     
-    <title>RecyclerView下拉刷新上拉加载的封装 | Garvin</title>
+    <title>RecyclerView下拉刷新上拉加载的封装 | Garvin 杂记</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#3F51B5">
@@ -25,20 +25,20 @@
 <meta name="keywords" content="PullDownToRefresh,PullUpToRefresh,RecyclerView,CustomView,Components">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RecyclerView下拉刷新上拉加载的封装">
-<meta property="og:url" content="https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/index.html">
-<meta property="og:site_name" content="Garvin">
+<meta property="og:url" content="https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
 <meta property="og:description" content="初识RecyclerView A flexible view for providing a limited window into a large data set.  根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，RecyclerView就是应对这种情况而产生的。RecyclerView是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/recycler_menu_view.png">
-<meta property="og:image" content="https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/recycler_refresh_view.png">
-<meta property="og:image" content="https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/recycler_loadmore_view.png">
-<meta property="og:updated_time" content="2018-08-17T09:21:37.758Z">
+<meta property="og:image" content="https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/recycler_menu_view.png">
+<meta property="og:image" content="https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/recycler_refresh_view.png">
+<meta property="og:image" content="https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/recycler_loadmore_view.png">
+<meta property="og:updated_time" content="2018-08-17T15:13:02.051Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RecyclerView下拉刷新上拉加载的封装">
 <meta name="twitter:description" content="初识RecyclerView A flexible view for providing a limited window into a large data set.  根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，RecyclerView就是应对这种情况而产生的。RecyclerView是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时">
-<meta name="twitter:image" content="https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/recycler_menu_view.png">
+<meta name="twitter:image" content="https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/recycler_menu_view.png">
     
-        <link rel="alternate" type="application/atom+xml" title="Garvin" href="/atom.xml">
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
@@ -186,8 +186,8 @@
             <h2 id="初识RecyclerView"><a href="#初识RecyclerView" class="headerlink" title="初识RecyclerView"></a>初识RecyclerView</h2><blockquote>
 <p>A flexible view for providing a limited window into a large data set.</p>
 </blockquote>
-<p>根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，<code>RecyclerView</code>就是应对这种情况而产生的。<code>RecyclerView</code>是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时需要在<code>build.gradle</code>文件中配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile &apos;com.android.support:recyclerview-v7:22.2.1&apos;</span><br></pre></td></tr></table></figure></p>
-<p>与<code>ListView</code>不同的是，<code>RecyclerView</code>不再负责Item布局绘制等方面的工作，转而拆分成不同的类去管理。作为未来<code>ListView、GridView</code>等替代的组件，虽然没有它们那么易用，所有的功能都需要自己重新实现，但正是因为这种特性使得<code>RecyclerView</code>更加Flexible。为了满足各种各样的需求，可能会使用到下面与<code>RecyclerView</code>相关紧密的类：</p>
+<p>根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，<code>RecyclerView</code>就是应对这种情况而产生的。<code>RecyclerView</code>是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时需要在<code>build.gradle</code>文件中配置：<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">compile</span> <span class="string">'com.android.support:recyclerview-v7:22.2.1'</span></span><br></pre></td></tr></table></figure></p>
+<p>与<code>ListView</code>不同的是，<code>RecyclerView</code>不再负责Item布局绘制等方面的工作，转而拆分成不同的类去管理。作为未来<code>ListView、GridView</code>等替代的组件，虽然没有它们那么易用，所有的功能都需要自己重新实现，但正是因为这种特性使得<code>RecyclerView</code>更加Flexible。为了满足各种各样的需求，可能会使用到下面与<code>RecyclerView</code>相关紧密的类：<br><a id="more"></a></p>
 <h3 id="RecyclerView-Adapter"><a href="#RecyclerView-Adapter" class="headerlink" title="RecyclerView.Adapter"></a>RecyclerView.Adapter</h3><p><code>Adapter</code>与在此前用到过的<code>BaseAdapter</code>很相似，准确的说是做了缓存优化的<code>BaseAdapter</code>，它负责为Item创建合适的视图同时为这些视图通过<code>ViewHolder</code>去绑定数据，以下3个方法是必须重写的：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ViewHolder <span class="title">onCreateViewHolder</span><span class="params">(ViewGroup parent,<span class="keyword">int</span> viewType)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBindViewHolder</span><span class="params">(ViewHolder holder,<span class="keyword">int</span> position)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getItemCount</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure></p>
 <h3 id="RecyclerView-ViewHolder"><a href="#RecyclerView-ViewHolder" class="headerlink" title="RecyclerView.ViewHolder"></a>RecyclerView.ViewHolder</h3><p><code>ViewHolder</code>早前在<code>ListView</code>的使用时就推荐用来做性能优化，只不过在<code>RecyclerView.Adapter</code>中变成了必须实现的一部分。它保存着Item中所需要使用到的视图ID，方便在绑定数据的时候使用，使用的方法如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyViewHolder</span> <span class="keyword">extends</span> <span class="title">ViewHolder</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyViewHolder</span><span class="params">(View itemView)</span></span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(itemView);</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h3 id="RecyclerView-LayoutManager"><a href="#RecyclerView-LayoutManager" class="headerlink" title="RecyclerView.LayoutManager"></a>RecyclerView.LayoutManager</h3><p><code>LayoutManager</code>是用来确定<code>RecyclerView</code>的布局方式的，目前有三种可选，分别是：</p>
@@ -221,19 +221,19 @@
 <p>效果图如下面所示：<br><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/2015/09/02/RecyclerView下拉刷新上拉加载的封装/recycler_menu_view.png" alt="demo" title="">
+                    <img src="/RecyclerView下拉刷新上拉加载的封装/recycler_menu_view.png" alt="demo" title="">
                 </div>
                 <div class="image-caption">demo</div>
             </figure><br><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/2015/09/02/RecyclerView下拉刷新上拉加载的封装/recycler_refresh_view.png" alt="refresh" title="">
+                    <img src="/RecyclerView下拉刷新上拉加载的封装/recycler_refresh_view.png" alt="refresh" title="">
                 </div>
                 <div class="image-caption">refresh</div>
             </figure><br><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/2015/09/02/RecyclerView下拉刷新上拉加载的封装/recycler_loadmore_view.png" alt="loadmore" title="">
+                    <img src="/RecyclerView下拉刷新上拉加载的封装/recycler_loadmore_view.png" alt="loadmore" title="">
                 </div>
                 <div class="image-caption">loadmore</div>
             </figure></p>
@@ -251,13 +251,9 @@
     
     <div class="content">
         
-<span class="post-time">
-    最后更新时间：<time datetime="2018-08-17T09:21:37.758Z" itemprop="dateUpdated">2018-08-17 17:21:37</time>
-</span><br>
-
 
         
-        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2015/09/02/RecyclerView下拉刷新上拉加载的封装/" target="_blank" rel="external">https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/</a>
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/RecyclerView下拉刷新上拉加载的封装/" target="_blank" rel="external">https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/</a>
         
     </div>
     
@@ -288,7 +284,7 @@
 <div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/&title=《RecyclerView下拉刷新上拉加载的封装》 — Garvin&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/&title=《RecyclerView下拉刷新上拉加载的封装》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -298,22 +294,23 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/&title=《RecyclerView下拉刷新上拉加载的封装》 — Garvin&source=生活与工作的感悟" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/&title=《RecyclerView下拉刷新上拉加载的封装》 — Garvin 杂记&source=初识RecyclerView
+A flexible view for providing a limited window into a large da..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《RecyclerView下拉刷新上拉加载的封装》 — Garvin&url=https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/&via=https://hjw541988478.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《RecyclerView下拉刷新上拉加载的封装》 — Garvin 杂记&url=https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/&via=https://hjw541988478.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -336,7 +333,7 @@
 <nav class="post-nav flex-row flex-justify-between">
   
     <div class="waves-block waves-effect prev">
-      <a href="/2015/09/09/MaterialDesign设计探索使用/" id="post-prev" class="post-nav-link">
+      <a href="/MaterialDesign设计探索使用/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
         <h4 class="title">MaterialDesign设计探索使用</h4>
       </a>
@@ -345,7 +342,7 @@
 
   
     <div class="waves-block waves-effect next">
-      <a href="/2015/08/26/Android传感器编程之摇一摇/" id="post-next" class="post-nav-link">
+      <a href="/Android传感器编程之摇一摇/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
         <h4 class="title">Android传感器编程之摇一摇</h4>
       </a>
@@ -468,7 +465,7 @@
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/&title=《RecyclerView下拉刷新上拉加载的封装》 — Garvin&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/&title=《RecyclerView下拉刷新上拉加载的封装》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -478,22 +475,23 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/&title=《RecyclerView下拉刷新上拉加载的封装》 — Garvin&source=生活与工作的感悟" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/&title=《RecyclerView下拉刷新上拉加载的封装》 — Garvin 杂记&source=初识RecyclerView
+A flexible view for providing a limited window into a large da..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《RecyclerView下拉刷新上拉加载的封装》 — Garvin&url=https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/&via=https://hjw541988478.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《RecyclerView下拉刷新上拉加载的封装》 — Garvin 杂记&url=https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/&via=https://hjw541988478.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/09/02/RecyclerView下拉刷新上拉加载的封装/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -504,7 +502,7 @@
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADNElEQVR42u3a207DMBAFQP7/p4vEG2oJ53hTqXHGT6gtdsaVWPby9RWvx896fuX59b/e/euV9vPH+5y8sLGxsS/Cfhyu462ThzvGHF9ufkG5BRsbG3tXdnLY8aO31DwItZce7YCNjY19S/Y8/WgvKAlF2NjY2NhtAGuLPjk1We1zYmNjY9+HnReDElgeAttT8jTptFoaNjY29sez20bvJ//8xv42NjY29keyH0trrfm61hJo05vo+bGxsbE3YidjNO8IgW0Skv9cBDZsbGzsLdh54zYpIbW/mzce8i+sjtvY2NjYG7GPH65NANrGw6QKlF9H/Z1gY2NjX4o9Tw8mgMk11eEQGxsbeyN2O7zYHpkM6+TXl/OiUIeNjY29ETsPXcefSdKbeTMgv3psbGzsO7DzxGMSiubXl5S6kqbyr/YANjY29hbs5IC1lScSSUEqD29JUoSNjY19B3abHuRhLC8P5WG1/ZKwsbGxd2K34Elxpx2vbHco0idsbGzsjdgnlGaWRn/eMV552sLGxsa+FHveEmgvLnk3T0UWwy02Njb2RuzksAk+D0h5xGljUxGlsbGxsS/Ibpu7ydZnNW7nYS+aVMLGxsbemt0O3ORDM2vjO3kz4J9zsbGxsTdiT37hrHGc9tLbctI/oREbGxv74uy2cZuElrbxkJ+7Ft5e4LGxsbE3Yk+K8mvFoLa1PGn35l8bNjY29tXZkwA2aRW0CUzeJI52xsbGxt6InaQHa//0n/vu2pNEF4eNjY29ETsfi2lDSEJda+LO0yRsbGzsPdjtn/48nKwlJ5NT8t2wsbGx92ZPBmXWyvd52zgPk1E5CRsbG3sLdj5wMx+pyQNSsuck6GJjY2PvxM6PXysSzROSoiqWl8OwsbGxL85+lGueSOSloryeX7eTsbGxsTdirwWAdpimbcdOzmqbx9jY2Nh7sNvUYi3jyYcj11KX+pmxsbGxt2PnAWYtYairXOOdi8YANjY29u3ZbVknTzzyMlYSul6kItjY2Ng3Y0+SkyT5aUtFeTwaBTBsbGzsi7Dz5m47cJmEqBy8FtiwsbGx92afVe6f8PKEJ3met/S3sbGxsT+R/Q1iJUUoCImOXgAAAABJRU5ErkJggg==" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuUlEQVR42u3aQW7jMBAEwPz/015gTwtk7XTPkLEPpVMgyxLLAchRD7++4uPx92jPf//03zPf//7+rWfnDx94eHh4o6E/O14z9vjkKQn76U+Ah4eHd433enDJFL+Z1l9/NxnP0/N4eHh4b+VtHpYU2S0eDw8P7/N5bWCRl86P+MDDw8P7HF5yu2SiT+6cLwx5sX4ga8HDw8OLeW0D7BP+vtjfw8PDw1t01dsF4/XU35bUB0aIh4eHd4GXF8ezdn7SPGtL9nZbAx4eHt5ZXhIQzIaS37ndzlWEvHh4eHgXeLMYdz/0WUndLhh4eHh493h5wZrjk0B29iPOFhg8PDy8U7y8mM6n8vzxswUpHz8eHh7eDV4ylNlScXvhKQIUPDw8vKO8tum1D23z5lnbQvvPnfHw8PAu8PZ99lXyUW4myAv9Y9sI8PDw8F6+rW82XeVTeR5JJE+M/gF4eHh4R3l5/LqJYjeRRFvQ//DGgIeHh3eB15az7TWzBlvLGyYWeHh4eDGvbUrNAtl288Gs2YaHh4f3Xl4bHGzK6NmVP/xYeHh4eBd4s2HlxXFR/pbNtiLIwMPDw7vAmzXD6gJ3FNHOgg88PDy83+clu7SS0GFTcM/Kazw8PLzbvOTStpWVLCezZaDe3ICHh4d3gZe38PeD2y8eB/ZH4OHh4R3iFS/zowfM2myHm2R4eHh4R3mbDQT7ZlUbyOabuvDw8PBu85KBzs7PNmm1x/CNAQ8PD6/kPcqjnfTb7+YbC6KIBA8PD+8Cr512Z82wWXTbluNDGB4eHt6I126famOFdlvAqTgYDw8P7zavzT+Tx7RlejKqZAnBw8PD+0xei0wWmFlZH5XUeHh4eG/ibcLTTeiQl/t4eHh4v8mbBQHJENvyerbYHMha8PDw8Nb99Dy0Tdj5p7PIeLWRCw8PDy+98g8+RWnOJmrsYAAAAABJRU5ErkJggg==" alt="微信分享二维码">
 </div>
 
 

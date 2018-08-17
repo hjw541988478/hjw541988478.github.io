@@ -14,7 +14,7 @@
     
     
     
-    <title>Android应用自动检测更新机制的实现 | Garvin</title>
+    <title>Android应用自动检测更新机制的实现 | Garvin 杂记</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#3F51B5">
@@ -25,21 +25,21 @@
 <meta name="keywords" content="Service,Handler,Notification">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android应用自动检测更新机制的实现">
-<meta property="og:url" content="https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/index.html">
-<meta property="og:site_name" content="Garvin">
+<meta property="og:url" content="https://hjw541988478.github.io/Android应用自动检测更新机制的实现/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
 <meta property="og:description" content="需求在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，从服务端获取版本号比对当前包的版本号，如果大于当前版本号则提示用户升级，而对于某些需要强制更新的版本号，则不允许用户取消版本的升级，必须强制更新。整个流程大概如下图所示：">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/app_update_flowchart.png">
-<meta property="og:image" content="https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/shot_downloading.png">
-<meta property="og:image" content="https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/shot_download_completed.png">
-<meta property="og:image" content="https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/shot_update_dialog.png">
-<meta property="og:updated_time" content="2018-08-17T09:01:51.432Z">
+<meta property="og:image" content="https://hjw541988478.github.io/Android应用自动检测更新机制的实现/app_update_flowchart.png">
+<meta property="og:image" content="https://hjw541988478.github.io/Android应用自动检测更新机制的实现/shot_downloading.png">
+<meta property="og:image" content="https://hjw541988478.github.io/Android应用自动检测更新机制的实现/shot_download_completed.png">
+<meta property="og:image" content="https://hjw541988478.github.io/Android应用自动检测更新机制的实现/shot_update_dialog.png">
+<meta property="og:updated_time" content="2018-08-17T15:31:23.735Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android应用自动检测更新机制的实现">
 <meta name="twitter:description" content="需求在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，从服务端获取版本号比对当前包的版本号，如果大于当前版本号则提示用户升级，而对于某些需要强制更新的版本号，则不允许用户取消版本的升级，必须强制更新。整个流程大概如下图所示：">
-<meta name="twitter:image" content="https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/app_update_flowchart.png">
+<meta name="twitter:image" content="https://hjw541988478.github.io/Android应用自动检测更新机制的实现/app_update_flowchart.png">
     
-        <link rel="alternate" type="application/atom+xml" title="Garvin" href="/atom.xml">
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
@@ -187,10 +187,11 @@
             <h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，从服务端获取版本号比对当前包的版本号，如果大于当前版本号则提示用户升级，而对于某些需要强制更新的版本号，则不允许用户取消版本的升级，必须强制更新。整个流程大概如下图所示：<br><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/2015/08/25/Android应用自动检测更新机制的实现/app_update_flowchart.png" alt="更新流程图" title="">
+                    <img src="/Android应用自动检测更新机制的实现/app_update_flowchart.png" alt="更新流程图" title="">
                 </div>
                 <div class="image-caption">更新流程图</div>
-            </figure><br>可以看到，整个流程的关键在于对VerisonCode版本号的大小比较，VersionCode标识了同一应用的不同版本号，对于修改版本号后打包的安装包便是最新版本的安装包。在AndroidStudio中，VersionCode的配置一般在应用模块的<code>*.build</code>文件中，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">defaultConfig &#123;</span><br><span class="line">    applicationId &quot;com.test.app&quot;</span><br><span class="line">    minSdkVersion 9</span><br><span class="line">    targetSdkVersion 22</span><br><span class="line">    versionCode 6 #这里便是对版本号的设置</span><br><span class="line">    versionName &quot;2.0.0&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+            </figure><br>可以看到，整个流程的关键在于对VerisonCode版本号的大小比较，VersionCode标识了同一应用的不同版本号，对于修改版本号后打包的安装包便是最新版本的安装包。在AndroidStudio中，VersionCode的配置一般在应用模块的<code>*.build</code>文件中，如下：<br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">defaultConfig &#123;</span><br><span class="line">    applicationId <span class="string">"com.test.app"</span></span><br><span class="line">    minSdkVersion 9</span><br><span class="line">    targetSdkVersion 22</span><br><span class="line">    <span class="keyword">version</span>Code 6 <span class="comment">#这里便是对版本号的设置</span></span><br><span class="line">    <span class="keyword">version</span>Name <span class="string">"2.0.0"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
 <p>对于本地版本号的获取，使用<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curCode = mActivity.getPackageManager().getPackageInfo(mActivity.getPackageName(), <span class="number">0</span>).versionCode;</span><br></pre></td></tr></table></figure></p>
 <p>便可以获取，然后直接去比较从服务端获取下来的版本号，便可以知晓应用是否需要更新。</p>
 <h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>使用<code>Service</code>组件去完成整个功能，鉴于它有着不可见，运行在后台的特性，并使用本地服务，直接<code>startService</code>或者<code>stopService</code>便可以完成服务的启动和停止，整个流程分为3个部分，服务端获取最新版本信息-&gt;下载最新版本，并实时更新UI-&gt;下载完成，覆盖安装。</p>
@@ -211,19 +212,19 @@
 <p><code>DownloadAsyncTask</code>充分利用了<code>AsyncTask</code>的特点，分别在<code>onPreExecute</code>中进行了<code>Notification</code>的构造以及唤醒工作，在<code>doInBackground</code>中进行着网络数据下载工作，然后在数据不断缓存的过程中，当数据缓存的比例大于5%时，则调用<code>publishProgress</code>方法，更新<code>Notification</code>中的进度条，这样做的目的是，在频繁更新<code>Notification</code>并唤醒的过程中，会阻塞UI线程导致ANR，因此一般在进度变化累积到5%的时候再去更新UI，保证应用的流畅性。具体涉及到UI的更新工作放在<code>onProgressUpdate</code>方法中，包括进度和文字提示的更新，其中包含了更新失败的情况，同样也需要提示。最后在<code>onPostExecute</code>方法中进行下载文件的获取和安装，并弹出安装界面指导安装。<br><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/2015/08/25/Android应用自动检测更新机制的实现/shot_downloading.png" alt="下载中状态" title="">
+                    <img src="/Android应用自动检测更新机制的实现/shot_downloading.png" alt="下载中状态" title="">
                 </div>
                 <div class="image-caption">下载中状态</div>
             </figure><br><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/2015/08/25/Android应用自动检测更新机制的实现/shot_download_completed.png" alt="下载完成状态" title="">
+                    <img src="/Android应用自动检测更新机制的实现/shot_download_completed.png" alt="下载完成状态" title="">
                 </div>
                 <div class="image-caption">下载完成状态</div>
             </figure><br><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/2015/08/25/Android应用自动检测更新机制的实现/shot_update_dialog.png" alt="安装状态" title="">
+                    <img src="/Android应用自动检测更新机制的实现/shot_update_dialog.png" alt="安装状态" title="">
                 </div>
                 <div class="image-caption">安装状态</div>
             </figure></p>
@@ -235,13 +236,9 @@
     
     <div class="content">
         
-<span class="post-time">
-    最后更新时间：<time datetime="2018-08-17T09:01:51.432Z" itemprop="dateUpdated">2018-08-17 17:01:51</time>
-</span><br>
-
 
         
-        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2015/08/25/Android应用自动检测更新机制的实现/" target="_blank" rel="external">https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/</a>
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/Android应用自动检测更新机制的实现/" target="_blank" rel="external">https://hjw541988478.github.io/Android应用自动检测更新机制的实现/</a>
         
     </div>
     
@@ -272,7 +269,7 @@
 <div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/&title=《Android应用自动检测更新机制的实现》 — Garvin&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/Android应用自动检测更新机制的实现/&title=《Android应用自动检测更新机制的实现》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -282,22 +279,22 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/&title=《Android应用自动检测更新机制的实现》 — Garvin&source=生活与工作的感悟" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/Android应用自动检测更新机制的实现/&title=《Android应用自动检测更新机制的实现》 — Garvin 杂记&source=需求在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/Android应用自动检测更新机制的实现/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android应用自动检测更新机制的实现》 — Garvin&url=https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android应用自动检测更新机制的实现》 — Garvin 杂记&url=https://hjw541988478.github.io/Android应用自动检测更新机制的实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/Android应用自动检测更新机制的实现/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -320,7 +317,7 @@
 <nav class="post-nav flex-row flex-justify-between">
   
     <div class="waves-block waves-effect prev">
-      <a href="/2015/08/26/Android传感器编程之摇一摇/" id="post-prev" class="post-nav-link">
+      <a href="/Android传感器编程之摇一摇/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
         <h4 class="title">Android传感器编程之摇一摇</h4>
       </a>
@@ -329,7 +326,7 @@
 
   
     <div class="waves-block waves-effect next">
-      <a href="/2015/08/24/PropertyAnimation使用总结/" id="post-next" class="post-nav-link">
+      <a href="/PropertyAnimation使用总结/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
         <h4 class="title">PropertyAnimation使用总结</h4>
       </a>
@@ -452,7 +449,7 @@
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/&title=《Android应用自动检测更新机制的实现》 — Garvin&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/Android应用自动检测更新机制的实现/&title=《Android应用自动检测更新机制的实现》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -462,22 +459,22 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/&title=《Android应用自动检测更新机制的实现》 — Garvin&source=生活与工作的感悟" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/Android应用自动检测更新机制的实现/&title=《Android应用自动检测更新机制的实现》 — Garvin 杂记&source=需求在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/Android应用自动检测更新机制的实现/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android应用自动检测更新机制的实现》 — Garvin&url=https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android应用自动检测更新机制的实现》 — Garvin 杂记&url=https://hjw541988478.github.io/Android应用自动检测更新机制的实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/08/25/Android应用自动检测更新机制的实现/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/Android应用自动检测更新机制的实现/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -488,7 +485,7 @@
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADNUlEQVR42u3aS5LiQAwFwL7/pZltdwzYT5KJwCK9IsCUK4uF0OfnJ74ev67f7xzf+f89r95Pnti7Z3RhY2Nj34T9OLxyzKuV83uST1/tKrdgY2Njb2Xnm04WnSNzQPNwsbGxsb+Y3dtW/unxcR+viY2NjY09Yeflp7wgdVw2wsbGxsauFpWqYem4iJ8Ep4T39loaNjY29sez867o579+S38bGxsb+4PZj+KVhK5J0Sd/Vh60nqyAjY2NvYidB4DkD30vnZgfUHP/2NjY2OvYvRDyjuxn/pRokAgbGxt7BXsSBvLma0LKG8O9tKTMwMbGxr4hu9pSnYSQ8kaL6dDJnrGxsbGXsqsjOL3RnGTNeanr5LvY2NjY69h5u7Q60NNr5fbavYUQi42Njb2O3WuyVjGjjRZTjpOfChsbG/sL2NUkpJc85AWsahHqZB1sbGzsdez5oMxVreJ8PKgawP68g42Njb2O3QsGk+butelKEnoLURQbGxv7VuweLA9px4xqI6HaZj45UGxsbOx17GYYaAW2POW4eFinevbY2NjYN2H3/uLn1GRz+RBn/vNcMMeEjY2NfSv2pLGaY5LA1kta8jWxsbGxN7EfwdUrJ1ULQ9WEJPlhXu4EGxsbex07CUJXJQ+9I6iG1ZOdYGNjYy9iX9XQ7Y1dVgco83JVdXgUGxsb+77sPOT0Rion5f5qoEqaxydxGxsbG/u27F7YyANP/q08rPaeOPplsLGxsT+YXX1dLdxXk5+8kZw85cmesbGxsZeyqyWhahEqbwD31i+kPdjY2NiL2Hl4yFvCefrRW7+akGBjY2N/Azsv9MwL/XkxKw94zXQIGxsbeym73DQdF5KOj6w8bTSJ2NjY2Ng3Z09KRfmRzctAk5bDk1QEGxsb++bsR/HKWwW9sNQ7xOpBY2NjY29iV//c5weRNA+SzVUPsborbGxs7B3sPGjlG02awUkTNw9UzUYvNjY29iJ2D5AXnnqjNtVn5UEXGxsb+5vZk5JTUkLKC1693WJjY2Njz9OG3lH2ghk2Njb297B7YSlJG/KVq4eYJzxP3sHGxsZexK4OMvYatBPqHDnqb2NjY2N/Lvsft7BdyeZ0EzgAAAAASUVORK5CYII=" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsklEQVR42u3aQY7jMAwEwPz/07vAnvYSp5uUJnMonwLHdlQyIDEkX6/4+PPveP72/2vaM/n5140DDw8PbzT0d0f+6GSgz+B8ipMx4+Hh4d3mJY/Lf+wZnGw8z/fmz8HDw8P7Lu8ZOQuIN1sOHh4e3u/nJdcnvGRSZiE+Hh4e3k/y8sRB+227xM9SvQdyLXh4eHgxb5ZC/e7ni/U9PDw8vEVVvQ1q2w1ms+VE48TDw8O7wJuV8PN07WYK2uatIgeMh4eHd4jXlr72Cdw2LTvctPDw8PAu8PKkQxHIxivzrG0ruRIPDw/vHm/WCjBrikruahsFPrw3PDw8vKO8WVKgbRrIz8+e8PYMHh4e3gVeG1hvmln3aYt8Eof/G/Dw8PBi3iZozhMTs2LYLGTHw8PDu8eb/eHfhNp5uJwX5z68Nzw8PLyjvOIPfJwsaH++vavehPDw8PCu8ZLl/l7ZrA3HixeAh4eHd403W/pPNQTsN5sPDQR4eHh4h3jtojxbvtuEb95c9QGPh4eHd4GXtzTlj24Tu5ugvN4e8PDw8K7x8s95iJyXu2ZNDHWuBQ8PD2/B25TwN2H0bFqTNgI8PDy827w8Sfoczs6+3RThogMPDw/vAq/FJBO0aUdog+liIvDw8PAu89omgE36ddaSlZzBw8PD+xleGyifXcqL4ZaBOx4eHt4p3r5pIA+yW/Zmc8LDw8O7zWuX7DyVkG8AV/K0eHh4eEd5swL/fnD7JG/RNICHh4d3lDcrceVDb5ul8iuTAB0PDw/vHq9tJN2nD2YDbctgeHh4eLd57fK9WdzzgQ7zK3lvAh4eHt6P8NqmgbZgNiuqvX0OHh4e3ld5bci7TyVsmgnw8PDwbvM2rU5JwqId+mwKXvkehYeHh7fgtQWwWQg+a8ZqA/oDrQN4eHh4T1f+BY9n0HXF65NoAAAAAElFTkSuQmCC" alt="微信分享二维码">
 </div>
 
 

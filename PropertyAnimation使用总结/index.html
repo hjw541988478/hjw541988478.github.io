@@ -14,7 +14,7 @@
     
     
     
-    <title>PropertyAnimation使用总结 | Garvin</title>
+    <title>PropertyAnimation使用总结 | Garvin 杂记</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#3F51B5">
@@ -25,16 +25,16 @@
 <meta name="keywords" content="Animation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PropertyAnimation使用总结">
-<meta property="og:url" content="https://hjw541988478.github.io/2015/08/24/PropertyAnimation使用总结/index.html">
-<meta property="og:site_name" content="Garvin">
+<meta property="og:url" content="https://hjw541988478.github.io/PropertyAnimation使用总结/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
 <meta property="og:description" content="ObjectAnimator 淡入效果123ObjectAnimator.ofFloat(tv, &quot;alpha&quot;, 0.0f, 1.0f)            .setDuration(500)            .start();   ofFloat对应着三个参数值，分别是目标View，动画属性名Property，以及属性值，一个则为终点值，两个对应着起点和终点值，多个则为起点值，将会调用">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-08-17T08:39:15.298Z">
+<meta property="og:updated_time" content="2018-08-17T15:31:06.181Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PropertyAnimation使用总结">
 <meta name="twitter:description" content="ObjectAnimator 淡入效果123ObjectAnimator.ofFloat(tv, &quot;alpha&quot;, 0.0f, 1.0f)            .setDuration(500)            .start();   ofFloat对应着三个参数值，分别是目标View，动画属性名Property，以及属性值，一个则为终点值，两个对应着起点和终点值，多个则为起点值，将会调用">
     
-        <link rel="alternate" type="application/atom+xml" title="Garvin" href="/atom.xml">
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
@@ -183,7 +183,7 @@
 <li>淡入效果<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ObjectAnimator.ofFloat(tv, <span class="string">"alpha"</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>)</span><br><span class="line">            .setDuration(<span class="number">500</span>)</span><br><span class="line">            .start();</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<p><code>ofFloat</code>对应着三个参数值，分别是目标<code>View</code>，动画属性名<code>Property</code>，以及属性值，一个则为终点值，两个对应着起点和终点值，多个则为起点值，将会调用的值和终点值。与<code>ofFloat</code>类似的还有<code>ofInt</code>、<code>ofObject</code>，这些都是用来设置动画动作的元素。</p>
+<p><code>ofFloat</code>对应着三个参数值，分别是目标<code>View</code>，动画属性名<code>Property</code>，以及属性值，一个则为终点值，两个对应着起点和终点值，多个则为起点值，将会调用的值和终点值。与<code>ofFloat</code>类似的还有<code>ofInt</code>、<code>ofObject</code>，这些都是用来设置动画动作的元素。<br><a id="more"></a></p>
 <ul>
 <li>同时缩小和淡出效果<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ObjectAnimator anim = ObjectAnimator</span><br><span class="line">            .ofFloat(view, <span class="string">"hjw"</span>, <span class="number">1.0F</span>,  <span class="number">0.0F</span>)  </span><br><span class="line">            .setDuration(<span class="number">500</span>);  </span><br><span class="line">    anim.start();  </span><br><span class="line">    anim.addUpdateListener(<span class="keyword">new</span> AnimatorUpdateListener()  </span><br><span class="line">    &#123;  </span><br><span class="line">        <span class="meta">@Override</span>  </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationUpdate</span><span class="params">(ValueAnimator animation)</span>  </span></span><br><span class="line"><span class="function">        </span>&#123;  </span><br><span class="line">            <span class="keyword">float</span> cVal = (Float) animation.getAnimatedValue();  </span><br><span class="line">            view.setAlpha(cVal);  </span><br><span class="line">            view.setScaleX(cVal);  </span><br><span class="line">            view.setScaleY(cVal);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
 </li>
@@ -208,7 +208,7 @@
 <li>XML方式描述淡出效果<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">objectAnimator</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:duration</span>=<span class="string">"1000"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:propertyName</span>=<span class="string">"alpha"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:valueFrom</span>=<span class="string">"0.0"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:valueTo</span>=<span class="string">"1.0"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:valueType</span>=<span class="string">"floatType"</span> &gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">objectAnimator</span>&gt;</span></span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<p>在<code>res/animator</code>目录下创建<code>alpha.xml</code>文件，然后进行调用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Animator anim = AnimatorInflater.loadAnimator(this, R.animator.alpha);  </span><br><span class="line">anim.setTarget(mMv);  </span><br><span class="line">anim.start()</span><br></pre></td></tr></table></figure></p>
+<p>在<code>res/animator</code>目录下创建<code>alpha.xml</code>文件，然后进行调用：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Animator anim = AnimatorInflater.loadAnimator(<span class="keyword">this</span>, R.animator.alpha);  </span><br><span class="line">anim.setTarget(mMv);  </span><br><span class="line">anim.start()</span><br></pre></td></tr></table></figure></p>
 <p>如果需要多个动画去执行，只需要在XML文件中增加<code>Set</code>节点：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">set</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:ordering</span>=<span class="string">"together"</span> &gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">objectAnimator</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:duration</span>=<span class="string">"1000"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:propertyName</span>=<span class="string">"scaleX"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:valueFrom</span>=<span class="string">"1"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:valueTo</span>=<span class="string">"0.5"</span> &gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">objectAnimator</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">objectAnimator</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:duration</span>=<span class="string">"1000"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:propertyName</span>=<span class="string">"scaleY"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:valueFrom</span>=<span class="string">"1"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:valueTo</span>=<span class="string">"0.5"</span> &gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">objectAnimator</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <p>通过改变<code>ordering</code>属性的值去控制多个动画之间的执行顺序。</p>
 <h2 id="Layout-Animations-布局动画"><a href="#Layout-Animations-布局动画" class="headerlink" title="Layout Animations(布局动画)"></a>Layout Animations(布局动画)</h2><p>改变<code>ViewGroup</code>的子<code>View</code>移除或者添加的动画效果<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">LayoutTransition transition = <span class="keyword">new</span> LayoutTransition();</span><br><span class="line">    transition.setAnimator(LayoutTransition.CHANGE_APPEARING,</span><br><span class="line">			transition.getAnimator(LayoutTransition.CHANGE_APPEARING));</span><br><span class="line">	transition.setAnimator(LayoutTransition.APPEARING,</span><br><span class="line">			<span class="keyword">null</span>);</span><br><span class="line">	transition.setAnimator(LayoutTransition.DISAPPEARING,</span><br><span class="line">			<span class="keyword">null</span>);</span><br><span class="line">	transition.setAnimator(LayoutTransition.CHANGE_DISAPPEARING,</span><br><span class="line">			<span class="keyword">null</span>);</span><br><span class="line">	mLayout.setLayoutTransition(transition);</span><br></pre></td></tr></table></figure></p>
@@ -227,13 +227,9 @@
     
     <div class="content">
         
-<span class="post-time">
-    最后更新时间：<time datetime="2018-08-17T08:39:15.298Z" itemprop="dateUpdated">2018-08-17 16:39:15</time>
-</span><br>
-
 
         
-        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2015/08/24/PropertyAnimation使用总结/" target="_blank" rel="external">https://hjw541988478.github.io/2015/08/24/PropertyAnimation使用总结/</a>
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/PropertyAnimation使用总结/" target="_blank" rel="external">https://hjw541988478.github.io/PropertyAnimation使用总结/</a>
         
     </div>
     
@@ -264,7 +260,7 @@
 <div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/08/24/PropertyAnimation使用总结/&title=《PropertyAnimation使用总结》 — Garvin&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/PropertyAnimation使用总结/&title=《PropertyAnimation使用总结》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -274,22 +270,23 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/08/24/PropertyAnimation使用总结/&title=《PropertyAnimation使用总结》 — Garvin&source=生活与工作的感悟" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/PropertyAnimation使用总结/&title=《PropertyAnimation使用总结》 — Garvin 杂记&source=ObjectAnimator
+淡入效果123ObjectAnimator.ofFloat(tv, "alpha", 0.0f, 1.0f)        ..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/08/24/PropertyAnimation使用总结/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/PropertyAnimation使用总结/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《PropertyAnimation使用总结》 — Garvin&url=https://hjw541988478.github.io/2015/08/24/PropertyAnimation使用总结/&via=https://hjw541988478.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《PropertyAnimation使用总结》 — Garvin 杂记&url=https://hjw541988478.github.io/PropertyAnimation使用总结/&via=https://hjw541988478.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/08/24/PropertyAnimation使用总结/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/PropertyAnimation使用总结/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -312,7 +309,7 @@
 <nav class="post-nav flex-row flex-justify-between">
   
     <div class="waves-block waves-effect prev">
-      <a href="/2015/08/25/Android应用自动检测更新机制的实现/" id="post-prev" class="post-nav-link">
+      <a href="/Android应用自动检测更新机制的实现/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
         <h4 class="title">Android应用自动检测更新机制的实现</h4>
       </a>
@@ -321,7 +318,7 @@
 
   
     <div class="waves-block waves-effect next">
-      <a href="/2015/08/23/多行文本可折叠展开TextView实现/" id="post-next" class="post-nav-link">
+      <a href="/多行文本可折叠展开TextView实现/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
         <h4 class="title">多行文本的可展开折叠的TextView实现</h4>
       </a>
@@ -444,7 +441,7 @@
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/08/24/PropertyAnimation使用总结/&title=《PropertyAnimation使用总结》 — Garvin&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/PropertyAnimation使用总结/&title=《PropertyAnimation使用总结》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -454,22 +451,23 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/08/24/PropertyAnimation使用总结/&title=《PropertyAnimation使用总结》 — Garvin&source=生活与工作的感悟" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/PropertyAnimation使用总结/&title=《PropertyAnimation使用总结》 — Garvin 杂记&source=ObjectAnimator
+淡入效果123ObjectAnimator.ofFloat(tv, "alpha", 0.0f, 1.0f)        ..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/08/24/PropertyAnimation使用总结/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/PropertyAnimation使用总结/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《PropertyAnimation使用总结》 — Garvin&url=https://hjw541988478.github.io/2015/08/24/PropertyAnimation使用总结/&via=https://hjw541988478.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《PropertyAnimation使用总结》 — Garvin 杂记&url=https://hjw541988478.github.io/PropertyAnimation使用总结/&via=https://hjw541988478.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/08/24/PropertyAnimation使用总结/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/PropertyAnimation使用总结/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -480,7 +478,7 @@
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACvklEQVR42u3aQW7jQAwEQP//09lrAENKN6nBOkHpJAj2eEqHIU3y9Yqvr7fr+/P2u+/r3H8r/63hhYeHh7fe+tXS7z+QfPJ+i8maV+tErwwPDw/vGO/qRE3u7w/69sUlQSjZMx4eHt5v4SXUPGDg4eHh/Q1env4mLyVPr/Hw8PA+jZckvu3W8xCSl4MP1lrw8PDw5uu88iDxv+6P9Pfw8PDw1l312YGblxg2wSbaLR4eHt4B3mxwKnm+SdmT11HsEw8PD+8wrx11asen2hGrfMjgcid4eHh4B3jJEd9uq0U+Ba4jGx4eHt6IlzSr8jZYHkjyBLptp+Hh4eGd5rWJ9axtlo8CtIGqiHt4eHh4a15ypM5aYnnZYhYAor3h4eHhHeO1bbCkZTVL1vMXFz3Hw8PDO8DblwZm7fy8MZaHmXpEDA8PD2/Bu09w8/S6ZWzKDcXwFh4eHt6jvPbPf36I72uqeYJ+eY+Hh4d3gNeORuX4tv2fj20VJDw8PLwDvP1wVZtY79lFcQQPDw/vAG8/INW2o2bFiHb9HyoueHh4eAveLDDMEu58gCBvnhW1Fjw8PLyHeOdKDPvUfFYCjiYg8PDw8Ba8tsSQpMLtZ1Yjp0mtBQ8PD+8Ary6Jxg2zzehVTo2SaTw8PLyHeG3hNT+g24Q72e4mKcfDw8N7lpeEgae22/5inkZHtRY8PDy8R3mzsul9Ktym5vmaBRIPDw/vGK/daFQCWBQyNsWIKKXGw8PDG/G+yis/1tsBrASZB4/V5vDw8PC2ffkiyc632Cbu7UvBw8PDO82bHeUzRp4ct684mo/Aw8PDe5SXH8ptCTgvE2/GVS+f4OHh4X0Mr91iW+zIA9UP4QcPDw/vw3h7fDt+mpdF8PDw8E7z8kXb0kM7BNAOexVDV3h4eHgP8TZ/+Gel2zZFbsMSHh4e3jHePx0xAydBRvYDAAAAAElFTkSuQmCC" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACL0lEQVR42u3aUa6DMAwFUfa/afpbqQLmOqRSnOGrekWQkye5duzjwNcJrt87v/+SvuuYccmQIWNZRm1x/MX3T/59wtV7758gQ4aMHRj3i0s/89BJtg9tnAwZMmRcLJEER5ICypAhQ8Z/GDyAkkRQhgwZMmpF7PiBXS01fLkWlyFDxoKMdBH//DylvyFDhoylGGd4kSfMKGgfViVDhozWjNrxPTl0e21xfD0yZMjYhjHShiRjGbXRDbQqGTJktGakj+ZFJm8MkGO+4H8iQ4aMRox0hIKD029rbzlqkyAyZMhYijGS3tWGM/hQBR/mkCFDRm8GT8hqoTAtZYtjHzJkyNiMwVO3kWAa/A6QsQwZMmS0ZvDAx8vIWmMy3b7LFqYMGTLaMXhrkCdtPKVL2wDBtIgMGTIaMdKl8wKYg2vDFsfIL4AMGTKWZfDiMyXx8Eo27qEfK0OGjC0ZJFCmIbXWBA1qcRkyZDRinOAipWxtcROHLWTIkNGIMdJiTFO9kWcGIxcyZMhozUjTuNqwF285xMdwMmTI2IDBh7rSQ/9aIzM++JMhQ8ZmjLQBkJastUD/cL8MGTKaMs7wGi9ua8niQ2ooQ4aM1ozx0jQd85oRsmXIkLEDgwTZt3YoHd0I9luGDBkbMNLAxw/OasE0Xa0MGTJkpLkkAaQNhpcDrgwZMjZg8OO5GolsChpglSFDRiNGbYSC3D/SFiXNAxkyZOzAmJfqkRKXh9fxhFWGDBkLMj6azyLgatmpCwAAAABJRU5ErkJggg==" alt="微信分享二维码">
 </div>
 
 

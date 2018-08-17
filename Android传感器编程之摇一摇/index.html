@@ -14,7 +14,7 @@
     
     
     
-    <title>Android传感器编程之摇一摇 | Garvin</title>
+    <title>Android传感器编程之摇一摇 | Garvin 杂记</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#3F51B5">
@@ -25,19 +25,19 @@
 <meta name="keywords" content="Sensor,Vibrator">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android传感器编程之摇一摇">
-<meta property="og:url" content="https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/index.html">
-<meta property="og:site_name" content="Garvin">
+<meta property="og:url" content="https://hjw541988478.github.io/Android传感器编程之摇一摇/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
 <meta property="og:description" content="思路摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：12&amp;lt;uses-permission android:">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/screenshot_before_shake.png">
-<meta property="og:image" content="https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/screenshot_after_shake.png">
-<meta property="og:updated_time" content="2018-08-17T09:01:32.190Z">
+<meta property="og:image" content="https://hjw541988478.github.io/Android传感器编程之摇一摇/screenshot_before_shake.png">
+<meta property="og:image" content="https://hjw541988478.github.io/Android传感器编程之摇一摇/screenshot_after_shake.png">
+<meta property="og:updated_time" content="2018-08-17T15:30:43.267Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android传感器编程之摇一摇">
 <meta name="twitter:description" content="思路摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：12&amp;lt;uses-permission android:">
-<meta name="twitter:image" content="https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/screenshot_before_shake.png">
+<meta name="twitter:image" content="https://hjw541988478.github.io/Android传感器编程之摇一摇/screenshot_before_shake.png">
     
-        <link rel="alternate" type="application/atom+xml" title="Garvin" href="/atom.xml">
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
@@ -182,7 +182,8 @@
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。<br>对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:name=&quot;android.hardware.sensor.accelerometer&quot; /&gt; # 加速度传感器</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.VIBRATE&quot;/&gt;  # 振动传感器</span><br></pre></td></tr></table></figure></p>
+            <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。<br>对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:<span class="built_in">name</span>=<span class="string">"android.hardware.sensor.accelerometer"</span> /&gt; <span class="comment"># 加速度传感器</span></span><br><span class="line">&lt;uses-permission android:<span class="built_in">name</span>=<span class="string">"android.permission.VIBRATE"</span>/&gt;  <span class="comment"># 振动传感器</span></span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
 <p>同时在应用初始化的时候，获取<code>SensorManager</code>和<code>Vibrator</code>,之后才可以使用振动传感器和加速度传感器进行其他操作：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SensorManager mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);  </span><br><span class="line">Vibrator mVibrator = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);</span><br></pre></td></tr></table></figure></p>
 <h2 id="摇晃监听器的实现"><a href="#摇晃监听器的实现" class="headerlink" title="摇晃监听器的实现"></a>摇晃监听器的实现</h2><ul>
 <li>摇晃监听器:<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShakeOffListener</span> <span class="keyword">implements</span> <span class="title">SensorEventListener</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Context context;</span><br><span class="line">    <span class="keyword">private</span> Vibrator mVibrator;</span><br><span class="line">    <span class="keyword">private</span> SensorManager mSensorManager;</span><br><span class="line">    <span class="keyword">private</span> OnShakeListener mListener;</span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">OnShakeListener</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">onShake</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setShakeListener</span><span class="params">(OnShakeListener listener)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mListener = listener;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ShakeOffListener</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.context = context;</span><br><span class="line">        mVibrator = (Vibrator) context.</span><br><span class="line">                getSystemService(Context.VIBRATOR_SERVICE);</span><br><span class="line">        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">resume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mSensorManager.registerListener(<span class="keyword">this</span>,</span><br><span class="line">                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),</span><br><span class="line">                SensorManager.SENSOR_DELAY_NORMAL);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pause</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mVibrator.vibrate(<span class="number">300</span>);</span><br><span class="line">        mSensorManager.unregisterListener(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 传感器值变化</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSensorChanged</span><span class="params">(SensorEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">float</span> x = event.values[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">float</span> y = event.values[<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">float</span> z = event.values[<span class="number">2</span>];</span><br><span class="line">        <span class="comment">// 达到速度阀值，发出提示</span></span><br><span class="line">        <span class="keyword">if</span> (Math.abs(x) &gt;= <span class="number">19</span> || Math.abs(y) &gt;= <span class="number">19</span> || Math.abs(z) &gt;= <span class="number">19</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (mListener != <span class="keyword">null</span>)</span><br><span class="line">                mListener.onShake();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//传感器反应速度值的变化</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAccuracyChanged</span><span class="params">(Sensor sensor, <span class="keyword">int</span> accuracy)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -206,14 +207,14 @@
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/2015/08/26/Android传感器编程之摇一摇/screenshot_before_shake.png" alt="摇晃前截图" title="">
+                    <img src="/Android传感器编程之摇一摇/screenshot_before_shake.png" alt="摇晃前截图" title="">
                 </div>
                 <div class="image-caption">摇晃前截图</div>
             </figure>
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/2015/08/26/Android传感器编程之摇一摇/screenshot_after_shake.png" alt="摇晃成功截图" title="">
+                    <img src="/Android传感器编程之摇一摇/screenshot_after_shake.png" alt="摇晃成功截图" title="">
                 </div>
                 <div class="image-caption">摇晃成功截图</div>
             </figure>
@@ -225,13 +226,9 @@
     
     <div class="content">
         
-<span class="post-time">
-    最后更新时间：<time datetime="2018-08-17T09:01:32.190Z" itemprop="dateUpdated">2018-08-17 17:01:32</time>
-</span><br>
-
 
         
-        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2015/08/26/Android传感器编程之摇一摇/" target="_blank" rel="external">https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/</a>
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/Android传感器编程之摇一摇/" target="_blank" rel="external">https://hjw541988478.github.io/Android传感器编程之摇一摇/</a>
         
     </div>
     
@@ -262,7 +259,7 @@
 <div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/&title=《Android传感器编程之摇一摇》 — Garvin&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/Android传感器编程之摇一摇/&title=《Android传感器编程之摇一摇》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -272,22 +269,22 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/&title=《Android传感器编程之摇一摇》 — Garvin&source=生活与工作的感悟" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/Android传感器编程之摇一摇/&title=《Android传感器编程之摇一摇》 — Garvin 杂记&source=思路摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/Android传感器编程之摇一摇/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android传感器编程之摇一摇》 — Garvin&url=https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/&via=https://hjw541988478.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android传感器编程之摇一摇》 — Garvin 杂记&url=https://hjw541988478.github.io/Android传感器编程之摇一摇/&via=https://hjw541988478.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/Android传感器编程之摇一摇/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -310,7 +307,7 @@
 <nav class="post-nav flex-row flex-justify-between">
   
     <div class="waves-block waves-effect prev">
-      <a href="/2015/09/02/RecyclerView下拉刷新上拉加载的封装/" id="post-prev" class="post-nav-link">
+      <a href="/RecyclerView下拉刷新上拉加载的封装/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
         <h4 class="title">RecyclerView下拉刷新上拉加载的封装</h4>
       </a>
@@ -319,7 +316,7 @@
 
   
     <div class="waves-block waves-effect next">
-      <a href="/2015/08/25/Android应用自动检测更新机制的实现/" id="post-next" class="post-nav-link">
+      <a href="/Android应用自动检测更新机制的实现/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
         <h4 class="title">Android应用自动检测更新机制的实现</h4>
       </a>
@@ -442,7 +439,7 @@
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/&title=《Android传感器编程之摇一摇》 — Garvin&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/Android传感器编程之摇一摇/&title=《Android传感器编程之摇一摇》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -452,22 +449,22 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/&title=《Android传感器编程之摇一摇》 — Garvin&source=生活与工作的感悟" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/Android传感器编程之摇一摇/&title=《Android传感器编程之摇一摇》 — Garvin 杂记&source=思路摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/Android传感器编程之摇一摇/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android传感器编程之摇一摇》 — Garvin&url=https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/&via=https://hjw541988478.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android传感器编程之摇一摇》 — Garvin 杂记&url=https://hjw541988478.github.io/Android传感器编程之摇一摇/&via=https://hjw541988478.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/08/26/Android传感器编程之摇一摇/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/Android传感器编程之摇一摇/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -478,7 +475,7 @@
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtklEQVR42u3aQY5iMQwE0L7/pWe2I/UAVXaC/uKxajUoP49FHMr++Ylff168/n339yd/v/tqtdk6x154eHh4h7aePCzf6HtqspP8k3h4eHjf4b06UfNDOdnE+6ck6+R7xsPDw3sO7/2mk3eTrywvNnh4eHjP5+W/+tvV8tKCh4eH9wTeLFyYXYtnEe31rAUPDw8v5uVdpOf8faW/h4eHh7fuquchbBJJnHpKsQ4eHh7eBd6muZXHCvkIQj7mVewTDw8P7yhvGIyWj88xbUn40CrDw8PD+wpvf3U+dawfCILx8PDwLvBOLZoMCrSDBbOvvujv4eHh4S14Hy6m5bstY1OoisYYHh4e3lFevok8vJhtrg1zhw0wPDw8vAVvf4jnAcE+tnhfAKLfCnh4eHhrXn5Y58dxEtomIewmjIgSazw8PLwFr31Ye42eBbh5efjwHzw8PLyv8/atqU1J2LTQ8PDw8L7Dy2GbsGC20fbijoeHh3ePl4ezyUE/a4bNnlWD8fDw8Na89mBNLsTJCm15yIvQf0YH8PDw8K7x2st0G8ieCjvyEQQ8PDy8e7wkhJ21ozawYqAqmSnDw8PDO8RLqLNxq7ZllXyhs0AEDw8P7ywvjwCSK/JmQ+1QV1Js8PDw8G7wNsslD5sh85VnIw54eHh4e96mBVWEquX1vS1Uq98KeHh4eCPefvQqj26TQjJrs+Hh4eF9k7c/pvNWVnKgR4d+Ugvw8PDwjvJm7as2VkiGBtqiEl3T8fDw8C7w2qO2DR1mA17J9bpueuHh4eEd5Z0tBvk3uh8giCIMPDw8vGu8/FBuM9JZOcmr2YfQBA8PD+8BvE3sOys8swEsPDw8vGfy8qtzOxyQxx/1ZAQeHh7eIV6+6Gyjsyv47PN4eHh4t3ntD/52xKpths3KyYH+Hh4eHt5n3l+vvSIWFGGw7wAAAABJRU5ErkJggg==" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACwUlEQVR42u3a0U7DQAwEwP7/T8MrUpVkbZ8LSJMnVJLGE6TcsfbrFR9fP473T94/vzonOe6/57Vx4OHh4Q1Kv79Zfs79Ve93v6+n+uDw8PDwPsO7eqPmr+n8e/Kik6seasDDw8P7V7zqIlH9Njw8PLz/wrsPKZLizkYeeHh4eL/Fy0PVanHV7XKyVKxkLXh4eHgxL+8i/Z2fV/p7eHh4eOOuet6Iqm6d8635aAQBDw8Pb4HX2y5PRgHyULi3MODh4eFt8/JGVPl1PG75582zy7vg4eHhLfBONbR6r++9h1jeuePh4eHFvOSVmr+yq9vlfBHq1YaHh4e3wesVdGrxyM/Pxwhmp+Lh4eE919zbwl5d2wsgkmuTe436e3h4eHgxr9ey6m2O86UifxzRooKHh4e3wMtP7QUTk3C2OpKFh4eH90leHqHm4exkgalurKMwFw8PD+8Qr/f6nje3NoYS8PDw8LZ588GpaphbDWGTwOKhAYaHh4d3lJcPBFTb/L0NcW9xevhfAQ8PD2+Bl7f5q+NT1dJ77a6Hq/Dw8PAWeL2Bpwm7usDkG+tyooyHh4dX5E2aTL249h6QXJssCZcxLh4eHt6Yl5SeFFR9BNVhr149eHh4eBu8Sem9GCLZfCfnR60vPDw8vAXe/N/+atjaKzqJRQ7EuHh4eHiDBljeBptEt9WQN/ljvKpF4+Hh4Y15STw6GRfoFdob8MLDw8Pb5vVaXJOIthd25HfBw8PD2+B9FY8DjfzieEF+34clAQ8PD+8Qr/rCzQPWPALOGYdbYnh4eHgDXrWsyVs3jyGqs2MPo1d4eHh4C7wkPqg2q3oxR+/xlX+Nh4eH90FeEkbkLbT8Rd+sBw8PD+/P8JLb5IwqrPCI8fDw8NZ4k6ZXHl5U22bJoy9MRuDh4eEd4vVGpnpDAHlMfP/JqYgZDw8Pr8j7BmAvIhZ4eJAQAAAAAElFTkSuQmCC" alt="微信分享二维码">
 </div>
 
 

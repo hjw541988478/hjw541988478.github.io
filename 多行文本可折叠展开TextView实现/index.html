@@ -14,7 +14,7 @@
     
     
     
-    <title>多行文本的可展开折叠的TextView实现 | Garvin</title>
+    <title>多行文本的可展开折叠的TextView实现 | Garvin 杂记</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#3F51B5">
@@ -25,19 +25,19 @@
 <meta name="keywords" content="CustomView">
 <meta property="og:type" content="article">
 <meta property="og:title" content="多行文本的可展开折叠的TextView实现">
-<meta property="og:url" content="https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/index.html">
-<meta property="og:site_name" content="Garvin">
+<meta property="og:url" content="https://hjw541988478.github.io/多行文本可折叠展开TextView实现/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
 <meta property="og:description" content="需求在实现商家评论区的需求时，对于多行评论的显示，采用的是使用maxLines属性去限定显示的行数，同时使用android:ellipsize=end在限定行数的末尾显示...，这种方式可以很好的避免评论文字过多显示过长的情况。但是对于有价值的评论，有必要显示所有评论文字，采用展开折叠的交互，能够更加的灵活地去应对长文字的多行显示，给用户给好的体验。 思路首先，继承LinearLayout，并对文">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/pic_expandable_state.png">
-<meta property="og:image" content="https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/pic_collapse_state.png">
-<meta property="og:updated_time" content="2018-08-17T08:42:04.570Z">
+<meta property="og:image" content="https://hjw541988478.github.io/多行文本可折叠展开TextView实现/pic_expandable_state.png">
+<meta property="og:image" content="https://hjw541988478.github.io/多行文本可折叠展开TextView实现/pic_collapse_state.png">
+<meta property="og:updated_time" content="2018-08-17T15:30:20.875Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多行文本的可展开折叠的TextView实现">
 <meta name="twitter:description" content="需求在实现商家评论区的需求时，对于多行评论的显示，采用的是使用maxLines属性去限定显示的行数，同时使用android:ellipsize=end在限定行数的末尾显示...，这种方式可以很好的避免评论文字过多显示过长的情况。但是对于有价值的评论，有必要显示所有评论文字，采用展开折叠的交互，能够更加的灵活地去应对长文字的多行显示，给用户给好的体验。 思路首先，继承LinearLayout，并对文">
-<meta name="twitter:image" content="https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/pic_expandable_state.png">
+<meta name="twitter:image" content="https://hjw541988478.github.io/多行文本可折叠展开TextView实现/pic_expandable_state.png">
     
-        <link rel="alternate" type="application/atom+xml" title="Garvin" href="/atom.xml">
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
     
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
@@ -183,7 +183,7 @@
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>在实现商家评论区的需求时，对于多行评论的显示，采用的是使用<code>maxLines</code>属性去限定显示的行数，同时使用<code>android:ellipsize=end</code>在限定行数的末尾显示<code>...</code>，这种方式可以很好的避免评论文字过多显示过长的情况。但是对于有价值的评论，有必要显示所有评论文字，采用展开折叠的交互，能够更加的灵活地去应对长文字的多行显示，给用户给好的体验。</p>
-<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>首先，继承<code>LinearLayout</code>，并对文本和标记组件进行一层包装，通过对折叠状态下的行数、展开折叠的动画时长、展开和折叠状态的视图控制，进行可自定义的属性封装。然后对父类的<code>onClick</code>方法进行重写，用户在对组件点击的时候，文本会自动的展开或折叠。然而当文本正在处于折叠或展开过程的动画中时，应该重写<code>onInterceptTouchEvent</code>方法拦截所有的点击事件，防止出现异常。<br>其次，在整个流程中我们需要了解到文本的真实高度，用来在初始化的时候去判断是否需要进入折叠模式，因此需要重写<code>onMeasure</code>方法，如果组件不需要重新绘制或者组件的可见性为<code>View.GONE</code>，则直接使用父类的<code>onMeasure</code>方法。<br>然后，但是如果组件需要重新绘制，便会初始化组件的状态，并对组件进行测量，判断真实文本的行数，如果小于设置的最大显示行数，则直接显示，否则按最大显示行数显示文本并让展开状态的View可见，保存当前折叠状态下显示的高度。<br>最后，对于视图复用的问题，一般情况下，视图被滑出了屏幕看不见后，这个视图数据便消失了，重新让视图进入屏幕中时，视图会重新初始化，而对于那些展开或者折叠状态的视图也会默认变为折叠模式。因此需要一个标记量去使用额外的标记决定视图显示的位置和状态，这里使用到的是<a href="http://blog.csdn.net/haukey/article/details/8200404" target="_blank" rel="noopener">SparseBooleanArray</a>，实质上基于稀疏矩阵和折半查找的<code>HashMap&lt;Integer,Boolean&gt;</code>的优化版本，<code>key</code>用来记录位置，<code>value</code>用来记录状态。</p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>首先，继承<code>LinearLayout</code>，并对文本和标记组件进行一层包装，通过对折叠状态下的行数、展开折叠的动画时长、展开和折叠状态的视图控制，进行可自定义的属性封装。然后对父类的<code>onClick</code>方法进行重写，用户在对组件点击的时候，文本会自动的展开或折叠。然而当文本正在处于折叠或展开过程的动画中时，应该重写<code>onInterceptTouchEvent</code>方法拦截所有的点击事件，防止出现异常。<br><a id="more"></a><br>其次，在整个流程中我们需要了解到文本的真实高度，用来在初始化的时候去判断是否需要进入折叠模式，因此需要重写<code>onMeasure</code>方法，如果组件不需要重新绘制或者组件的可见性为<code>View.GONE</code>，则直接使用父类的<code>onMeasure</code>方法。<br>然后，但是如果组件需要重新绘制，便会初始化组件的状态，并对组件进行测量，判断真实文本的行数，如果小于设置的最大显示行数，则直接显示，否则按最大显示行数显示文本并让展开状态的View可见，保存当前折叠状态下显示的高度。<br>最后，对于视图复用的问题，一般情况下，视图被滑出了屏幕看不见后，这个视图数据便消失了，重新让视图进入屏幕中时，视图会重新初始化，而对于那些展开或者折叠状态的视图也会默认变为折叠模式。因此需要一个标记量去使用额外的标记决定视图显示的位置和状态，这里使用到的是<a href="http://blog.csdn.net/haukey/article/details/8200404" target="_blank" rel="noopener">SparseBooleanArray</a>，实质上基于稀疏矩阵和折半查找的<code>HashMap&lt;Integer,Boolean&gt;</code>的优化版本，<code>key</code>用来记录位置，<code>value</code>用来记录状态。</p>
 <h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><ul>
 <li><p>通过在<code>attrs.xml</code>中进行属性的自定义，并通过下面的代码去获取在布局文件中配置的自定义的属性值，包括了最多显示行数，展开、折叠资源等。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">    TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.ExpTextView);</span><br><span class="line">    <span class="comment">//最多行数</span></span><br><span class="line">    mMaxLines = typedArray.getInt(R.styleable.Exp_maxCollapsedLines, MAX_COLLAPSED_LINES);</span><br><span class="line">    <span class="comment">//动画时长</span></span><br><span class="line">    mAnimDuration = typedArray.getInt(R.styleable.ExpTextView_animDuration, DEFAULT_ANIM_DURATION);</span><br><span class="line">    <span class="comment">// 动画透明度渐变初始值</span></span><br><span class="line">    mAnimAlphaStart = typedArray.getFloat(R.styleable.ExpTextView_animAlphaStart, DEFAULT_ANIM_ALPHA_START);</span><br><span class="line">    mExpandDrawable = typedArray.getDrawable(R.styleable.ExpTextView_expandDrawable);</span><br><span class="line">    mCollapseDrawable = typedArray.getDrawable(R.styleable.ExpTextView_collapseDrawable);</span><br><span class="line">    <span class="keyword">if</span> (mExpandDrawable == <span class="keyword">null</span>) &#123;</span><br><span class="line">        mExpandDrawable = getDrawable(getContext(), );</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mCollapseDrawable == <span class="keyword">null</span>) &#123;</span><br><span class="line">        mCollapseDrawable = getDrawable(getContext(), R.drawable.ic_mer_detail_collapse);</span><br><span class="line">    &#125;</span><br><span class="line">    typedArray.recycle();</span><br><span class="line">    <span class="comment">//只能是垂直布局</span></span><br><span class="line">    setOrientation(LinearLayout.VERTICAL);</span><br><span class="line">    <span class="comment">//默认是不显示的</span></span><br><span class="line">    setVisibility(GONE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -207,14 +207,14 @@
 <h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/2015/08/23/多行文本可折叠展开TextView实现/pic_expandable_state.png" alt="多行文本展开状态效果图" title="">
+                    <img src="/多行文本可折叠展开TextView实现/pic_expandable_state.png" alt="多行文本展开状态效果图" title="">
                 </div>
                 <div class="image-caption">多行文本展开状态效果图</div>
             </figure>
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/2015/08/23/多行文本可折叠展开TextView实现/pic_collapse_state.png" alt="多行文本收缩状态效果图" title="">
+                    <img src="/多行文本可折叠展开TextView实现/pic_collapse_state.png" alt="多行文本收缩状态效果图" title="">
                 </div>
                 <div class="image-caption">多行文本收缩状态效果图</div>
             </figure>
@@ -224,13 +224,9 @@
     
     <div class="content">
         
-<span class="post-time">
-    最后更新时间：<time datetime="2018-08-17T08:42:04.570Z" itemprop="dateUpdated">2018-08-17 16:42:04</time>
-</span><br>
-
 
         
-        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2015/08/23/多行文本可折叠展开TextView实现/" target="_blank" rel="external">https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/</a>
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/多行文本可折叠展开TextView实现/" target="_blank" rel="external">https://hjw541988478.github.io/多行文本可折叠展开TextView实现/</a>
         
     </div>
     
@@ -261,7 +257,7 @@
 <div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/&title=《多行文本的可展开折叠的TextView实现》 — Garvin&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/多行文本可折叠展开TextView实现/&title=《多行文本的可展开折叠的TextView实现》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -271,22 +267,22 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/&title=《多行文本的可展开折叠的TextView实现》 — Garvin&source=生活与工作的感悟" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/多行文本可折叠展开TextView实现/&title=《多行文本的可展开折叠的TextView实现》 — Garvin 杂记&source=需求在实现商家评论区的需求时，对于多行评论的显示，采用的是使用maxLines属性去限定显示的行数，同时使用android:ellipsize=end在限..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/多行文本可折叠展开TextView实现/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《多行文本的可展开折叠的TextView实现》 — Garvin&url=https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《多行文本的可展开折叠的TextView实现》 — Garvin 杂记&url=https://hjw541988478.github.io/多行文本可折叠展开TextView实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/多行文本可折叠展开TextView实现/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -309,7 +305,7 @@
 <nav class="post-nav flex-row flex-justify-between">
   
     <div class="waves-block waves-effect prev">
-      <a href="/2015/08/24/PropertyAnimation使用总结/" id="post-prev" class="post-nav-link">
+      <a href="/PropertyAnimation使用总结/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
         <h4 class="title">PropertyAnimation使用总结</h4>
       </a>
@@ -434,7 +430,7 @@
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/&title=《多行文本的可展开折叠的TextView实现》 — Garvin&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/多行文本可折叠展开TextView实现/&title=《多行文本的可展开折叠的TextView实现》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -444,22 +440,22 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/&title=《多行文本的可展开折叠的TextView实现》 — Garvin&source=生活与工作的感悟" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/多行文本可折叠展开TextView实现/&title=《多行文本的可展开折叠的TextView实现》 — Garvin 杂记&source=需求在实现商家评论区的需求时，对于多行评论的显示，采用的是使用maxLines属性去限定显示的行数，同时使用android:ellipsize=end在限..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/多行文本可折叠展开TextView实现/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《多行文本的可展开折叠的TextView实现》 — Garvin&url=https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《多行文本的可展开折叠的TextView实现》 — Garvin 杂记&url=https://hjw541988478.github.io/多行文本可折叠展开TextView实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/08/23/多行文本可折叠展开TextView实现/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/多行文本可折叠展开TextView实现/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -470,7 +466,7 @@
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACrklEQVR42u3aQW7DMAwEwP7/0+m1QOF4SYpOUYxPRRLIGh1EdqWvr/h5/Xjef5785uqXV99ejXDswcPDwxtM/ffTm+IV+P0Ir+DJ54yHh4e3zcun2CsA+bfvSfmc8fDw8P4a78mCgYeHh/c/eHlAMGnQkyKBh4eH9yle3s4mMWuvsa4WhsNZCx4eHl7My0+R/s7fK+d7eHh4eONT9WTD7TXWvdC2PFs8PDy8BV6+4ebsfIpJVFFtl/Hw8PC2eZNQ4FTZmEQeN2Pi4eHhrfHyLb4azua/SRauHNTi4eHhLfDyqeftbx4lnDqEu4l68fDw8I7yev/q51cHqs10PkJUHvDw8PCWedVP8nGqUW+vyY4qHh4eHt4hXr7h9l5TnWIvdLi8GYGHh4e3xstfWZ1otR3Prx3cfIuHh4e3xptvxEncMIkY8iUeZS14eHh4Ma93EFWNJ6oBcR5nlO+U4eHh4Y15NzcLBlOphg7VEW7AeHh4eGu8ajvba6CT8fOwODrhwsPDw3ucV33lvKicjS3w8PDwNnjVRrYareYHYL1LYNFi4eHh4R3lTa4FTMLZauPebP3x8PDwlnl5Yz05uEqWIA87bhYODw8Pb4GXH001j6Diz3tlKVpEPDw8vDXeZOOuRhV5zFG9hnWZteDh4eE9wtsLc/PSMpkbHh4e3vO8yRWo5O9ehJGHI3h4eHhP8npxQzLF5GJBsuiF/R8PDw/vKO9VfPLXnC0beTtevhmBh4eH1z+9Kky6N1xSMPIG+mxRwcPDw6vy8vg1iSGa6zeIRW7AeHh4eGu8XmCat7bVJag28TeFAQ8PD++jvAkpn1a1UJWrDR4eHt6DvElYkBeM6rWtA3fK8PDw8Iq8yTXT6tFXXhLyQLl5gQAPDw+vxZsErL2XVcvDMQYeHh7elPcNRNi7YLvGwrcAAAAASUVORK5CYII=" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACt0lEQVR42u3awU7kMBAEUP7/p1lpTyuxZKq6bZjDy2k0BCfPSLap7o+P+Pr8e339/O83333/PM7Xe5J3OHzh4eHhjV79uysZ+hn8jH9+1vM9yVPw8PDw7vGSzSB5cLI+zzabZLrx8PDw3o2XL/2z4/Xmfjw8PLz35OUPyAOLdhPCw8PDex9estDnMUG7hcwCi8NZCx4eHl7M2xTAfuvzD9X38PDw8Mqq+qmlPw9nkwJY8bZ4eHh4F3h5hJoHEMlxPG8R2IcjeHh4ePd4+aG2jWg3gAPFNjw8PLyjvDw2PVXsT15xs1H95z8GPDw8vGu8ffGpDWTz2KItoeHh4eHd47VR7OaYm09Z26S1Kobh4eHhrXmbmvusHSqnzpob8PDw8M7ykvh1s3nU8UF5sH7xd8PDw8O7xsvDgmGFrWwX2EzBsJ6Gh4eHF/NmjVNtaHuglFWOX8e4eHh4eCNeu8TPpmYTxbaHdTw8PLwbvPYofCOAaIOGvEiGh4eHd4PXRhIJY1YkKyp17RaCh4eHd4236T7YtGdttopksvDw8PDO8vKGp3b5zhf3tvRVBM14eHh4F3htoHAqkmjvzElF7oKHh4c34n3G1yxI3bdnrZ6Ih4eHd5m3CVg3TQObgPjFlOHh4eFd4+ULdPRv/yjwbSclOqbj4eHhXebNAtakkJYv+i3jxVaBh4eHd4HXbgntT/MGqTbkLZqx8PDw8I7y9sfifdCw2VRePAUPDw/vMm9WBkvuzyOMnBFNNx4eHt4FXjt0vgHk39z4XCPx8PDwSl6+GcyW+Hy0Uw0KeHh4eD/DS8KItgyWtwXkZbY2jMbDw8P7XV6CzydlNln5O+Ph4eG9Gy9/0fYwnbe0FmEEHh4e3gXerOiVl7jaOKPdTr4dEw8PD+8Cb18Ay383PyI/j3+gpoeHh4c34f0BTGcr8Ei0bbUAAAAASUVORK5CYII=" alt="微信分享二维码">
 </div>
 
 
