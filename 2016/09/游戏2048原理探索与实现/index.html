@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>游戏2048原理探索与实现 | Garvin 杂记</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="CustomView,RandomNumber">
+    <meta name="description" content="简述2048有着简单的游戏规则有趣的游戏过程，在早年的时候着实火了一把，以致在后来也出现了很多不同的版本。但主要的规则都是相似的，4*4的格子，数字随机出现2或者4，手指进行上下左右的滑动，所有数字向滑动方向靠拢，相同的相邻数字相加合并，合并成功或者移动后在剩下的空格中随机出现新的数字，直到合并出现2048，则挑战成功。">
+<meta name="keywords" content="CustomView,RandomNumber">
+<meta property="og:type" content="article">
+<meta property="og:title" content="游戏2048原理探索与实现">
+<meta property="og:url" content="https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
+<meta property="og:description" content="简述2048有着简单的游戏规则有趣的游戏过程，在早年的时候着实火了一把，以致在后来也出现了很多不同的版本。但主要的规则都是相似的，4*4的格子，数字随机出现2或者4，手指进行上下左右的滑动，所有数字向滑动方向靠拢，相同的相邻数字相加合并，合并成功或者移动后在剩下的空格中随机出现新的数字，直到合并出现2048，则挑战成功。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/game2048_box.png">
+<meta property="og:image" content="https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/game2048.jpg">
+<meta property="og:updated_time" content="2018-08-18T15:43:07.140Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="游戏2048原理探索与实现">
+<meta name="twitter:description" content="简述2048有着简单的游戏规则有趣的游戏过程，在早年的时候着实火了一把，以致在后来也出现了很多不同的版本。但主要的规则都是相似的，4*4的格子，数字随机出现2或者4，手指进行上下左右的滑动，所有数字向滑动方向靠拢，相同的相邻数字相加合并，合并成功或者移动后在剩下的空格中随机出现新的数字，直到合并出现2048，则挑战成功。">
+<meta name="twitter:image" content="https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/game2048_box.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Garvin</h5>
+          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                存档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">游戏2048原理探索与实现</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">游戏2048原理探索与实现</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2016-09-22T13:22:00.000Z" itemprop="datePublished" class="page-time">
+  2016-09-22
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#简述"><span class="post-toc-number">1.</span> <span class="post-toc-text">简述</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#分析"><span class="post-toc-number">2.</span> <span class="post-toc-text">分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#游戏布局"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">游戏布局</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#游戏算法"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">游戏算法</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现"><span class="post-toc-number">3.</span> <span class="post-toc-text">实现</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#小格子设计"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">小格子设计</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#游戏面板设计"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">游戏面板设计</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#滑动事件处理"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">滑动事件处理</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#判断游戏结束"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">判断游戏结束</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">总结</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">5.</span> <span class="post-toc-text">参考</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-游戏2048原理探索与实现"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">游戏2048原理探索与实现</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2016-09-22 21:22:00" datetime="2016-09-22T13:22:00.000Z"  itemprop="datePublished">2016-09-22</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>2048有着简单的游戏规则有趣的游戏过程，在早年的时候着实火了一把，以致在后来也出现了很多不同的版本。但主要的规则都是相似的，4*4的格子，数字随机出现2或者4，手指进行上下左右的滑动，所有数字向滑动方向靠拢，相同的相邻数字相加合并，合并成功或者移动后在剩下的空格中随机出现新的数字，直到合并出现2048，则挑战成功。<br><a id="more"></a></p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><h3 id="游戏布局"><a href="#游戏布局" class="headerlink" title="游戏布局"></a>游戏布局</h3><p>游戏主布局为一个4*4的面板，想要实现该布局的方式有很多种，比如继承View手动计算每个格子的坐标，但是会比较复杂，鉴于<code>GridLayout</code>在4.0的引入，比较适用于本游戏的布局，然后只需要监控上下左右不同的手势方向执行不同的逻辑运算便可以达到效果。接下来的重点是每个格子的实现，它是根据不同的数值表现出来的不同的背景色值，其尺寸大小是根据不同的分辨率下动态设置的。</p>
+<h3 id="游戏算法"><a href="#游戏算法" class="headerlink" title="游戏算法"></a>游戏算法</h3><p>主要是小格子的产生、合并算法要求高点，如果过于麻烦效率太低势必会造成游戏卡顿，影响体验，于是这里采用的是思路比较传统的做法：<br>在进行上下左右滑动时，遍历每一行(列)，如果没有数字用0来代替空格，如某一行的数字为4 4 0 2，则相同的合并后加入List中，否则直接加入，操作后的顺序即8 2，并从滑动的方向重新放置List中的数字，直到遍历所有行(列)。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="小格子设计"><a href="#小格子设计" class="headerlink" title="小格子设计"></a>小格子设计</h3><p>让GameBoxView继承<code>FrameLayout</code>，并根据设置的数字改变相应的颜色，对外提供setBoxNum()方法，并加入一个TextView设置数字背景颜色边距和数字值，整个实现起来较为简单：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> android.content.Context;</span><br><span class="line"><span class="keyword">import</span> android.graphics.Color;</span><br><span class="line"><span class="keyword">import</span> android.text.TextPaint;</span><br><span class="line"><span class="keyword">import</span> android.view.Gravity;</span><br><span class="line"><span class="keyword">import</span> android.view.View;</span><br><span class="line"><span class="keyword">import</span> android.widget.FrameLayout;</span><br><span class="line"><span class="keyword">import</span> android.widget.TextView;</span><br><span class="line"><span class="keyword">import</span> com.example.game2048.GameApp;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GameBoxView</span> <span class="keyword">extends</span> <span class="title">FrameLayout</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> gBoxNumVal;</span><br><span class="line">    <span class="keyword">private</span> TextView gBoxView;</span><br><span class="line">    <span class="keyword">private</span> FrameLayout.LayoutParams gBoxParams;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 小格子的初始化数字值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">GameBoxView</span><span class="params">(Context context, <span class="keyword">int</span> gBoxNum)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context);</span><br><span class="line">        <span class="keyword">this</span>.gBoxNumVal = gBoxNum;</span><br><span class="line">        initGameBoxView();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initGameBoxView</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        setBackgroundColor(Color.GRAY);</span><br><span class="line">        gBoxView = <span class="keyword">new</span> TextView(getContext());</span><br><span class="line">        setBoxNumber(gBoxNumVal);</span><br><span class="line">        <span class="keyword">int</span> gameLines = GameApp.mSp.getInt(GameApp.KEY_GAME_LINES, <span class="number">4</span>);</span><br><span class="line">        <span class="comment">// 根据不同的宫格设置不同的字体大小</span></span><br><span class="line">        <span class="keyword">if</span> (gameLines == <span class="number">4</span>) &#123;</span><br><span class="line">            gBoxView.setTextSize(<span class="number">35</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (gameLines == <span class="number">5</span>) &#123;</span><br><span class="line">            gBoxView.setTextSize(<span class="number">25</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            gBoxView.setTextSize(<span class="number">20</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        TextPaint tp = gBoxView.getPaint();</span><br><span class="line">        tp.setFakeBoldText(<span class="keyword">true</span>);</span><br><span class="line">        gBoxView.setGravity(Gravity.CENTER);</span><br><span class="line">        gBoxParams = <span class="keyword">new</span> FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,</span><br><span class="line">                LayoutParams.MATCH_PARENT);</span><br><span class="line">        gBoxParams.setMargins(<span class="number">5</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">5</span>);</span><br><span class="line">        addView(gBoxView, gBoxParams);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> View <span class="title">getBoxItemView</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> gBoxView;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getBoxNumber</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> gBoxNumVal;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBoxNumber</span><span class="params">(<span class="keyword">int</span> num)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.gBoxNumVal = num;</span><br><span class="line">        <span class="keyword">if</span> (num == <span class="number">0</span>) &#123;</span><br><span class="line">            gBoxView.setText(<span class="string">""</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            gBoxView.setText(<span class="string">""</span> + num);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">switch</span> (num) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0x00000000</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0xffeee5db</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0xffeee0ca</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">8</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0xfff2c17a</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">16</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0xfff59667</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">32</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0xfff68c6f</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">64</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0xfff66e3c</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">128</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0xffedcf74</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">256</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0xffedcc64</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">512</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0xffedc854</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">1024</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0xffedc54f</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">2048</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0xffedc32e</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                gBoxView.setBackgroundColor(<span class="number">0xff3c4a34</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>首先在构造时确定显示的数字，从而确定小格子的背景颜色，默认都是灰色，然后设置小格子的边距，整个的实现效果如下图：<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2016/09/游戏2048原理探索与实现/game2048_box.png" alt="小格子效果图" title="">
+                </div>
+                <div class="image-caption">小格子效果图</div>
+            </figure><br>可以看到的是对于不同的数字对比效果还是很明显的，也达到了我们的目的。</p>
+<h3 id="游戏面板设计"><a href="#游戏面板设计" class="headerlink" title="游戏面板设计"></a>游戏面板设计</h3><p>在初始化游戏矩阵时，首先需要移除之前的游戏布局，并获取最高成绩，并随机添加2个小格子作为初始格子。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化游戏矩阵</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initGameMatrix</span><span class="params">()</span></span>&#123;</span><br><span class="line">    removeAllViews();</span><br><span class="line">    mHistoryScore = <span class="number">0</span>;</span><br><span class="line">    GameApp.CURRENT_SCORE = <span class="number">0</span>;</span><br><span class="line">    GameApp.mGameLines = GameApp.mSp.getInt(GameApp.KEY_GAME_LINES,<span class="number">4</span>);</span><br><span class="line">    mGameLines = GameApp.mGameLines;</span><br><span class="line">    mGameMatrixViews = <span class="keyword">new</span> GameBoxView[mGameLines][mGameLines];</span><br><span class="line">    mGameMatrixHistory = <span class="keyword">new</span> <span class="keyword">int</span>[mGameLines][mGameLines];</span><br><span class="line">    mTmpBoxNumList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    mBlankGameBoxes = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    mHighestScore = GameApp.mSp.getInt(GameApp.KEY_HIGH_SCORE , <span class="number">0</span>);</span><br><span class="line">    setColumnCount(mGameLines);</span><br><span class="line">    setRowCount(mGameLines);</span><br><span class="line">    <span class="comment">// 设置触摸事件监听用于处理滑动事件</span></span><br><span class="line">    setOnTouchListener(<span class="keyword">this</span>);</span><br><span class="line">    DisplayMetrics metrics = <span class="keyword">new</span> DisplayMetrics();</span><br><span class="line">    WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);</span><br><span class="line">    Display display = wm.getDefaultDisplay();</span><br><span class="line">    display.getMetrics(metrics);</span><br><span class="line">    GameApp.mGameBoxWidth = metrics.widthPixels / GameApp.mGameLines;</span><br><span class="line">    <span class="comment">//根据小格子宽度初始化格子</span></span><br><span class="line">    initGameView(GameApp.mGameBoxWidth);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initGameView</span><span class="params">(<span class="keyword">int</span> cardSize)</span></span>&#123;</span><br><span class="line">    removeAllViews();</span><br><span class="line">    GameBoxView gameBoxView;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mGameLines; i ++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span> ; j &lt; mGameLines ; j++)&#123;</span><br><span class="line">            gameBoxView = <span class="keyword">new</span> GameBoxView(getContext(),<span class="number">0</span>);</span><br><span class="line">            addView(gameBoxView,cardSize,cardSize);</span><br><span class="line">            mGameMatrixViews[i][j] = gameBoxView;</span><br><span class="line">            mBlankGameBoxes.add(<span class="keyword">new</span> Point(i,j));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 初始化随机2个数字</span></span><br><span class="line">    addRandomNum();</span><br><span class="line">    addRandomNum();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 根据剩余的格子位置坐标初始化小格子</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addRandomNum</span><span class="params">()</span></span>&#123;</span><br><span class="line">    getBlankGameBoxes();</span><br><span class="line">    <span class="keyword">if</span> (mBlankGameBoxes.size() &gt; <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">int</span> randomNumPos = (<span class="keyword">int</span>) Math.random() * mBlankGameBoxes.size();</span><br><span class="line">        Point randomPoint = mBlankGameBoxes.get(randomNumPos);</span><br><span class="line">        mGameMatrixViews[randomPoint.x][randomPoint.y]</span><br><span class="line">        <span class="comment">// 只会出现2或者4</span></span><br><span class="line">                .setBoxNumber(Math.random() &gt; <span class="number">0.2</span>d ? <span class="number">2</span>: <span class="number">4</span>);</span><br><span class="line">        <span class="comment">// 增加缩放动画过渡自然些</span></span><br><span class="line">        animCreate(mGameMatrixViews[randomPoint.x][randomPoint.y]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="滑动事件处理"><a href="#滑动事件处理" class="headerlink" title="滑动事件处理"></a>滑动事件处理</h3><p>游戏中只存在着上下左右四个方向的滑动，整个处理流程大致如下：滑动事件产生-&gt;滑动事件结束-&gt;判断滑动方向-&gt;游戏布局重新处理-&gt;添加新的随机数字-&gt;游戏是否结束。<br>下面是对移动方向的处理：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouch</span><span class="params">(View v, MotionEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (event.getAction())&#123;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_DOWN:</span><br><span class="line">                saveHistoryMatrix();</span><br><span class="line">                mStartX = (<span class="keyword">int</span>) event.getX();</span><br><span class="line">                mStartY = (<span class="keyword">int</span>) event.getY();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_UP:</span><br><span class="line">                mEndX = (<span class="keyword">int</span>) event.getX();</span><br><span class="line">                mEndY = (<span class="keyword">int</span>) event.getY();</span><br><span class="line">                judgeDirection(mEndX - mStartX , mEndY - mStartY);</span><br><span class="line">                <span class="keyword">if</span> (isMoved()) &#123;</span><br><span class="line">                    addRandomNum();</span><br><span class="line">                    GameActivity.getGameActivity().setScore(GameApp.CURRENT_SCORE, <span class="number">0</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                checkCompleted();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>在<code>onTouch</code>方法中捕获<code>ACTION_DOWN</code>事件，预先保存目前状态的游戏数据，记录起点坐标，在手指抬起后，捕获<code>ACTION_UP</code>事件，记录终点坐标随之判断滑动的方向，合并游戏数据，添加一个新的随机数字并检查游戏是否符合达到结束的条件。<br>下面是向上滑动后进行的操作：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">swipeUp</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span> ; i &lt; mGameLines ; i ++)&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span> ; j &lt; mGameLines ; j ++) &#123;</span><br><span class="line">                <span class="keyword">int</span> currentNum = mGameMatrixViews[j][i].getBoxNumber();</span><br><span class="line">                <span class="keyword">if</span> (currentNum != <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (mLastBoxNum == -<span class="number">1</span>) &#123;</span><br><span class="line">                        mLastBoxNum = currentNum;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">if</span> (mLastBoxNum == currentNum)&#123;</span><br><span class="line">                            mTmpBoxNumList.add(mLastBoxNum * <span class="number">2</span>);</span><br><span class="line">                            GameApp.CURRENT_SCORE += mLastBoxNum * <span class="number">2</span>;</span><br><span class="line">                            mLastBoxNum = -<span class="number">1</span>;</span><br><span class="line">                        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                            mTmpBoxNumList.add(mLastBoxNum);</span><br><span class="line">                            mLastBoxNum = currentNum;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (mLastBoxNum != -<span class="number">1</span>)&#123;</span><br><span class="line">                mTmpBoxNumList.add(mLastBoxNum);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; mTmpBoxNumList.size() ; j ++)&#123;</span><br><span class="line">                mGameMatrixViews[j][i].setBoxNumber(mTmpBoxNumList.get(j));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> m = mTmpBoxNumList.size(); m &lt; mGameLines; m ++)&#123;</span><br><span class="line">                mGameMatrixViews[m][i].setBoxNumber(<span class="number">0</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            mLastBoxNum = -<span class="number">1</span>;</span><br><span class="line">            mTmpBoxNumList.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过外层循环遍历每一列，再通过内层循环遍历每一行，对相同的数字进行合并，并通过 mLastBoxNum 标识区分是否已经进行了合并，对于已经合并后的数字并不会与下个数字再次进行合并，最后将处理后的数字重新设置到游戏面板，从而完成了整个滑动过程。</p>
+<h3 id="判断游戏结束"><a href="#判断游戏结束" class="headerlink" title="判断游戏结束"></a>判断游戏结束</h3><p>游戏结束意味着达到了设定的目标分数值，或者失败表示着所有的方块无法再次移动。对于游戏数据来说，成功即意味着游戏矩阵含有了设定分数值的方块，而失败意味着每个小方块四个方向都不存在与其相同的小方块。<br>主要操作如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">checkCompleted</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> result = checkNums();</span><br><span class="line">        <span class="keyword">if</span> (result == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (GameApp.CURRENT_SCORE &gt; mHighestScore)&#123;</span><br><span class="line">                SharedPreferences.Editor editor = GameApp.mSp.edit();</span><br><span class="line">                editor.putInt(GameApp.KEY_HIGH_SCORE, GameApp.CURRENT_SCORE);</span><br><span class="line">                editor.apply();</span><br><span class="line">                GameActivity.getGameActivity().setScore(GameApp.CURRENT_SCORE, <span class="number">1</span>);</span><br><span class="line">                GameApp.CURRENT_SCORE = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            AlertDialog.Builder builder = <span class="keyword">new</span> AlertDialog.Builder(getContext());</span><br><span class="line">            builder.setTitle(<span class="string">"GameOver"</span>)</span><br><span class="line">                    .setPositiveButton(<span class="string">"Again"</span>,</span><br><span class="line">                            <span class="keyword">new</span> DialogInterface.OnClickListener() &#123;</span><br><span class="line">                                <span class="meta">@Override</span></span><br><span class="line">                                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(DialogInterface dialog, <span class="keyword">int</span> which)</span> </span>&#123;</span><br><span class="line">                                    startGame();</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;).create().show();</span><br><span class="line">            GameApp.CURRENT_SCORE = <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (result == <span class="number">2</span>) &#123;</span><br><span class="line">            AlertDialog.Builder builder = <span class="keyword">new</span> AlertDialog.Builder(getContext());</span><br><span class="line">            builder.setTitle(<span class="string">"Mission Accomplished"</span>)</span><br><span class="line">                    .setPositiveButton(<span class="string">"Again"</span>,</span><br><span class="line">                            <span class="keyword">new</span> DialogInterface.OnClickListener() &#123;</span><br><span class="line">                                <span class="meta">@Override</span></span><br><span class="line">                                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(DialogInterface dialog, <span class="keyword">int</span> which)</span> </span>&#123;</span><br><span class="line">                                    startGame();</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;)</span><br><span class="line">                    .setNegativeButton(<span class="string">"Continue"</span>,</span><br><span class="line">                            <span class="keyword">new</span> DialogInterface.OnClickListener() &#123;</span><br><span class="line">                                <span class="meta">@Override</span></span><br><span class="line">                                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(DialogInterface dialog, <span class="keyword">int</span> which)</span> </span>&#123;</span><br><span class="line">                                    SharedPreferences.Editor editor = GameApp.mSp.edit();</span><br><span class="line">                                    <span class="keyword">if</span> (mTargetScore == <span class="number">1024</span>)&#123;</span><br><span class="line">                                        editor.putInt(GameApp.KEY_GAME_GOAL,<span class="number">2048</span>);</span><br><span class="line">                                        mTargetScore = <span class="number">2048</span>;</span><br><span class="line">                                        GameActivity.getGameActivity().setGoal(<span class="number">2048</span>);</span><br><span class="line">                                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mTargetScore == <span class="number">2048</span>)&#123;</span><br><span class="line">                                        editor.putInt(GameApp.KEY_GAME_GOAL,<span class="number">4096</span>);</span><br><span class="line">                                        mTargetScore = <span class="number">4096</span>;</span><br><span class="line">                                        GameActivity.getGameActivity().setGoal(<span class="number">4096</span>);</span><br><span class="line">                                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                        editor.putInt(GameApp.KEY_GAME_GOAL,<span class="number">4096</span>);</span><br><span class="line">                                        mTargetScore = <span class="number">4096</span>;</span><br><span class="line">                                        GameActivity.getGameActivity().setGoal(<span class="number">4096</span>);</span><br><span class="line">                                    &#125;</span><br><span class="line">                                    editor.apply();</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;).create().show();</span><br><span class="line">                GameApp.CURRENT_SCORE = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>最终游戏实现效果图：<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2016/09/游戏2048原理探索与实现/game2048.jpg" alt="最终效果图" title="">
+                </div>
+                <div class="image-caption">最终效果图</div>
+            </figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>一步步分析来看，2048游戏的核心就是随机数字的生成，合并同行/同列数字，重新布局，检查游戏是否结束，关键还是对于游戏玩法转化成代码的理解能力，需要加强对日常业务的思考，对于问题转化成解决问题的模型的能力。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<ol>
+<li><a href="http://blog.csdn.net/eclipsexys/article/details/47405045" target="_blank" rel="noopener">Android 群英传</a></li>
+</ol>
+</blockquote>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+
+        
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2016/09/游戏2048原理探索与实现/" target="_blank" rel="external">https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://hjw541988478.github.io">
+            <img src="/img/avatar.jpg" alt="Garvin">
+            Garvin
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CustomView/">CustomView</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RandomNumber/">RandomNumber</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/&title=《游戏2048原理探索与实现》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/&title=《游戏2048原理探索与实现》 — Garvin 杂记&source=简述2048有着简单的游戏规则有趣的游戏过程，在早年的时候着实火了一把，以致在后来也出现了很多不同的版本。但主要的规则都是相似的，4*4的格子，数字随机出..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《游戏2048原理探索与实现》 — Garvin 杂记&url=https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2016/11/Java线程常用场景/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Java线程常用场景</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2016/07/MultiDex65535探索/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">MultiDex65535探索</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "Av3sk2Q4QhL7up87ziVVSeeS-gzGzoHsz",
+            appKey: "hVI7cltsWA2q1fvsUNRWEJ4e",
+            avatar: "retro",
+            placeholder: "Just go go",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Garvin &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/&title=《游戏2048原理探索与实现》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/&title=《游戏2048原理探索与实现》 — Garvin 杂记&source=简述2048有着简单的游戏规则有趣的游戏过程，在早年的时候着实火了一把，以致在后来也出现了很多不同的版本。但主要的规则都是相似的，4*4的格子，数字随机出..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《游戏2048原理探索与实现》 — Garvin 杂记&url=https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2016/09/游戏2048原理探索与实现/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtUlEQVR42u3awU7DQAwEUP7/p0HiTMKMnS0VejlVNE325RCbWX98xMfn93H1l8/guP9V++3DBx4eHt5o6SeWdb+45L73d0x+i4eHh3eOd18Mkhvc3/jqmptSlPwKDw8P7295CXXTpuPh4eH9P17SIufgzePDw8PDewde0gq358zCi03jjoeHh/caXtv+vsPng/t7eHh4eItd9dkL9/782XVmBx4eHt4JXhIrJLdsg4w2jFiNZOHh4eE9ykuWuNn+b+OGvMxEgTIeHh7eMV5eHmYjVrNYtl3JD3/Hw8PDO8Br2+hZsNtiZptkeHh4eK/htW1u3l7ni56NbRUpCx4eHt4BXh4ibF7TeeEpEuh7MB4eHt5hXhuV7scCTsS4l0MDeHh4eI/yNqNXbRCcjyDkzfov41Z4eHh4j/LyoCF/HG3xSJCzJhsPDw/vBC9/Kbfb/JtBhDaSKIoBHh4e3pq3WVAx8DQaKWgjYzw8PLzX8NrNpzxEyMPZPMKo/xnAw8PDO8bbLL0dz2qD3bax/mV/Dw8PD+8hXh7dzl7WSbFpe+Do8eHh4eEd4G1ignygqi0q7WOKhgbw8PDwHuXlQ04tOC8Jm5GsYq8PDw8Pb81LhgaSM2ft+LPloZjwwsPDw3uIN4to20Y5D3zbSYA6hsDDw8Nb8/KIoS0DOTgvEtG4GB4eHt4B3j5uyDex9t/mJDw8PLxzvHyjaz8KkAcTs674h+vg4eHhHebl4cJmt202wpWMNVxWPDw8PLxHee2l22h1Nkaw+TxE4uHh4ZW8thgUm/fxI2hD3uJqeHh4eMd4m0u3YwGzyKOIIdp+Hw8PD+8YL4kG8oGDNt7Nw2I8PDy8d+a1W/5JGZgFGZdXwMPDwzvGS8KIPD7YDxa0AfHlOXh4eHgHeM9ugO1/lZei1bgAHh4e3oT3BS2aIhZqjddKAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1274482147&web_id=1274482147')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

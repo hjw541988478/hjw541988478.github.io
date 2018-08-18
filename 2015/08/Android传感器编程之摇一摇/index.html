@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Android传感器编程之摇一摇 | Garvin 杂记</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Sensor,Vibrator">
+    <meta name="description" content="思路摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：12&amp;lt;uses-permission android:">
+<meta name="keywords" content="Sensor,Vibrator">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android传感器编程之摇一摇">
+<meta property="og:url" content="https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
+<meta property="og:description" content="思路摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：12&amp;lt;uses-permission android:">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/screenshot_before_shake.png">
+<meta property="og:image" content="https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/screenshot_after_shake.png">
+<meta property="og:updated_time" content="2018-08-17T15:30:43.267Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android传感器编程之摇一摇">
+<meta name="twitter:description" content="思路摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：12&amp;lt;uses-permission android:">
+<meta name="twitter:image" content="https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/screenshot_before_shake.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Garvin</h5>
+          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                存档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Android传感器编程之摇一摇</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Android传感器编程之摇一摇</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-08-26T11:54:01.000Z" itemprop="datePublished" class="page-time">
+  2015-08-26
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#思路"><span class="post-toc-number">1.</span> <span class="post-toc-text">思路</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#摇晃监听器的实现"><span class="post-toc-number">2.</span> <span class="post-toc-text">摇晃监听器的实现</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#摇晃监听器的使用及其效果"><span class="post-toc-number">3.</span> <span class="post-toc-text">摇晃监听器的使用及其效果</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Android传感器编程之摇一摇"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Android传感器编程之摇一摇</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015-08-26 19:54:01" datetime="2015-08-26T11:54:01.000Z"  itemprop="datePublished">2015-08-26</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。<br>对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:name=&quot;android.hardware.sensor.accelerometer&quot; /&gt; # 加速度传感器</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.VIBRATE&quot;/&gt;  # 振动传感器</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>同时在应用初始化的时候，获取<code>SensorManager</code>和<code>Vibrator</code>,之后才可以使用振动传感器和加速度传感器进行其他操作：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SensorManager mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);  </span><br><span class="line">Vibrator mVibrator = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);</span><br></pre></td></tr></table></figure></p>
+<h2 id="摇晃监听器的实现"><a href="#摇晃监听器的实现" class="headerlink" title="摇晃监听器的实现"></a>摇晃监听器的实现</h2><ul>
+<li>摇晃监听器:<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShakeOffListener</span> <span class="keyword">implements</span> <span class="title">SensorEventListener</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Context context;</span><br><span class="line">    <span class="keyword">private</span> Vibrator mVibrator;</span><br><span class="line">    <span class="keyword">private</span> SensorManager mSensorManager;</span><br><span class="line">    <span class="keyword">private</span> OnShakeListener mListener;</span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">OnShakeListener</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">onShake</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setShakeListener</span><span class="params">(OnShakeListener listener)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mListener = listener;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ShakeOffListener</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.context = context;</span><br><span class="line">        mVibrator = (Vibrator) context.</span><br><span class="line">                getSystemService(Context.VIBRATOR_SERVICE);</span><br><span class="line">        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">resume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mSensorManager.registerListener(<span class="keyword">this</span>,</span><br><span class="line">                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),</span><br><span class="line">                SensorManager.SENSOR_DELAY_NORMAL);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pause</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mVibrator.vibrate(<span class="number">300</span>);</span><br><span class="line">        mSensorManager.unregisterListener(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 传感器值变化</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSensorChanged</span><span class="params">(SensorEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">float</span> x = event.values[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">float</span> y = event.values[<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">float</span> z = event.values[<span class="number">2</span>];</span><br><span class="line">        <span class="comment">// 达到速度阀值，发出提示</span></span><br><span class="line">        <span class="keyword">if</span> (Math.abs(x) &gt;= <span class="number">19</span> || Math.abs(y) &gt;= <span class="number">19</span> || Math.abs(z) &gt;= <span class="number">19</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (mListener != <span class="keyword">null</span>)</span><br><span class="line">                mListener.onShake();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//传感器反应速度值的变化</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAccuracyChanged</span><span class="params">(Sensor sensor, <span class="keyword">int</span> accuracy)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>在对<code>ShakeOffListener</code>进行初始化时，首先会对传感器进行初始化，同时也在内部定义了<code>OnShakeListener</code>接口，方便在宿主类对事件触发的监听，然后通过对<code>SensorEventListener</code>接口的实现，重新实现了<code>onSensorChanged</code>的回调方法，这里主要完成是对于摇晃功能阈值的设定以及触发条件满足后将事件传给宿主类完成其他操作，同时也定义了<code>resume</code>和<code>pause</code>方法，用来完成摇晃过程的恢复和暂停事件的处理，这样可以更加方便处理摇晃开始、摇晃中和摇晃结束整个流程。</p>
+<h2 id="摇晃监听器的使用及其效果"><a href="#摇晃监听器的使用及其效果" class="headerlink" title="摇晃监听器的使用及其效果"></a>摇晃监听器的使用及其效果</h2><ul>
+<li>在Activity中进行使用<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> ImageView shkePic;</span><br><span class="line">    <span class="keyword">private</span> ShakeOffListener mShakeOffListener;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_test);</span><br><span class="line">        shkePic = (ImageView) findViewById(R.id.id_hand_shake_off);</span><br><span class="line">        mShakeOffListener = <span class="keyword">new</span> ShakeOffListener(<span class="keyword">this</span>);</span><br><span class="line">        mShakeOffListener.setShakeListener(<span class="keyword">new</span> ShakeOffListener.OnShakeListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onShake</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="comment">//TODO 处理业务请求</span></span><br><span class="line">                Logger.d(<span class="string">"onShake~"</span>);</span><br><span class="line">                Animation shakeAnim = AnimationUtils.loadAnimation(TestActivity.<span class="keyword">this</span>, R.anim.shake);</span><br><span class="line">                shakeAnim.setAnimationListener(<span class="keyword">new</span> Animation.AnimationListener() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationStart</span><span class="params">(Animation animation)</span> </span>&#123;</span><br><span class="line">                        mShakeOffListener.pause();</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationEnd</span><span class="params">(Animation animation)</span> </span>&#123;</span><br><span class="line">                        mShakeOffListener.resume();</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationRepeat</span><span class="params">(Animation animation)</span> </span>&#123;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">                shkePic.startAnimation(shakeAnim);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        mShakeOffListener.resume();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy();</span><br><span class="line">        <span class="keyword">if</span> (mShakeOffListener != <span class="keyword">null</span>)&#123;</span><br><span class="line">            mShakeOffListener.pause();</span><br><span class="line">            mShakeOffListener = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>在<code>TestActivity</code>中，通过在<code>onCreate</code>方法中，初始化<code>ShakeOffListener</code>同时实现了自定义的摇晃事件接口，巧妙的利用<code>Animation</code>的执行流程的回调方法，防止了摇晃事件的重复触发，摇晃事件的间隔取决于动画的时长，只需要在动画开始和结束使用<code>pause</code>和<code>resume</code>方法便可以暂停和恢复对摇晃事件的监听。最后在<code>Activity</code>被销毁时会回调的<code>onDestroy</code>方法中解除对摇晃监听器的注册，防了止内存泄露。<br>用到的<code>Animation</code>摇晃动画资源文件<code>shake.xml</code>：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">translate</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:duration</span>=<span class="string">"500"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:fromXDelta</span>=<span class="string">"0"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:interpolator</span>=<span class="string">"@anim/cycle_7"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:toXDelta</span>=<span class="string">"50"</span>/&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>以及使用到的插值器<code>cycle_7.xml</code>：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">cycleInterpolator</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:cycles</span>=<span class="string">"5.0"</span> /&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>还有在对传感器进行注册的时候，第一个参数是加速度传感器监听器实例，本例中是实现了<code>SensorEventListener</code>接口了的，第二个是加速度传感器实例，实现摇晃功能需要<code>Sensor.TYPE_ACCELEROMETER</code>类型，最后一个参数代表着传感器反应的速度类型，这个有如下几类：</p>
+<ul>
+<li><code>SENSOR_DELAY_NORMAL</code>：默认的获取传感器数据的速度；</li>
+<li><code>SENSOR_DELAY_UI</code>：若使用传感器更新UI，推荐使用；</li>
+<li><code>SENSOR_DELAY_GAME</code>：如果利用传感器开发游戏，建议使用；</li>
+<li><code>SENSOR_DELAY_FASTEST</code>：在特别灵敏的处理下推荐使用，但该模式可能造成手机电力大量消耗；<br>对于摇晃功能的实现，也只需要使用默认的即<code>SENSOR_DELAY_NORMAL</code>便可以满足监听传感器加速度变化的需求：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mSensorManager.registerListener(<span class="keyword">this</span>,</span><br><span class="line">                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),</span><br><span class="line">                SensorManager.SENSOR_DELAY_NORMAL);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2015/08/Android传感器编程之摇一摇/screenshot_before_shake.png" alt="摇晃前截图" title="">
+                </div>
+                <div class="image-caption">摇晃前截图</div>
+            </figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2015/08/Android传感器编程之摇一摇/screenshot_after_shake.png" alt="摇晃成功截图" title="">
+                </div>
+                <div class="image-caption">摇晃成功截图</div>
+            </figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>摇一摇功能用到的知识点有传感器、动画以及利用动画的执行周期巧妙的实现业务需求，但不得不说的是，对于合理设定摇晃阈值才是整个摇晃功能实现的关键，目前这个版本设定的值是19,对于大多数手机是能够实现功能的，但是相信有更好方法利用X、Y、Z轴加速度的值去处理这个阈值，这个是待完善的地方。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+
+        
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2015/08/Android传感器编程之摇一摇/" target="_blank" rel="external">https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://hjw541988478.github.io">
+            <img src="/img/avatar.jpg" alt="Garvin">
+            Garvin
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Sensor/">Sensor</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vibrator/">Vibrator</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/&title=《Android传感器编程之摇一摇》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/&title=《Android传感器编程之摇一摇》 — Garvin 杂记&source=思路摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android传感器编程之摇一摇》 — Garvin 杂记&url=https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2015/09/RecyclerView下拉刷新上拉加载的封装/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">RecyclerView下拉刷新上拉加载的封装</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2015/08/Android应用自动检测更新机制的实现/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Android应用自动检测更新机制的实现</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "Av3sk2Q4QhL7up87ziVVSeeS-gzGzoHsz",
+            appKey: "hVI7cltsWA2q1fvsUNRWEJ4e",
+            avatar: "retro",
+            placeholder: "Just go go",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Garvin &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/&title=《Android传感器编程之摇一摇》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/&title=《Android传感器编程之摇一摇》 — Garvin 杂记&source=思路摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android传感器编程之摇一摇》 — Garvin 杂记&url=https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/08/Android传感器编程之摇一摇/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACrElEQVR42u3awW5iMQwF0P7/TzPbSgi4N447LE5WCKH3clIpdm3//MTr8Wv9/ub58/Pvk/Xqme/fcm3h4eHhDbb+/sVnm0sOIj+UfD94eHh427xXN2pyZb+/yieHkoeil9/j4eHhfQFv8rI2KZ+/EQ8PD+/beEka3W7uLDXHw8PD+3vepMA62Wheol2vteDh4eHFvLyL9D2fV/p7eHh4eOOu+iRIJN/n1/rjaOHh4eFt8Np0tm3kt5vLx7zyVB4PDw/vLm9SMM0LwXdbZcmu8PDw8PZ4UdyIi7DzK/4xXj91WMTDw8PrePlwwNmm89PNCxx5oo+Hh4e3wWsbTnnRoU18k6e1owZ4eHh4G7xJAywPA3d/mReI8fDw8PZ4eXp6q4lVbLEsGUeRBw8PD2/Am1MnqXb7/CR4XP5L4uHh4T39ZvKIjYJFHhiio8HDw8Nb450l0POxgLMku9gDHh4e3gKvHQadvzIvB7dh42UxAg8PD+8qL28s5c3+fIjqblHjZUjAw8PDW+DlY0xJwEhIoziW7wQPDw9vgTeZ8Gwb/3kIyQ+uLQHj4eHhzXlJ6nzhOh4PuR4GLTw8PLw13lmBICfl4IRRDBPg4eHhLfDagar21j0sv5aAD8/Bw8PDW+OdDUidtb7a0saFwICHh4e3wGsv7jYw5EXbtoTxIbTg4eHhLfMm1MkAQXtAORsPDw/vL3lnLaizgzhrqkVJPB4eHt5V3qNcLS9h50GoHurCw8PDW+BN2vOThHjv8+HCw8PDK3lnKfX7Mm7bBsuLvEUZAg8PD2+Zl/yTnxcL5ulvHs2iwICHh4f3X3ln7a6zMnHy+w/PwcPDw/sa3tm28vZVcojF0BUeHh7eAq99aLvppDCRFy+KRBwPDw9vgdf+w98OV80DxjUGHh4e3pT3DwRqNyv+l+gMAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1274482147&web_id=1274482147')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

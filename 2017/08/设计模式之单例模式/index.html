@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>设计模式之单例模式 | Garvin 杂记</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="DesignPattern,Singleton">
+    <meta name="description" content="模式介绍模式定义确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。 使用场景确保某个类只有一个对象的场景，例如日志类，访问 IO 和数据库资源。 UML图                                                                                             单例模式UML图">
+<meta name="keywords" content="DesignPattern,Singleton">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式之单例模式">
+<meta property="og:url" content="https://hjw541988478.github.io/2017/08/设计模式之单例模式/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
+<meta property="og:description" content="模式介绍模式定义确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。 使用场景确保某个类只有一个对象的场景，例如日志类，访问 IO 和数据库资源。 UML图                                                                                             单例模式UML图">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://hjw541988478.github.io/2017/08/设计模式之单例模式/singleton.png">
+<meta property="og:updated_time" content="2018-08-18T15:42:41.683Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="设计模式之单例模式">
+<meta name="twitter:description" content="模式介绍模式定义确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。 使用场景确保某个类只有一个对象的场景，例如日志类，访问 IO 和数据库资源。 UML图                                                                                             单例模式UML图">
+<meta name="twitter:image" content="https://hjw541988478.github.io/2017/08/设计模式之单例模式/singleton.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Garvin</h5>
+          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                存档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">设计模式之单例模式</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">设计模式之单例模式</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-08-02T12:52:00.000Z" itemprop="datePublished" class="page-time">
+  2017-08-02
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/DesignPattern/">DesignPattern</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#模式介绍"><span class="post-toc-number">1.</span> <span class="post-toc-text">模式介绍</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#模式定义"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">模式定义</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#使用场景"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">使用场景</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#UML图"><span class="post-toc-number">2.</span> <span class="post-toc-text">UML图</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#代码实现"><span class="post-toc-number">3.</span> <span class="post-toc-text">代码实现</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#饿汉式"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">饿汉式</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#懒汉式"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">懒汉式</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#双重加锁式"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">双重加锁式</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#静态内部类式"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">静态内部类式</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#枚举式"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">枚举式</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#容器式"><span class="post-toc-number">3.6.</span> <span class="post-toc-text">容器式</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Android-源码实现"><span class="post-toc-number">4.</span> <span class="post-toc-text">Android 源码实现</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">5.</span> <span class="post-toc-text">总结</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">6.</span> <span class="post-toc-text">参考</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-设计模式之单例模式"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">设计模式之单例模式</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-08-02 20:52:00" datetime="2017-08-02T12:52:00.000Z"  itemprop="datePublished">2017-08-02</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/DesignPattern/">DesignPattern</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><h3 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h3><p>确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>确保某个类只有一个对象的场景，例如日志类，访问 IO 和数据库资源。</p>
+<h2 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h2><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2017/08/设计模式之单例模式/singleton.png" alt="单例模式UML图" title="">
+                </div>
+                <div class="image-caption">单例模式UML图</div>
+            </figure>
+<a id="more"></a>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>单例模式的实现有很多种不同的方式，包括饿汉式、懒汉式、双重锁式、静态内部类式、枚举式、容器式。</p>
+<h3 id="饿汉式"><a href="#饿汉式" class="headerlink" title="饿汉式"></a>饿汉式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 静态单例，提前在类加载的时候初始化，保证线程安全。</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">IvoryTower</span> </span>&#123;</span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 私有构造函数，保证外部没法初始化</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="title">IvoryTower</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 静态初始化对象</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> IvoryTower INSTANCE = <span class="keyword">new</span> IvoryTower();</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IvoryTower <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     <span class="keyword">return</span> INSTANCE;</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="懒汉式"><a href="#懒汉式" class="headerlink" title="懒汉式"></a>懒汉式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 线程安全，延迟加载，需要 synchronization 加锁同步</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadSafeLazyLoadedIvoryTower</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> ThreadSafeLazyLoadedIvoryTower instance;</span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="title">ThreadSafeLazyLoadedIvoryTower</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 延迟加载，只有在被调用时，才会初始化</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> ThreadSafeLazyLoadedIvoryTower <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">      instance = <span class="keyword">new</span> ThreadSafeLazyLoadedIvoryTower();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="双重加锁式"><a href="#双重加锁式" class="headerlink" title="双重加锁式"></a>双重加锁式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 双重加锁式</span></span><br><span class="line"><span class="comment">* &lt;p/&gt;</span></span><br><span class="line"><span class="comment">* http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html</span></span><br><span class="line"><span class="comment">* &lt;p/&gt;</span></span><br><span class="line"><span class="comment">* Broken under Java 1.4.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> mortezaadi@gmail.com</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadSafeDoubleCheckLocking</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 被volatile修饰的变量的值，不会被本地线程缓存，所有对该变量的读写都是直接操作共享内存，从而</span></span><br><span class="line">  <span class="comment">// 保证线程正确的处理该变量。</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> ThreadSafeDoubleCheckLocking instance;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 私有构造方法防止外部初始化</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="title">ThreadSafeDoubleCheckLocking</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 防止反射初始化</span></span><br><span class="line">    <span class="keyword">if</span> (instance != <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Already initialized."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 获取单例的入口</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ThreadSafeDoubleCheckLocking <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 本地变量能改善25%的性能</span></span><br><span class="line">    <span class="comment">// Joshua Bloch "Effective Java, Second Edition", p. 283-284</span></span><br><span class="line">    </span><br><span class="line">    ThreadSafeDoubleCheckLocking result = instance;</span><br><span class="line">    <span class="comment">// 检查单例是否创建，如果已创建直接返回</span></span><br><span class="line">    <span class="keyword">if</span> (result == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="comment">// 检查到单例还未创建，但不保证其他线程可能已经创建了单例，因此需要加锁同步再次检查</span></span><br><span class="line">      <span class="keyword">synchronized</span> (ThreadSafeDoubleCheckLocking.class) &#123;</span><br><span class="line">        <span class="comment">// 再次给本地变量赋值，检查是否已被其他线程创建，由于当前线程已被阻塞，如果此时不为空，直接将已创建的对象返回即可</span></span><br><span class="line">        result = instance;</span><br><span class="line">        <span class="keyword">if</span> (result == <span class="keyword">null</span>) &#123;</span><br><span class="line">          <span class="comment">// 此时实例还未初始化，所以在此处进行初始化，实现单例</span></span><br><span class="line">          instance = result = <span class="keyword">new</span> ThreadSafeDoubleCheckLocking();</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="静态内部类式"><a href="#静态内部类式" class="headerlink" title="静态内部类式"></a>静态内部类式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 延迟初始化线程安全的单例，充分利用了类初始化的特点，也无需其他类似 volatile、synchronized 关键词限定，只有调用了 getInstance 的时候才会初始化。</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">InitializingOnDemandHolderIdiom</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="title">InitializingOnDemandHolderIdiom</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> InitializingOnDemandHolderIdiom <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> HelperHolder.INSTANCE;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">HelperHolder</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> InitializingOnDemandHolderIdiom INSTANCE =</span><br><span class="line">        <span class="keyword">new</span> InitializingOnDemandHolderIdiom();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="枚举式"><a href="#枚举式" class="headerlink" title="枚举式"></a>枚举式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 枚举式单例，写法简单，线程安全。</span></span><br><span class="line"><span class="comment">* Effective Java 2nd Edition (Joshua Bloch) p. 18</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> EnumIvoryTower &#123;</span><br><span class="line">  INSTANCE;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> getDeclaringClass().getCanonicalName() + <span class="string">"@"</span> + hashCode();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="容器式"><a href="#容器式" class="headerlink" title="容器式"></a>容器式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment"> * 注册到容器, 根据key获取对象.一般都会有多种相同属性类型的对象会注册到一个map中，典型的是在对 WMS，AMS 系统服务的获取能够体现。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Map&lt;String, Singleton&gt; objMap = <span class="keyword">new</span> HashMap&lt;string Singleton&gt;();</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">registerService</span><span class="params">(String key, Singleton instance)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!objMap.containsKey(key) ) &#123;</span><br><span class="line">        objMap.put(key, instance) ;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getService</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> objMap.get(key) ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Android-源码实现"><a href="#Android-源码实现" class="headerlink" title="Android 源码实现"></a>Android 源码实现</h2><p>各种各样的系统服务，我们在使用到时采用的是<code>context.getSystemService(xxx)</code>的形式，其初始化和获取的实现类通过跟踪源码可以到<code>ContextImpl</code>中查看。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ContextImpl</span> <span class="keyword">extends</span> <span class="title">Contex</span> </span>&#123;</span><br><span class="line"> <span class="comment">// 1 : service容器</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> HashMap&lt;String, ServiceFetcher&gt; SYSTEM_SERVICE_MAP =</span><br><span class="line">            <span class="keyword">new</span> HashMap&lt;String, ServiceFetcher&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> sNextPerContextServiceCacheIndex = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 2: 注册服务器</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">registerService</span><span class="params">(String serviceName, ServiceFetcher fetcher)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!(fetcher <span class="keyword">instanceof</span> StaticServiceFetcher)) &#123;</span><br><span class="line">            fetcher.mContextCacheIndex = sNextPerContextServiceCacheIndex++;</span><br><span class="line">        &#125;</span><br><span class="line">        SYSTEM_SERVICE_MAP.put(serviceName, fetcher);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 3: 静态语句块, 第一次加载该类时执行 ( 只执行一次, 保证实例的唯一性. )</span></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="comment">//  代码省略</span></span><br><span class="line">        <span class="comment">// 注册Activity Servicer</span></span><br><span class="line">        registerService(ACTIVITY_SERVICE, <span class="keyword">new</span> ServiceFetcher() &#123;</span><br><span class="line">                <span class="function"><span class="keyword">public</span> Object <span class="title">createService</span><span class="params">(ContextImpl ctx)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> ActivityManager(ctx.getOuterContext(), ctx.mMainThread.getHandler());</span><br><span class="line">                &#125;&#125;);</span><br><span class="line">        <span class="comment">// 注册LayoutInflater service</span></span><br><span class="line">        registerService(LAYOUT_INFLATER_SERVICE, <span class="keyword">new</span> ServiceFetcher() &#123;</span><br><span class="line">                <span class="function"><span class="keyword">public</span> Object <span class="title">createService</span><span class="params">(ContextImpl ctx)</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">return</span> PolicyManager.makeNewLayoutInflater(ctx.getOuterContext());</span><br><span class="line">                &#125;&#125;);</span><br><span class="line">        <span class="comment">// 代码省略</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 4: 根据key获取对应的服务,</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getSystemService</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 根据name来获取服务</span></span><br><span class="line">        ServiceFetcher fetcher = SYSTEM_SERVICE_MAP.get(name);</span><br><span class="line">        <span class="keyword">return</span> fetcher == <span class="keyword">null</span> ? <span class="keyword">null</span> : fetcher.getService(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>ContextImpl 类为 Context 的实现类，在虚拟机第一次加载时会注册各种用到的服务，这些服务以键值对的形势存储在一个 HashMap 中，用户使用时只需要根据 key 来获取到对应的服务。系统核心服务以单例形式存在，减少资源消耗。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>单例模式实现的核心在于，将构造函数私有化，同时保证类在多线程、序列化和反序列化时能够只获取到唯一的实例。</p>
+<ul>
+<li>由于需要控制类的创建和生命周期，违背了 SRP（单一职责） 设计原则；</li>
+<li>使用唯一的全局访问点，优化共享资源；</li>
+<li>太够耦合，难以测试；</li>
+<li>几乎无法实现单例类的子类，难以扩展；</li>
+<li>Android 中持有 Context 对象，可能导致内存泄露；</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<ol>
+<li><a href="https://github.com/simple-android-framework/android_design_patterns_analysis/tree/master/singleton/mr.simple" target="_blank" rel="noopener">Android 设计模式源码解析之单例模式</a></li>
+<li><a href="https://github.com/iluwatar/java-design-patterns" target="_blank" rel="noopener">java-design-patterns 开源库</a></li>
+</ol>
+</blockquote>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+
+        
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2017/08/设计模式之单例模式/" target="_blank" rel="external">https://hjw541988478.github.io/2017/08/设计模式之单例模式/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://hjw541988478.github.io">
+            <img src="/img/avatar.jpg" alt="Garvin">
+            Garvin
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DesignPattern/">DesignPattern</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Singleton/">Singleton</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2017/08/设计模式之单例模式/&title=《设计模式之单例模式》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2017/08/设计模式之单例模式/&title=《设计模式之单例模式》 — Garvin 杂记&source=模式介绍模式定义确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。
+使用场景确保某个类只有一个对象的场景，例如日志类，访问 IO 和数据库..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2017/08/设计模式之单例模式/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《设计模式之单例模式》 — Garvin 杂记&url=https://hjw541988478.github.io/2017/08/设计模式之单例模式/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2017/08/设计模式之单例模式/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/08/16-3Sum-Closet/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">16.3Sum Closet</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/07/设计模式之七大基本原则/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">设计模式之七大基本原则</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "Av3sk2Q4QhL7up87ziVVSeeS-gzGzoHsz",
+            appKey: "hVI7cltsWA2q1fvsUNRWEJ4e",
+            avatar: "retro",
+            placeholder: "Just go go",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Garvin &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2017/08/设计模式之单例模式/&title=《设计模式之单例模式》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2017/08/设计模式之单例模式/&title=《设计模式之单例模式》 — Garvin 杂记&source=模式介绍模式定义确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。
+使用场景确保某个类只有一个对象的场景，例如日志类，访问 IO 和数据库..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2017/08/设计模式之单例模式/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《设计模式之单例模式》 — Garvin 杂记&url=https://hjw541988478.github.io/2017/08/设计模式之单例模式/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2017/08/设计模式之单例模式/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACw0lEQVR42u3a0W7jMAwEwPz/T+eAPhVorCxJM+0Bo6fA8MkeFxB5Kz0e8Xh+je+/v1/5ef3n/flsyZWbBx4eHl7r1a/G+Z4ccIadAfn7vJgBDw8Pb41XLQbPYNxVeJIPenkdDw8P71d553+VFICkIOVgPDw8vP+Rl1zPC0bS0OPh4eH9HV51mc4/R9JeJ59jPWvBw8PDuyclKMeyn/m9vr+Hh4eH19pVz7em5scLkua4/LZ4eHh4C7zqYam8CT4zJs9KqkAh4cDDw8Mb8CZbX3mMmwfBvQ75xQx4eHh4t/Kqr56/Vh4oVI8U5CUKDw8Pb4NXbazzeKJ3sCBpuJsNOh4eHt5NvPzoUi/krYYLvZDi8h48PDy8D/J6j8zb5aQkJDHxm4KEh4eHt8Dr9eDVB0RhQXGD7TGpQnh4eHhrvL22Ow8aeuUHDw8P75O8fNnNF+7J9XlRwcPDw9vgVdfSJJ7IN8kmwW6zwODh4eGt8XJA/nKTALc3Ax4eHt4Gr9fCVotBNXedhBR4eHh427z5gp4XjHyGyYfAw8PD2+M94zEvFWfwJGi4fAoeHh7eAi/Z0Mq3l3rh77wFL/TpeHh4eDeRkhC2esSq90EnRxNeXMHDw8Nb4OVLdm/q3kbX+Xr5gBceHh7eMi/f1qpGDNUGfRIK4+Hh4e3xzsvxXtiavHoS0b55Ch4eHt4yL1+OJ4cM8jnzpxT+r4CHh4c35lVjheT3eeGuRrrJDNH9eHh4eDfxnsVRLQbVXKS65fam7cbDw8Nb4E2OZOXHtvKFPo8ees06Hh4e3l28XjGoBq95wUgiicJfCQ8PD2+NVy0GvVY7v78aZ1yK8PDw8H6VN8Hka/Xk4NdlS42Hh4f3Z3i9raz8EEA1gLg8H4GHh4e3wMvDiDw+mKzPvc9RPkCAh4eHN13Vy1loNbrtBR85rDnw8PDwUt4/F419gh/sKjMAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1274482147&web_id=1274482147')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

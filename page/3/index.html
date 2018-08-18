@@ -141,6 +141,104 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-RecyclerView下拉刷新上拉加载的封装"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-09-02 19:04:23" datetime="2015-09-02T11:04:23.000Z"  itemprop="datePublished">2015-09-02</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2015/09/RecyclerView下拉刷新上拉加载的封装/">RecyclerView下拉刷新上拉加载的封装</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="初识RecyclerView"><a href="#初识RecyclerView" class="headerlink" title="初识RecyclerView"></a>初识RecyclerView</h2><blockquote>
+<p>A flexible view for providing a limited window into a large data set.</p>
+</blockquote>
+<p>根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，<code>RecyclerView</code>就是应对这种情况而产生的。<code>RecyclerView</code>是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时需要在<code>build.gradle</code>文件中配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile &apos;com.android.support:recyclerview-v7:22.2.1&apos;</span><br></pre></td></tr></table></figure></p>
+<p>与<code>ListView</code>不同的是，<code>RecyclerView</code>不再负责Item布局绘制等方面的工作，转而拆分成不同的类去管理。作为未来<code>ListView、GridView</code>等替代的组件，虽然没有它们那么易用，所有的功能都需要自己重新实现，但正是因为这种特性使得<code>RecyclerView</code>更加Flexible。为了满足各种各样的需求，可能会使用到下面与<code>RecyclerView</code>相关紧密的类：<br></p>
+    
+
+        <a href="/2015/09/RecyclerView下拉刷新上拉加载的封装/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CustomView/">CustomView</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RecyclerView/">RecyclerView</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-Android传感器编程之摇一摇"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-08-26 19:54:01" datetime="2015-08-26T11:54:01.000Z"  itemprop="datePublished">2015-08-26</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2015/08/Android传感器编程之摇一摇/">Android传感器编程之摇一摇</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。<br>对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:name=&quot;android.hardware.sensor.accelerometer&quot; /&gt; # 加速度传感器</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.VIBRATE&quot;/&gt;  # 振动传感器</span><br></pre></td></tr></table></figure></p>
+    
+
+        <a href="/2015/08/Android传感器编程之摇一摇/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Sensor/">Sensor</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vibrator/">Vibrator</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-Android应用自动检测更新机制的实现"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -159,7 +257,7 @@
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/Android应用自动检测更新机制的实现/">Android应用自动检测更新机制的实现</a>
+      <a class="post-title-link" href="/2015/08/Android应用自动检测更新机制的实现/">Android应用自动检测更新机制的实现</a>
     </h3>
   
 
@@ -172,13 +270,13 @@
         <h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，从服务端获取版本号比对当前包的版本号，如果大于当前版本号则提示用户升级，而对于某些需要强制更新的版本号，则不允许用户取消版本的升级，必须强制更新。整个流程大概如下图所示：<br><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/Android应用自动检测更新机制的实现/app_update_flowchart.png" alt="更新流程图" title="">
+                    <img src="/2015/08/Android应用自动检测更新机制的实现/app_update_flowchart.png" alt="更新流程图" title="">
                 </div>
                 <div class="image-caption">更新流程图</div>
             </figure><br>可以看到，整个流程的关键在于对VerisonCode版本号的大小比较，VersionCode标识了同一应用的不同版本号，对于修改版本号后打包的安装包便是最新版本的安装包。在AndroidStudio中，VersionCode的配置一般在应用模块的<code>*.build</code>文件中，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">defaultConfig &#123;</span><br><span class="line">    applicationId &quot;com.test.app&quot;</span><br><span class="line">    minSdkVersion 9</span><br><span class="line">    targetSdkVersion 22</span><br><span class="line">    versionCode 6 #这里便是对版本号的设置</span><br><span class="line">    versionName &quot;2.0.0&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
     
 
-        <a href="/Android应用自动检测更新机制的实现/" class="post-more waves-effect waves-button">
+        <a href="/2015/08/Android应用自动检测更新机制的实现/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
@@ -212,7 +310,7 @@
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/PropertyAnimation使用总结/">PropertyAnimation使用总结</a>
+      <a class="post-title-link" href="/2015/08/PropertyAnimation使用总结/">PropertyAnimation使用总结</a>
     </h3>
   
 
@@ -229,7 +327,7 @@
 <p><code>ofFloat</code>对应着三个参数值，分别是目标<code>View</code>，动画属性名<code>Property</code>，以及属性值，一个则为终点值，两个对应着起点和终点值，多个则为起点值，将会调用的值和终点值。与<code>ofFloat</code>类似的还有<code>ofInt</code>、<code>ofObject</code>，这些都是用来设置动画动作的元素。<br></p>
     
 
-        <a href="/PropertyAnimation使用总结/" class="post-more waves-effect waves-button">
+        <a href="/2015/08/PropertyAnimation使用总结/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
@@ -263,7 +361,7 @@
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/多行文本可折叠展开TextView实现/">多行文本的可展开折叠的TextView实现</a>
+      <a class="post-title-link" href="/2015/08/多行文本可折叠展开TextView实现/">多行文本的可展开折叠的TextView实现</a>
     </h3>
   
 
@@ -277,7 +375,7 @@
 <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>首先，继承<code>LinearLayout</code>，并对文本和标记组件进行一层包装，通过对折叠状态下的行数、展开折叠的动画时长、展开和折叠状态的视图控制，进行可自定义的属性封装。然后对父类的<code>onClick</code>方法进行重写，用户在对组件点击的时候，文本会自动的展开或折叠。然而当文本正在处于折叠或展开过程的动画中时，应该重写<code>onInterceptTouchEvent</code>方法拦截所有的点击事件，防止出现异常。<br></p>
     
 
-        <a href="/多行文本可折叠展开TextView实现/" class="post-more waves-effect waves-button">
+        <a href="/2015/08/多行文本可折叠展开TextView实现/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
