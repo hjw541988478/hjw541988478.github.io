@@ -17,8 +17,6 @@
     <title>Garvin 杂记</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
-    <meta name="theme-color" content="#3F51B5">
-    
     
     <meta name="keywords" content="">
     <meta property="og:type" content="website">
@@ -31,8 +29,8 @@
     
         <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/img/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <link rel="shortcut icon" href="/">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
     <script>window.lazyScripts=[]</script>
 
     <!-- custom head -->
@@ -48,47 +46,19 @@
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+    <div class="brand-wrap" style="background-image:url(/)">
       <div class="brand">
         <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
+          <img src="/">
         </a>
         <hgroup class="introduce">
           <h5 class="nickname">Garvin</h5>
-          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
+          <a href="mailto:undefined" class="mail">
         </hgroup>
       </div>
     </div>
     <div class="scroll-wrap flex-col">
       <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                存档
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/tags"  >
-                <i class="icon icon-lg icon-tags"></i>
-                标签
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/categories"  >
-                <i class="icon icon-lg icon-th-list"></i>
-                分类
-              </a>
-            </li>
         
       </ul>
     </div>
@@ -103,20 +73,6 @@
         </a>
         <div class="flex-col header-title ellipsis">Garvin 杂记</div>
         
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
         
     </div>
 </header>
@@ -169,8 +125,8 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="AIDL基本使用"><a href="#AIDL基本使用" class="headerlink" title="AIDL基本使用"></a>AIDL基本使用</h2><p>主要用于IPC，首先建立aidl文件：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> aidl;</span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IMyInterface</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">getTestStr</span><span class="params">(String s)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>然后，sync一下便可以看到生成的java文件，保持这样的结构，可以分析下具体用到的接口：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">IBinder</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IInterface <span class="title">queryLocalInterface</span><span class="params">(String descriptor)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">Binder</span> <span class="keyword">implements</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">IBinder</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">Interface</span> </span>&#123;</span><br><span class="line">    <span class="function">IBinder <span class="title">asBinder</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 自动生成的接口类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IMyInterface</span> <span class="keyword">extends</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">IInterface</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getTestStr</span><span class="params">(String s)</span></span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Stub</span> <span class="keyword">extends</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">Binder</span> <span class="keyword">implements</span> <span class="title">IMyInterface</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">               <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IMyInterface <span class="title">asInterface</span><span class="params">(IBinder binder)</span> </span>&#123;</span><br><span class="line">                &#125; </span><br><span class="line">         </span><br><span class="line">         <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTransact</span><span class="params">(..)</span> </span>&#123;</span><br><span class="line">         &#125;</span><br><span class="line">        </span><br><span class="line">         <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Proxy</span> <span class="keyword">implements</span> <span class="keyword">implements</span> <span class="title">IMyInterface</span> </span>&#123;</span><br><span class="line">            </span><br><span class="line">              <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transact</span><span class="params">()</span></span>&#123;</span><br><span class="line">              &#125;</span><br><span class="line">         &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+        AIDL基本使用主要用于IPC，首先建立aidl文件：1234package aidl;interface IMyInterface &#123;    String getTestStr(String s);&#125;
+然后，sync一下便可以看到生成的java文件，保持这样的结构，可以分析下具体用到的接口：123456789101112131415161718192021222324252627public interface android.os.IBinder &#123;    public IInterface queryLocalInterface(String descriptor);&#125;public class android.os.Binder implements android.os.IBinder &#123;    &#125;public interface android.os.Interface &#123;    IBinder asBinder();&#125;// 自动生成的接口类public interface IMyInterface extends android.os.IInterface &#123;    public String getTestStr(String s);    public static abstract class Stub extends android.os.Binder implements IMyInterface &#123;                       public static IMyInterface asInterface(IBinder binder) &#123;                &#125;                   public void onTransact(..) &#123;         &#125;                 private static class Proxy implements implements IMyInterface &#123;                          public void transact()&#123;              &#125;         &#125;    &#125;&#125;
     
 
         <a href="/2017/04/AIDL基本使用理解/" class="post-more waves-effect waves-button">
@@ -217,8 +173,8 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="两步使用"><a href="#两步使用" class="headerlink" title="两步使用"></a>两步使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  debugCompile &apos;com.squareup.leakcanary:leakcanary-android:1.5.1&apos;</span><br><span class="line">  releaseCompile &apos;com.squareup.leakcanary:leakcanary-android-no-op:1.5.1&apos;</span><br><span class="line">  testCompile &apos;com.squareup.leakcanary:leakcanary-android-no-op:1.5.1&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleApplication</span> <span class="keyword">extends</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line">     <span class="meta">@Override</span> </span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate();</span><br><span class="line">        <span class="keyword">if</span> (LeakCanary.isInAnalyzerProcess(<span class="keyword">this</span>)) &#123;</span><br><span class="line">        <span class="comment">// This process is dedicated to LeakCanary for heap analysis.</span></span><br><span class="line">        <span class="comment">// You should not init your app in this process.</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      LeakCanary.install(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        两步使用12345dependencies &#123;  debugCompile &apos;com.squareup.leakcanary:leakcanary-android:1.5.1&apos;  releaseCompile &apos;com.squareup.leakcanary:leakcanary-android-no-op:1.5.1&apos;  testCompile &apos;com.squareup.leakcanary:leakcanary-android-no-op:1.5.1&apos;&#125;
+123456789101112public class ExampleApplication extends Application &#123;     @Override      public void onCreate() &#123;        super.onCreate();        if (LeakCanary.isInAnalyzerProcess(this)) &#123;        // This process is dedicated to LeakCanary for heap analysis.        // You should not init your app in this process.        return;      &#125;      LeakCanary.install(this);  &#125;&#125;
     
 
         <a href="/2017/03/LeakCanary源码浅析/" class="post-more waves-effect waves-button">
@@ -265,8 +221,8 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="如何让两个线程依次执行？"><a href="#如何让两个线程依次执行？" class="headerlink" title="如何让两个线程依次执行？"></a>如何让两个线程依次执行？</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">demo2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Thread A = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         printNumber(<span class="string">"A"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  Thread B = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">          System.out.println(<span class="string">"B 开始等待 A"</span>);</span><br><span class="line">          <span class="keyword">try</span> &#123;</span><br><span class="line">             A.join();</span><br><span class="line">          &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">             e.printStackTrace();</span><br><span class="line">          &#125;</span><br><span class="line">          printNumber(<span class="string">"B"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  B.start();</span><br><span class="line">  A.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用<code>threadA.join()</code>，让线程B等待线程A执行完后，再执行自己；<br></p>
+        如何让两个线程依次执行？12345678910111213141516171819202122private static void demo2() &#123;  Thread A = new Thread(new Runnable() &#123;      @Override      public void run() &#123;         printNumber("A");      &#125;  &#125;);  Thread B = new Thread(new Runnable() &#123;      @Override      public void run() &#123;          System.out.println("B 开始等待 A");          try &#123;             A.join();          &#125; catch (InterruptedException e) &#123;             e.printStackTrace();          &#125;          printNumber("B");      &#125;  &#125;);  B.start();  A.start();&#125;
+使用threadA.join()，让线程B等待线程A执行完后，再执行自己；
     
 
         <a href="/2016/11/Java线程常用场景/" class="post-more waves-effect waves-button">
@@ -313,7 +269,7 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>2048有着简单的游戏规则有趣的游戏过程，在早年的时候着实火了一把，以致在后来也出现了很多不同的版本。但主要的规则都是相似的，4*4的格子，数字随机出现2或者4，手指进行上下左右的滑动，所有数字向滑动方向靠拢，相同的相邻数字相加合并，合并成功或者移动后在剩下的空格中随机出现新的数字，直到合并出现2048，则挑战成功。<br></p>
+        简述2048有着简单的游戏规则有趣的游戏过程，在早年的时候着实火了一把，以致在后来也出现了很多不同的版本。但主要的规则都是相似的，4*4的格子，数字随机出现2或者4，手指进行上下左右的滑动，所有数字向滑动方向靠拢，相同的相邻数字相加合并，合并成功或者移动后在剩下的空格中随机出现新的数字，直到合并出现2048，则挑战成功。
     
 
         <a href="/2016/09/游戏2048原理探索与实现/" class="post-more waves-effect waves-button">
@@ -360,8 +316,8 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><blockquote>
-<p>UNEXPECTED TOP-LEVEL EXCEPTION: java.lang.IllegalArgumentException: method ID not in [0, 0xffff]: 65536<br>Dex文件中保存所有classes的方法个数的变量范围值在<code>0~65535</code>之间，但随着业务一直在增长，引入到的库以及业务代码越来越多，超过这个限制只是时间问题。<br>一般来说 APK 安装的流程大多是这样构成的，首先复制apk文件到<code>data/app</code>目录下，然后解压扫描安装包将dex文件安装到<code>data/dalvik-cache</code>目录下，同时在<code>data/data</code>目录下创建以APK包名的应用数据目录。由于5.0及以上版本ART模式的存在，app第一次安装之后会进行一次预编译，如果这时候发现了<code>classes(..N).dex</code>文件的存在就会将他们最终合成为一个<code>.oat</code>的文件。<br></p></blockquote>
+        问题背景
+UNEXPECTED TOP-LEVEL EXCEPTION: java.lang.IllegalArgumentException: method ID not in [0, 0xffff]: 65536Dex文件中保存所有classes的方法个数的变量范围值在0~65535之间，但随着业务一直在增长，引入到的库以及业务代码越来越多，超过这个限制只是时间问题。一般来说 APK 安装的流程大多是这样构成的，首先复制apk文件到data/app目录下，然后解压扫描安装包将dex文件安装到data/dalvik-cache目录下，同时在data/data目录下创建以APK包名的应用数据目录。由于5.0及以上版本ART模式的存在，app第一次安装之后会进行一次预编译，如果这时候发现了classes(..N).dex文件的存在就会将他们最终合成为一个.oat的文件。
     
 
         <a href="/2016/07/MultiDex65535探索/" class="post-more waves-effect waves-button">
@@ -408,11 +364,11 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><ul>
-<li>概念<br>假设含有n个记录的序列为{r1..rn}，其对应关键字{k1..kn}，确定1…n的一种排列p1..pn,使得其关键字按照kp1..kpn呈非递增或者非递减关系，这样操作称为排序。</li>
-<li>稳定性<br>假设ki=kj且排序前的序列中ri领先于rj，如12果排序后ri仍领先于rj，则称排序方法稳定。</li>
-</ul>
-<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>主要分为内排序和外排序。<br>影响到性能的因素：1.时间 2.辅助空间 3.算法复杂性；<br>内排序主要分为：插入、交换、选择和归并排序；<br></p>
+        背景
+概念假设含有n个记录的序列为{r1..rn}，其对应关键字{k1..kn}，确定1…n的一种排列p1..pn,使得其关键字按照kp1..kpn呈非递增或者非递减关系，这样操作称为排序。
+稳定性假设ki=kj且排序前的序列中ri领先于rj，如12果排序后ri仍领先于rj，则称排序方法稳定。
+
+分类主要分为内排序和外排序。影响到性能的因素：1.时间 2.辅助空间 3.算法复杂性；内排序主要分为：插入、交换、选择和归并排序；
     
 
         <a href="/2016/04/数据结构之排序算法/" class="post-more waves-effect waves-button">
@@ -459,8 +415,8 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>IPC含义为进程间通信或者跨进程通信，指的是两个进程之间进行数据交换的过程。线程是CPU调度的最小单元，也是一种有限的系统资源，而进程是指一个执行单元。在Android系统中，一个进程一般指一个应用。</p>
-<h2 id="多进程模式"><a href="#多进程模式" class="headerlink" title="多进程模式"></a>多进程模式</h2><h3 id="开启多进程模式"><a href="#开启多进程模式" class="headerlink" title="开启多进程模式"></a>开启多进程模式</h3><p>在Android中使用多进程只有一种方法，那就是在AndroidManifest.xml中指定<code>android:process</code>属性，除此之外并无其他办法。如下面的例子所示:<br></p>
+        IntroIPC含义为进程间通信或者跨进程通信，指的是两个进程之间进行数据交换的过程。线程是CPU调度的最小单元，也是一种有限的系统资源，而进程是指一个执行单元。在Android系统中，一个进程一般指一个应用。
+多进程模式开启多进程模式在Android中使用多进程只有一种方法，那就是在AndroidManifest.xml中指定android:process属性，除此之外并无其他办法。如下面的例子所示:
     
 
         <a href="/2015/11/IPC通信机制理解实践/" class="post-more waves-effect waves-button">
@@ -507,8 +463,8 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <p>悬浮球功能作为顶层视图，在用户关闭了 APP 后也能方便快捷操作，而这类应用主要是系统级别的安全应用，比如一键清理内存。在后续的 Android 版本中，Google 和很多厂商对于此类权限做了更为敏感的控制，需要用户手动设置才能看到悬浮球。下面手动实现了一个悬浮球来分析整个过程，其核心部分就是<code>WindowManager</code>类对Window的管理。</p>
-<h2 id="WindowManager"><a href="#WindowManager" class="headerlink" title="WindowManager"></a>WindowManager</h2><p>对于<code>WindowManager</code>的工作过程，可以通过手动添加一个<code>Window</code>为例去分析：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">TextView mFloatingText = <span class="keyword">new</span> TextView(<span class="keyword">this</span>);</span><br><span class="line">mFloatingText.setText(<span class="string">"FloatingText"</span>);</span><br><span class="line">WindowManager.LayoutParams params = <span class="keyword">new</span> WindowManager.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,<span class="number">0</span>,<span class="number">0</span>,PixelFormat.TRANSPARENT);</span><br><span class="line">params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_SHOW_WHEN_LOCKED;</span><br><span class="line">params.gravity = Gravity.LEFT | Gravity.TOP;</span><br><span class="line">params.x = <span class="number">300</span>;</span><br><span class="line">params.y = <span class="number">100</span>;</span><br><span class="line">mWindowManager.addView(mFloatingText,params);</span><br></pre></td></tr></table></figure></p>
+        悬浮球功能作为顶层视图，在用户关闭了 APP 后也能方便快捷操作，而这类应用主要是系统级别的安全应用，比如一键清理内存。在后续的 Android 版本中，Google 和很多厂商对于此类权限做了更为敏感的控制，需要用户手动设置才能看到悬浮球。下面手动实现了一个悬浮球来分析整个过程，其核心部分就是WindowManager类对Window的管理。
+WindowManager对于WindowManager的工作过程，可以通过手动添加一个Window为例去分析：12345678TextView mFloatingText = new TextView(this);mFloatingText.setText("FloatingText");WindowManager.LayoutParams params = new WindowManager.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,0,0,PixelFormat.TRANSPARENT);params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_SHOW_WHEN_LOCKED;params.gravity = Gravity.LEFT | Gravity.TOP;params.x = 300;params.y = 100;mWindowManager.addView(mFloatingText,params);
     
 
         <a href="/2015/11/顶层悬浮球分析与实现/" class="post-more waves-effect waves-button">
@@ -555,18 +511,18 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <p>为Android和Java应用设计并且支持SPDY和HTTP请求的客户端。</p>
-<h2 id="Calls"><a href="#Calls" class="headerlink" title="Calls"></a>Calls</h2><h3 id="Requests-请求"><a href="#Requests-请求" class="headerlink" title="Requests(请求)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Request.html" target="_blank" rel="noopener">Requests(请求)</a></h3><p>每个HTTP请求包含了URL、METHOD和一系列头部信息。当然，头部也可以包含指定类型的数据流。</p>
-<h3 id="Responses-响应"><a href="#Responses-响应" class="headerlink" title="Responses(响应)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Response.html" target="_blank" rel="noopener">Responses(响应)</a></h3><p>带有状态码，Header和一些可选信息的对请求的响应。</p>
-<h3 id="Calls-调用"><a href="#Calls-调用" class="headerlink" title="Calls(调用)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Call.html" target="_blank" rel="noopener">Calls(调用)</a></h3><p>调用能够以Synchronous(同步)或者Asynchronous(异步)的形式被执行:</p>
-<ul>
-<li>Synchronous：请求线程直到响应能够可读时才会释放阻塞；</li>
-<li>Asynchronous：请求线程能够将请求进行入队操作，直到响应发生时以回调接口的形式返回。</li>
-</ul>
-<h2 id="Connections"><a href="#Connections" class="headerlink" title="Connections"></a>Connections</h2><h3 id="URLS-统一资源定位符"><a href="#URLS-统一资源定位符" class="headerlink" title="URLS(统一资源定位符)"></a><a href="http://developer.android.com/reference/java/net/URL.html" target="_blank" rel="noopener">URLS(统一资源定位符)</a></h3><p>URLs对于HTTP和互联网世界来说是至关重要的，除了成为通用的、web世界里唯一命名的解决方案，它们同时也描述了如何获取web资源。</p>
-<h3 id="Addresses-地址"><a href="#Addresses-地址" class="headerlink" title="Addresses(地址)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Address.html" target="_blank" rel="noopener">Addresses(地址)</a></h3><p>地址描述了一个web服务器和一切对于连接到服务器必要的静态配置信息，比如端口号，HTTPS设置等。共享同一地址的URL同样也共享同一的TCP连接，这样做的好处是：更低的延迟、更高的吞吐量和低消耗电量。OkHttp使用自动重用HTTP/1.x协议的连接和多路复用HTTP/2和SPDY的连接的ConnectionPool（连接池）。</p>
-<h3 id="Routes-路由"><a href="#Routes-路由" class="headerlink" title="Routes(路由)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Route.html" target="_blank" rel="noopener">Routes(路由)</a></h3><p>路由提供连接到web服务器的必要的动态信息。对于一个地址来说可能存在着多条路由选择。</p>
-<h3 id="Connections-连接"><a href="#Connections-连接" class="headerlink" title="Connections(连接)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Connection.html" target="_blank" rel="noopener">Connections(连接)</a></h3><p>如果使用OkHttp进行请求的话，它会这么做：<br></p>
+        为Android和Java应用设计并且支持SPDY和HTTP请求的客户端。
+CallsRequests(请求)每个HTTP请求包含了URL、METHOD和一系列头部信息。当然，头部也可以包含指定类型的数据流。
+Responses(响应)带有状态码，Header和一些可选信息的对请求的响应。
+Calls(调用)调用能够以Synchronous(同步)或者Asynchronous(异步)的形式被执行:
+
+Synchronous：请求线程直到响应能够可读时才会释放阻塞；
+Asynchronous：请求线程能够将请求进行入队操作，直到响应发生时以回调接口的形式返回。
+
+ConnectionsURLS(统一资源定位符)URLs对于HTTP和互联网世界来说是至关重要的，除了成为通用的、web世界里唯一命名的解决方案，它们同时也描述了如何获取web资源。
+Addresses(地址)地址描述了一个web服务器和一切对于连接到服务器必要的静态配置信息，比如端口号，HTTPS设置等。共享同一地址的URL同样也共享同一的TCP连接，这样做的好处是：更低的延迟、更高的吞吐量和低消耗电量。OkHttp使用自动重用HTTP/1.x协议的连接和多路复用HTTP/2和SPDY的连接的ConnectionPool（连接池）。
+Routes(路由)路由提供连接到web服务器的必要的动态信息。对于一个地址来说可能存在着多条路由选择。
+Connections(连接)如果使用OkHttp进行请求的话，它会这么做：
     
 
         <a href="/2015/09/OkHttp探索使用/" class="post-more waves-effect waves-button">
@@ -613,11 +569,11 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <p>在Android5.0之后，Google就开始推崇一门新的设计语言<code>MaterialDesign</code>，它更加新鲜和简洁，且能够非常有效的激发应用开发者的创作热情，也能够降低开发者自主开发设计UI的难度，对于MD风格的实现，Google后续完善了下面几个库，一步步的实现MD标准的交互效果。<br>需要在AndroidStudio引入的库：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">compile &apos;com.android.support:design:23.0.0&apos;</span><br><span class="line">compile &apos;com.android.support:appcompat-v7:23.0.0&apos;</span><br><span class="line">compile &apos;com.android.support:recyclerview-v7:23.0.0&apos;</span><br><span class="line">compile &apos;com.android.support:cardview-v7:23.0.0&apos;</span><br></pre></td></tr></table></figure></p>
-<h2 id="新的UI组件"><a href="#新的UI组件" class="headerlink" title="新的UI组件"></a>新的UI组件</h2><h3 id="CoordinatorLayout"><a href="#CoordinatorLayout" class="headerlink" title="CoordinatorLayout"></a>CoordinatorLayout</h3><p><code>CoordinatorLayout</code>在<code>android.support.deisgn</code>中，是一种增强型的<code>FrameLayout</code>，主要有以下两大基础性作用：</p>
-<ul>
-<li>作为顶级应用的装饰器；</li>
-<li>作为给多个子View之间进行特定交互的协调器；<br>通过对子<code>View</code>的<code>Behavior</code>的指定，可以实现子<code>View</code>之间的通信，从而确定它们具体的交互行为。</li></ul>
+        在Android5.0之后，Google就开始推崇一门新的设计语言MaterialDesign，它更加新鲜和简洁，且能够非常有效的激发应用开发者的创作热情，也能够降低开发者自主开发设计UI的难度，对于MD风格的实现，Google后续完善了下面几个库，一步步的实现MD标准的交互效果。需要在AndroidStudio引入的库：1234compile &apos;com.android.support:design:23.0.0&apos;compile &apos;com.android.support:appcompat-v7:23.0.0&apos;compile &apos;com.android.support:recyclerview-v7:23.0.0&apos;compile &apos;com.android.support:cardview-v7:23.0.0&apos;
+新的UI组件CoordinatorLayoutCoordinatorLayout在android.support.deisgn中，是一种增强型的FrameLayout，主要有以下两大基础性作用：
+
+作为顶级应用的装饰器；
+作为给多个子View之间进行特定交互的协调器；通过对子View的Behavior的指定，可以实现子View之间的通信，从而确定它们具体的交互行为。
     
 
         <a href="/2015/09/MaterialDesign设计探索使用/" class="post-more waves-effect waves-button">
@@ -650,15 +606,6 @@
         <footer class="footer">
     <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
 
         <p>
             
@@ -668,7 +615,7 @@
         </p>
     </div>
     <div class="bottom">
-        <p><span>Garvin &copy; 2015 - 2018</span>
+        <p><span>Garvin &copy; 2018</span>
             <span>
                 
                 Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
@@ -682,108 +629,21 @@
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/page/2/&title=Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/page/2/&title=Garvin 杂记&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/page/2/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Garvin 杂记&url=https://hjw541988478.github.io/page/2/&via=https://hjw541988478.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/page/2/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAABxElEQVR42u3aS46DMBAFwNz/0sx2pCjmPYwdIpVXUUC4YNHqj1+veB3/1vs/46vjZ75WLFxc3GnuMVzJPe93fmKNf4+fjIuLu587DjRJkGqD2vglP/6Pi4v7YG6e+uQpES4u7u9ykzuTZAUXF/f53DzQRCXKrcUVLi7ufm7epVz3e0l/FxcX9xL3KFdS3uQjk3p3XFzcLdw8oFxLStqWa7IvLi7uTm4RSuLXaF9+HChxcXF3cvMBybWQ1LZU6kMYuLi4i7k5pQ1tydVi0IKLi7uMe9vo4sPG818x6uLg4uIu414rbNoG61Txg4uL+yXutdFIW8zcFshwcXGXca8dpWo3O6Ek5RMuLu52btsEmUlcbghkuLi4y7h5QElSnynETGcXFxd3GTcZk9zVQm0/zck5Mlxc3MXcvAE6P1LNj4Lh4uJ+i5ukMsVD49BW34OLi7uYe5RrXJy0xzjqYx+4uLhbuG0Z0yZDdx3bql8GFxd3mjtf8CQBLg98J18UFxd3IzcfaSTb1Ijhvif9XVxc3Adw21dqU6V6PoOLi/sYbjtAzT/BiRAXF3cjt01QroWq9qAGLi7ut7j7j1itKJlwcXFv4v4Bun7YVztcn+MAAAAASUVORK5CYII=" alt="微信分享二维码">
-</div>
-
-
-
-
     <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
 <script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+var BLOG = { ROOT: '/', SHARE: , REWARD: false };
 
-
-lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1274482147&web_id=1274482147')
 
 </script>
 
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+<script src="/js/main.min.js?v=1.7.2"></script>
 
 
 
 
 
 
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
-    });
-})();
-</script>
 
 
 

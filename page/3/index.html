@@ -17,8 +17,6 @@
     <title>Garvin 杂记</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
-    <meta name="theme-color" content="#3F51B5">
-    
     
     <meta name="keywords" content="">
     <meta property="og:type" content="website">
@@ -31,8 +29,8 @@
     
         <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/img/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <link rel="shortcut icon" href="/">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
     <script>window.lazyScripts=[]</script>
 
     <!-- custom head -->
@@ -48,47 +46,19 @@
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+    <div class="brand-wrap" style="background-image:url(/)">
       <div class="brand">
         <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
+          <img src="/">
         </a>
         <hgroup class="introduce">
           <h5 class="nickname">Garvin</h5>
-          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
+          <a href="mailto:undefined" class="mail">
         </hgroup>
       </div>
     </div>
     <div class="scroll-wrap flex-col">
       <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                存档
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/tags"  >
-                <i class="icon icon-lg icon-tags"></i>
-                标签
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/categories"  >
-                <i class="icon icon-lg icon-th-list"></i>
-                分类
-              </a>
-            </li>
         
       </ul>
     </div>
@@ -103,20 +73,6 @@
         </a>
         <div class="flex-col header-title ellipsis">Garvin 杂记</div>
         
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
         
     </div>
 </header>
@@ -169,11 +125,11 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="初识RecyclerView"><a href="#初识RecyclerView" class="headerlink" title="初识RecyclerView"></a>初识RecyclerView</h2><blockquote>
-<p>A flexible view for providing a limited window into a large data set.</p>
-</blockquote>
-<p>根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，<code>RecyclerView</code>就是应对这种情况而产生的。<code>RecyclerView</code>是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时需要在<code>build.gradle</code>文件中配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile &apos;com.android.support:recyclerview-v7:22.2.1&apos;</span><br></pre></td></tr></table></figure></p>
-<p>与<code>ListView</code>不同的是，<code>RecyclerView</code>不再负责Item布局绘制等方面的工作，转而拆分成不同的类去管理。作为未来<code>ListView、GridView</code>等替代的组件，虽然没有它们那么易用，所有的功能都需要自己重新实现，但正是因为这种特性使得<code>RecyclerView</code>更加Flexible。为了满足各种各样的需求，可能会使用到下面与<code>RecyclerView</code>相关紧密的类：<br></p>
+        初识RecyclerView
+A flexible view for providing a limited window into a large data set.
+
+根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，RecyclerView就是应对这种情况而产生的。RecyclerView是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时需要在build.gradle文件中配置：1compile &apos;com.android.support:recyclerview-v7:22.2.1&apos;
+与ListView不同的是，RecyclerView不再负责Item布局绘制等方面的工作，转而拆分成不同的类去管理。作为未来ListView、GridView等替代的组件，虽然没有它们那么易用，所有的功能都需要自己重新实现，但正是因为这种特性使得RecyclerView更加Flexible。为了满足各种各样的需求，可能会使用到下面与RecyclerView相关紧密的类：
     
 
         <a href="/2015/09/RecyclerView下拉刷新上拉加载的封装/" class="post-more waves-effect waves-button">
@@ -220,7 +176,7 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。<br>对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:name=&quot;android.hardware.sensor.accelerometer&quot; /&gt; # 加速度传感器</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.VIBRATE&quot;/&gt;  # 振动传感器</span><br></pre></td></tr></table></figure></p>
+        思路摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：12&lt;uses-permission android:name=&quot;android.hardware.sensor.accelerometer&quot; /&gt; # 加速度传感器&lt;uses-permission android:name=&quot;android.permission.VIBRATE&quot;/&gt;  # 振动传感器
     
 
         <a href="/2015/08/Android传感器编程之摇一摇/" class="post-more waves-effect waves-button">
@@ -267,13 +223,7 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，从服务端获取版本号比对当前包的版本号，如果大于当前版本号则提示用户升级，而对于某些需要强制更新的版本号，则不允许用户取消版本的升级，必须强制更新。整个流程大概如下图所示：<br><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/2015/08/Android应用自动检测更新机制的实现/app_update_flowchart.png" alt="更新流程图" title="">
-                </div>
-                <div class="image-caption">更新流程图</div>
-            </figure><br>可以看到，整个流程的关键在于对VerisonCode版本号的大小比较，VersionCode标识了同一应用的不同版本号，对于修改版本号后打包的安装包便是最新版本的安装包。在AndroidStudio中，VersionCode的配置一般在应用模块的<code>*.build</code>文件中，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">defaultConfig &#123;</span><br><span class="line">    applicationId &quot;com.test.app&quot;</span><br><span class="line">    minSdkVersion 9</span><br><span class="line">    targetSdkVersion 22</span><br><span class="line">    versionCode 6 #这里便是对版本号的设置</span><br><span class="line">    versionName &quot;2.0.0&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+        需求在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，从服务端获取版本号比对当前包的版本号，如果大于当前版本号则提示用户升级，而对于某些需要强制更新的版本号，则不允许用户取消版本的升级，必须强制更新。整个流程大概如下图所示：可以看到，整个流程的关键在于对VerisonCode版本号的大小比较，VersionCode标识了同一应用的不同版本号，对于修改版本号后打包的安装包便是最新版本的安装包。在AndroidStudio中，VersionCode的配置一般在应用模块的*.build文件中，如下：1234567defaultConfig &#123;    applicationId &quot;com.test.app&quot;    minSdkVersion 9    targetSdkVersion 22    versionCode 6 #这里便是对版本号的设置    versionName &quot;2.0.0&quot;&#125;
     
 
         <a href="/2015/08/Android应用自动检测更新机制的实现/" class="post-more waves-effect waves-button">
@@ -320,11 +270,11 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="ObjectAnimator"><a href="#ObjectAnimator" class="headerlink" title="ObjectAnimator"></a>ObjectAnimator</h2><ul>
-<li>淡入效果<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ObjectAnimator.ofFloat(tv, <span class="string">"alpha"</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>)</span><br><span class="line">            .setDuration(<span class="number">500</span>)</span><br><span class="line">            .start();</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p><code>ofFloat</code>对应着三个参数值，分别是目标<code>View</code>，动画属性名<code>Property</code>，以及属性值，一个则为终点值，两个对应着起点和终点值，多个则为起点值，将会调用的值和终点值。与<code>ofFloat</code>类似的还有<code>ofInt</code>、<code>ofObject</code>，这些都是用来设置动画动作的元素。<br></p>
+        ObjectAnimator
+淡入效果123ObjectAnimator.ofFloat(tv, "alpha", 0.0f, 1.0f)            .setDuration(500)            .start();
+
+
+ofFloat对应着三个参数值，分别是目标View，动画属性名Property，以及属性值，一个则为终点值，两个对应着起点和终点值，多个则为起点值，将会调用的值和终点值。与ofFloat类似的还有ofInt、ofObject，这些都是用来设置动画动作的元素。
     
 
         <a href="/2015/08/PropertyAnimation使用总结/" class="post-more waves-effect waves-button">
@@ -371,8 +321,8 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>在实现商家评论区的需求时，对于多行评论的显示，采用的是使用<code>maxLines</code>属性去限定显示的行数，同时使用<code>android:ellipsize=end</code>在限定行数的末尾显示<code>...</code>，这种方式可以很好的避免评论文字过多显示过长的情况。但是对于有价值的评论，有必要显示所有评论文字，采用展开折叠的交互，能够更加的灵活地去应对长文字的多行显示，给用户给好的体验。</p>
-<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>首先，继承<code>LinearLayout</code>，并对文本和标记组件进行一层包装，通过对折叠状态下的行数、展开折叠的动画时长、展开和折叠状态的视图控制，进行可自定义的属性封装。然后对父类的<code>onClick</code>方法进行重写，用户在对组件点击的时候，文本会自动的展开或折叠。然而当文本正在处于折叠或展开过程的动画中时，应该重写<code>onInterceptTouchEvent</code>方法拦截所有的点击事件，防止出现异常。<br></p>
+        需求在实现商家评论区的需求时，对于多行评论的显示，采用的是使用maxLines属性去限定显示的行数，同时使用android:ellipsize=end在限定行数的末尾显示...，这种方式可以很好的避免评论文字过多显示过长的情况。但是对于有价值的评论，有必要显示所有评论文字，采用展开折叠的交互，能够更加的灵活地去应对长文字的多行显示，给用户给好的体验。
+思路首先，继承LinearLayout，并对文本和标记组件进行一层包装，通过对折叠状态下的行数、展开折叠的动画时长、展开和折叠状态的视图控制，进行可自定义的属性封装。然后对父类的onClick方法进行重写，用户在对组件点击的时候，文本会自动的展开或折叠。然而当文本正在处于折叠或展开过程的动画中时，应该重写onInterceptTouchEvent方法拦截所有的点击事件，防止出现异常。
     
 
         <a href="/2015/08/多行文本可折叠展开TextView实现/" class="post-more waves-effect waves-button">
@@ -405,15 +355,6 @@
         <footer class="footer">
     <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
 
         <p>
             
@@ -423,7 +364,7 @@
         </p>
     </div>
     <div class="bottom">
-        <p><span>Garvin &copy; 2015 - 2018</span>
+        <p><span>Garvin &copy; 2018</span>
             <span>
                 
                 Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
@@ -437,108 +378,21 @@
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/page/3/&title=Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/page/3/&title=Garvin 杂记&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/page/3/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Garvin 杂记&url=https://hjw541988478.github.io/page/3/&via=https://hjw541988478.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/page/3/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAABw0lEQVR42u3aS27DMAwFwNz/0u62QGHlkZKZoBitgkCxR1kQ/Oj1itf1a6339PYfXri4uNvca7nu9uSIv89ZH+/Nu3BxcQe5SWCqHm8d1O72v7Hh4uJ+JTdPbpJD4uLi/g/uOgXJkxVcXNzv51ZTlmr7o1pcHajVcHFxN7h5l/K5z4/0d3FxcVvcq7h6g5P194W34+LijnDzgJKkHWcTo9uduLi4g9wD489WOVRtu+Di4s5zd17TG7TkLVdcXNwZbi+EJZcq8uSmMMjBxcX9KDdvZKzbH03W3eFxcXEHuTuXMHohr1n84OLiDnJ7IWanmDkWd3FxcR/jJsVMteDJoYXyCRcXd4TbC155UtL7OwqDGVxc3A9xq8OSfURhVIOLi/sYN/lZHrDyJ+RPju6R4eLiPsDNw0oetnaufN3+Hbi4uIPcpDFRbXwkoa28BxcX92HuVVy9BGjNyvfj4uLOcPOVX7CoFkL5EBcXF3eSWy0/9q9wlVshefTFxcU9yq2+vpoY9QqkZn8XFxf3Q9yd1mo1PToQyHBxcUe4Seukd+w3Qlxc3EFuNUHZGbVuNU1wcXFHuNVQsnO85PteyYSLi3uI+wMKAblodolCyQAAAABJRU5ErkJggg==" alt="微信分享二维码">
-</div>
-
-
-
-
     <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
 <script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+var BLOG = { ROOT: '/', SHARE: , REWARD: false };
 
-
-lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1274482147&web_id=1274482147')
 
 </script>
 
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+<script src="/js/main.min.js?v=1.7.2"></script>
 
 
 
 
 
 
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
-    });
-})();
-</script>
 
 
 
