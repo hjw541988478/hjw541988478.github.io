@@ -30,8 +30,8 @@
 <meta property="og:description" content="问题背景 UNEXPECTED TOP-LEVEL EXCEPTION: java.lang.IllegalArgumentException: method ID not in [0, 0xffff]: 65536Dex文件中保存所有classes的方法个数的变量范围值在0~65535之间，但随着业务一直在增长，引入到的库以及业务代码越来越多，超过这个限制只是时间问题。一般来说 APK 安装的流">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://hjw541988478.github.io/2016/07/MultiDex65535探索/multidex_sequence_diagram.png">
-<meta property="og:image" content="https://hjw541988478.github.io/2016/07/MultiDex65535探索/asyn_dex_load.png">
-<meta property="og:updated_time" content="2018-08-18T15:41:37.505Z">
+<meta property="og:image" content="https://hjw541988478.github.io/2016/07/MultiDex65535探索/asyn_load_dex.png">
+<meta property="og:updated_time" content="2018-08-18T18:27:45.698Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MultiDex65535探索">
 <meta name="twitter:description" content="问题背景 UNEXPECTED TOP-LEVEL EXCEPTION: java.lang.IllegalArgumentException: method ID not in [0, 0xffff]: 65536Dex文件中保存所有classes的方法个数的变量范围值在0~65535之间，但随着业务一直在增长，引入到的库以及业务代码越来越多，超过这个限制只是时间问题。一般来说 APK 安装的流">
@@ -210,9 +210,9 @@
 <h2 id="异步加载-dex"><a href="#异步加载-dex" class="headerlink" title="异步加载 dex"></a>异步加载 dex</h2><p>线程异步 or 进程异步？如果是线程异步的话，无法预知 install 加载完成的时间，这时候进程需要第二个 dex 的信息的话岂不是会发生异常，显然这是行不通的。因此最终的解决方案就是需要放在进程异步加载上。在阅读了相关的博客后，得到了一个很重要的结论：在安装完启动后是第二个 dex 进行 dexopt 花费了更多的时间。结合之前对源码的理解，可以把问题的关注点转化为，在不ANR的前提下完成dexopt，这样以后也不会需要再次dexopt，由此便可以直接在 UI 线程install dex。<br>对于整个思路的流程图如下图：<br><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/2016/07/MultiDex65535探索/asyn_dex_load.png" alt="进程异步加载 dex图" title="">
+                    <img src="/2016/07/MultiDex65535探索/asyn_load_dex.png" alt="进程异步加载dex图" title="">
                 </div>
-                <div class="image-caption">进程异步加载 dex图</div>
+                <div class="image-caption">进程异步加载dex图</div>
             </figure></p>
 <ol>
 <li><p>首先是需要在 Application 中修改的:</p>
