@@ -29,7 +29,7 @@
 <meta property="og:site_name" content="Garvin 杂记">
 <meta property="og:description" content="why ？ 创建和销毁线程伴随着系统开销，如果频繁创建销毁线程，影响处理效率；（创建时间T1，执行任务T2，销毁T3。如果T1+T3&amp;gt;T2，那就划不来） 线程并发数量过多，抢占系统资源导致阻塞；（线程共享系统资源，如果同时执行线程过多，导致系统资源不多而产生阻塞） 能对线程进行简单管理；（延时执行，定时循环执行）">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-08-18T15:39:48.782Z">
+<meta property="og:updated_time" content="2018-08-18T18:34:54.729Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java常用线程池理解">
 <meta name="twitter:description" content="why ？ 创建和销毁线程伴随着系统开销，如果频繁创建销毁线程，影响处理效率；（创建时间T1，执行任务T2，销毁T3。如果T1+T3&amp;gt;T2，那就划不来） 线程并发数量过多，抢占系统资源导致阻塞；（线程共享系统资源，如果同时执行线程过多，导致系统资源不多而产生阻塞） 能对线程进行简单管理；（延时执行，定时循环执行）">
@@ -183,9 +183,9 @@
 <li>创建和销毁线程伴随着系统开销，如果频繁创建销毁线程，影响处理效率；（创建时间T1，执行任务T2，销毁T3。如果T1+T3&gt;T2，那就划不来）</li>
 <li>线程并发数量过多，抢占系统资源导致阻塞；（线程共享系统资源，如果同时执行线程过多，导致系统资源不多而产生阻塞）</li>
 <li>能对线程进行简单管理；（延时执行，定时循环执行）<a id="more"></a>
-<h2 id="what-？"><a href="#what-？" class="headerlink" title="what ？"></a>what ？</h2>主要是Executor接口，实现类为<code>ThreadPoolExecutor</code>，对线程池的配置主要在于构造参数的配置；<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> maximumPoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">long</span> keepAliveTime,</span></span></span><br><span class="line"><span class="function"><span class="params">                          TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">                          BlockingQueue&lt;Runnable&gt; workQueue)</span></span></span><br></pre></td></tr></table></figure>
 </li>
 </ul>
+<h2 id="what-？"><a href="#what-？" class="headerlink" title="what ？"></a>what ？</h2><p>主要是Executor接口，实现类为<code>ThreadPoolExecutor</code>，对线程池的配置主要在于构造参数的配置；<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> maximumPoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">long</span> keepAliveTime,</span></span></span><br><span class="line"><span class="function"><span class="params">                          TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">                          BlockingQueue&lt;Runnable&gt; workQueue)</span></span></span><br></pre></td></tr></table></figure></p>
 <p>还有<code>ThreadFactory，RejectedExecutionHandler</code>参数的构造，略有不同而已：</p>
 <ul>
 <li>int corePoolSize：核心线程数最大值；<br>线程池新建线程时，如果当前线程总数小于corePoolSize，则新建的是核心线程，否则是非核心线程，核心线程默认情况下会一直存活在线程池中，即使是闲置状态。如果指定了allowCoreThreadTimeOut为true，那么超时后就会被销毁掉。</li>
