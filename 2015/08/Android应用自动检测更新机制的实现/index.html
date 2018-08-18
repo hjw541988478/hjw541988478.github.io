@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Android应用自动检测更新机制的实现 | Garvin 杂记</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Service,Handler,Notification">
+    <meta name="description" content="需求在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，从服务端获取版本号比对当前包的版本号，如果大于当前版本号则提示用户升级，而对于某些需要强制更新的版本号，则不允许用户取消版本的升级，必须强制更新。整个流程大概如下图所示：">
+<meta name="keywords" content="Service,Handler,Notification">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android应用自动检测更新机制的实现">
+<meta property="og:url" content="https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
+<meta property="og:description" content="需求在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，从服务端获取版本号比对当前包的版本号，如果大于当前版本号则提示用户升级，而对于某些需要强制更新的版本号，则不允许用户取消版本的升级，必须强制更新。整个流程大概如下图所示：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/app_update_flowchart.png">
+<meta property="og:image" content="https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/shot_downloading.png">
+<meta property="og:image" content="https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/shot_download_completed.png">
+<meta property="og:image" content="https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/shot_update_dialog.png">
+<meta property="og:updated_time" content="2018-08-17T15:31:23.735Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android应用自动检测更新机制的实现">
+<meta name="twitter:description" content="需求在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，从服务端获取版本号比对当前包的版本号，如果大于当前版本号则提示用户升级，而对于某些需要强制更新的版本号，则不允许用户取消版本的升级，必须强制更新。整个流程大概如下图所示：">
+<meta name="twitter:image" content="https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/app_update_flowchart.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Garvin</h5>
+          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                存档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Android应用自动检测更新机制的实现</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Android应用自动检测更新机制的实现</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-08-25T12:42:39.000Z" itemprop="datePublished" class="page-time">
+  2015-08-25
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#需求"><span class="post-toc-number">1.</span> <span class="post-toc-text">需求</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#分析"><span class="post-toc-number">2.</span> <span class="post-toc-text">分析</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现"><span class="post-toc-number">3.</span> <span class="post-toc-text">实现</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Android应用自动检测更新机制的实现"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Android应用自动检测更新机制的实现</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015-08-25 20:42:39" datetime="2015-08-25T12:42:39.000Z"  itemprop="datePublished">2015-08-25</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，从服务端获取版本号比对当前包的版本号，如果大于当前版本号则提示用户升级，而对于某些需要强制更新的版本号，则不允许用户取消版本的升级，必须强制更新。整个流程大概如下图所示：<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2015/08/Android应用自动检测更新机制的实现/app_update_flowchart.png" alt="更新流程图" title="">
+                </div>
+                <div class="image-caption">更新流程图</div>
+            </figure><br>可以看到，整个流程的关键在于对VerisonCode版本号的大小比较，VersionCode标识了同一应用的不同版本号，对于修改版本号后打包的安装包便是最新版本的安装包。在AndroidStudio中，VersionCode的配置一般在应用模块的<code>*.build</code>文件中，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">defaultConfig &#123;</span><br><span class="line">    applicationId &quot;com.test.app&quot;</span><br><span class="line">    minSdkVersion 9</span><br><span class="line">    targetSdkVersion 22</span><br><span class="line">    versionCode 6 #这里便是对版本号的设置</span><br><span class="line">    versionName &quot;2.0.0&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>对于本地版本号的获取，使用<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curCode = mActivity.getPackageManager().getPackageInfo(mActivity.getPackageName(), <span class="number">0</span>).versionCode;</span><br></pre></td></tr></table></figure></p>
+<p>便可以获取，然后直接去比较从服务端获取下来的版本号，便可以知晓应用是否需要更新。</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>使用<code>Service</code>组件去完成整个功能，鉴于它有着不可见，运行在后台的特性，并使用本地服务，直接<code>startService</code>或者<code>stopService</code>便可以完成服务的启动和停止，整个流程分为3个部分，服务端获取最新版本信息-&gt;下载最新版本，并实时更新UI-&gt;下载完成，覆盖安装。</p>
+<ul>
+<li>服务端获取最新版本<br>通过服务端提供的API或者第三方SDK提供的API实现，在自定义的<code>Application</code>中，应用启动时便异步发起检测更新的请求，这样应用每次启动都能知晓是否需要更新。对于异步请求，可以使用<code>OkHttp、AsyncHttp</code>等知名的第三方库，同时也可以使用<code>AsyncTask</code>类去实现，当然，视项目的网络请求框架而定，直接复用网络框架中的请求即可。</li>
+<li>下载最新版本，更新进度条<br>在获取到服务端返回的结果中，解析最新版本安装包的下载地址URL链接，同时使用<code>NotificationManager</code>去唤起一个新的<code>Notification</code>，对于有进度条需求的，便需要使用自定义的UI，在<code>Notification</code>中获取到视图的ID和引用，这样便可以适时的去更新UI。对于UI更新机制，推荐使用主UI线程的<code>Handler</code>去维护管理消息队列，在下载线程中只需要使用<code>sendMessage</code>方法将相关数据带过去，让<code>Handler</code>去实现具体的UI更新内容。需要注意的时，对于更新频率的控制，在复用<code>Notification</code>时候，更新频率过高的时候，会占用大量内存，可能会引起UI线程的阻塞，从而影响用户体验。</li>
+<li>下载完成，覆盖安装<br>如何监听下载完成的事件呢?其实可以有两种方式实现，即<code>BroadcastReceiver</code>或者<code>EventBus</code>，但无论哪种方式，下载完成的关键便是网络数据已经完全请求完成，也就是下载进度达到了100%。而覆盖安装的关键在于<code>Intent</code>的<code>Flags</code>和<code>DataAndType</code>的设置，根据之前设定好的下载文件的路径，并可以发起调用覆盖安装的请求。</li>
+</ul>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><ul>
+<li>UpdateService实现<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UpdateService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 安装包下载地址</span></span><br><span class="line">    <span class="keyword">private</span> String url = <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">// 新的安装包本地存储路径</span></span><br><span class="line">    <span class="keyword">private</span> String filePath = <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">// 通知管理器</span></span><br><span class="line">    <span class="keyword">private</span> NotificationManager updateNotificationManager = <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">// 通知</span></span><br><span class="line">    <span class="keyword">private</span> Notification updateNotification = <span class="keyword">null</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">onStartCommand</span><span class="params">(Intent intent, <span class="keyword">int</span> flags, <span class="keyword">int</span> startId)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 获取传值</span></span><br><span class="line">        url = intent.getStringExtra(<span class="string">"url"</span>);</span><br><span class="line">        <span class="keyword">if</span> (url != <span class="keyword">null</span>) &#123;</span><br><span class="line">            String fileName = url.substring(url.lastIndexOf(<span class="string">"/"</span>));</span><br><span class="line">            File uDir = <span class="keyword">new</span> File(Environment.getExternalStorageDirectory() + <span class="string">"/test/download/"</span>);</span><br><span class="line">            <span class="keyword">if</span> (!uDir.exists() || !uDir.isDirectory()) &#123;</span><br><span class="line">                uDir.mkdirs();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 本地目录存储路径</span></span><br><span class="line">            filePath = uDir + fileName;</span><br><span class="line">            <span class="comment">// 使用AsyncTask执行下载请求</span></span><br><span class="line">            <span class="keyword">new</span> DownloadAsyncTask().execute(url);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onStartCommand(intent, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><code>UpdateService</code>先会把本地存储路径和<code>Notification</code>初始化，然后使用<code>AsyncTask</code>进行新安装包的下载和<code>NotificationUI</code>的更新工作。记得在使用<code>Service</code>前进行动态注册或者在<code>AndroidManifest.xml</code>文件中配置好<code>Service</code>节点。</p>
+<ul>
+<li><code>DownloadAsyncTask</code>实现<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DownloadAsyncTask</span> <span class="keyword">extends</span> <span class="title">AsyncTask</span>&lt;<span class="title">String</span>, <span class="title">Integer</span>, <span class="title">Void</span>&gt; </span>&#123;</span><br><span class="line">        <span class="comment">//构造Notification</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onPreExecute</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            updateNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);</span><br><span class="line">            updateNotification = <span class="keyword">new</span> Notification();</span><br><span class="line">            updateNotification.icon = R.drawable.ic_launcher;</span><br><span class="line">            updateNotification.contentView = <span class="keyword">new</span> RemoteViews(getPackageName(), R.layout.view_notification_download);</span><br><span class="line">            updateNotification.contentView.setProgressBar(R.id.notify_progress, <span class="number">100</span>, <span class="number">0</span>, <span class="keyword">false</span>);</span><br><span class="line">            updateNotification.contentView.setTextViewText(R.id.notify_title, <span class="string">"已下载:0%"</span>);</span><br><span class="line">            updateNotification.contentIntent = PendingIntent.getActivity(getApplicationContext(), <span class="number">0</span>, <span class="keyword">new</span> Intent(), <span class="number">0</span>);</span><br><span class="line">            updateNotification.flags = Notification.FLAG_AUTO_CANCEL;</span><br><span class="line">            updateNotificationManager.notify(<span class="number">101</span>, updateNotification);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> Void <span class="title">doInBackground</span><span class="params">(String... params)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// 下载百分比</span></span><br><span class="line">            <span class="keyword">int</span> downPercentage = <span class="number">0</span>;</span><br><span class="line">            <span class="comment">// 上次缓存文件大小</span></span><br><span class="line">            <span class="keyword">int</span> cachedSize = <span class="number">0</span>;</span><br><span class="line">            <span class="comment">// 临时文件大小</span></span><br><span class="line">            <span class="keyword">long</span> tmpTotalSize = <span class="number">0</span>;</span><br><span class="line">            <span class="comment">// 待下载文件总大小</span></span><br><span class="line">            <span class="keyword">int</span> totalSize = <span class="number">0</span>;</span><br><span class="line">            HttpURLConnection httpUrlConn = <span class="keyword">null</span>;</span><br><span class="line">            InputStream httpInputStream = <span class="keyword">null</span>;</span><br><span class="line">            FileOutputStream fileOutputStream = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                URL url = <span class="keyword">new</span> URL(params[<span class="number">0</span>]);</span><br><span class="line">                httpUrlConn = (HttpURLConnection) url.openConnection();</span><br><span class="line">                <span class="keyword">if</span> (cachedSize &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="comment">// 方便以后实现断点续传</span></span><br><span class="line">                    httpUrlConn.setRequestProperty(<span class="string">"RANGE"</span>, <span class="string">"bytes="</span> + cachedSize + <span class="string">"-"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                httpUrlConn.setConnectTimeout(NetworkConfig.CONNECT_TIMEOUT);</span><br><span class="line">                httpUrlConn.setReadTimeout(NetworkConfig.CONNECT_TIMEOUT);</span><br><span class="line">                <span class="comment">// 获取文件总大小</span></span><br><span class="line">                totalSize = httpUrlConn.getContentLength();</span><br><span class="line">                <span class="keyword">if</span> (httpUrlConn.getResponseCode() == <span class="number">200</span>) &#123;</span><br><span class="line">                    httpInputStream = httpUrlConn.getInputStream();</span><br><span class="line">                    fileOutputStream = <span class="keyword">new</span> FileOutputStream(<span class="keyword">new</span> File(filePath));</span><br><span class="line">                    <span class="keyword">byte</span> buffer[] = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4096</span>];</span><br><span class="line">                    <span class="keyword">int</span> bufferSize = <span class="number">0</span>;</span><br><span class="line">                    <span class="keyword">while</span> ((bufferSize = httpInputStream.read(buffer)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                        fileOutputStream.write(buffer, <span class="number">0</span>, bufferSize);</span><br><span class="line">                        tmpTotalSize += bufferSize;</span><br><span class="line">                        <span class="keyword">int</span> tmpDownPercentage = (<span class="keyword">int</span>) (tmpTotalSize * <span class="number">100</span> / totalSize);</span><br><span class="line">                        <span class="keyword">if</span> (tmpDownPercentage - downPercentage &gt; <span class="number">5</span>) &#123;</span><br><span class="line">                            downPercentage += <span class="number">5</span>;</span><br><span class="line">                            publishProgress(tmpDownPercentage);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">// 下载结束</span></span><br><span class="line">                    publishProgress(<span class="number">100</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">                publishProgress(-<span class="number">1</span>);</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (httpUrlConn != <span class="keyword">null</span>)</span><br><span class="line">                        httpUrlConn.disconnect();</span><br><span class="line">                    <span class="keyword">if</span> (httpInputStream != <span class="keyword">null</span>)</span><br><span class="line">                        httpInputStream.close();</span><br><span class="line">                    <span class="keyword">if</span> (fileOutputStream != <span class="keyword">null</span>)</span><br><span class="line">                        fileOutputStream.close();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                    publishProgress(-<span class="number">1</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onProgressUpdate</span><span class="params">(Integer... values)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (values[<span class="number">0</span>] != -<span class="number">1</span>) &#123;</span><br><span class="line">                updateNotification.contentView.setTextViewText(R.id.notify_title, values[<span class="number">0</span>] &gt;= <span class="number">100</span> ? <span class="string">"已完成下载"</span> : <span class="string">"已下载:"</span> + values[<span class="number">0</span>] + <span class="string">"%"</span>);</span><br><span class="line">                updateNotification.contentView.setProgressBar(R.id.notify_progress, <span class="number">100</span>, values[<span class="number">0</span>] &gt;= <span class="number">100</span> ? <span class="number">100</span> : values[<span class="number">0</span>], <span class="keyword">false</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                updateNotification.contentView.setTextViewText(R.id.notify_title, <span class="string">"下载失败!"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            updateNotification.flags = Notification.FLAG_AUTO_CANCEL;</span><br><span class="line">            updateNotificationManager.notify(<span class="number">101</span>, updateNotification);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onPostExecute</span><span class="params">(Void result)</span> </span>&#123;</span><br><span class="line">            Intent installIntent = <span class="keyword">new</span> Intent(Intent.ACTION_VIEW);</span><br><span class="line">            installIntent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED | Intent.FLAG_ACTIVITY_NEW_TASK);</span><br><span class="line">            installIntent.setDataAndType(Uri.fromFile(<span class="keyword">new</span> File(filePath)), <span class="string">"application/vnd.android.package-archive"</span>);</span><br><span class="line">            startActivity(installIntent);</span><br><span class="line">            stopSelf();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><code>DownloadAsyncTask</code>充分利用了<code>AsyncTask</code>的特点，分别在<code>onPreExecute</code>中进行了<code>Notification</code>的构造以及唤醒工作，在<code>doInBackground</code>中进行着网络数据下载工作，然后在数据不断缓存的过程中，当数据缓存的比例大于5%时，则调用<code>publishProgress</code>方法，更新<code>Notification</code>中的进度条，这样做的目的是，在频繁更新<code>Notification</code>并唤醒的过程中，会阻塞UI线程导致ANR，因此一般在进度变化累积到5%的时候再去更新UI，保证应用的流畅性。具体涉及到UI的更新工作放在<code>onProgressUpdate</code>方法中，包括进度和文字提示的更新，其中包含了更新失败的情况，同样也需要提示。最后在<code>onPostExecute</code>方法中进行下载文件的获取和安装，并弹出安装界面指导安装。<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2015/08/Android应用自动检测更新机制的实现/shot_downloading.png" alt="下载中状态" title="">
+                </div>
+                <div class="image-caption">下载中状态</div>
+            </figure><br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2015/08/Android应用自动检测更新机制的实现/shot_download_completed.png" alt="下载完成状态" title="">
+                </div>
+                <div class="image-caption">下载完成状态</div>
+            </figure><br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2015/08/Android应用自动检测更新机制的实现/shot_update_dialog.png" alt="安装状态" title="">
+                </div>
+                <div class="image-caption">安装状态</div>
+            </figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Andriod应用的更新机制主要使用到的知识点有<code>NotificationManager、Notification、ProgressBar、Service、AsyncTask</code>。通过对上面主要的分析与实现，可以看到涉及到的点还是比较多的，但大多都是基础的知识点，以后在实现复杂功能的时候，也应该通过对业务流程的分析、知识点的理解，综合运用，达到目的。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+
+        
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2015/08/Android应用自动检测更新机制的实现/" target="_blank" rel="external">https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://hjw541988478.github.io">
+            <img src="/img/avatar.jpg" alt="Garvin">
+            Garvin
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Handler/">Handler</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Notification/">Notification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Service/">Service</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/&title=《Android应用自动检测更新机制的实现》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/&title=《Android应用自动检测更新机制的实现》 — Garvin 杂记&source=需求在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android应用自动检测更新机制的实现》 — Garvin 杂记&url=https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2015/08/Android传感器编程之摇一摇/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Android传感器编程之摇一摇</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2015/08/PropertyAnimation使用总结/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">PropertyAnimation使用总结</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "Av3sk2Q4QhL7up87ziVVSeeS-gzGzoHsz",
+            appKey: "hVI7cltsWA2q1fvsUNRWEJ4e",
+            avatar: "retro",
+            placeholder: "Just go go",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Garvin &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/&title=《Android应用自动检测更新机制的实现》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/&title=《Android应用自动检测更新机制的实现》 — Garvin 杂记&source=需求在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android应用自动检测更新机制的实现》 — Garvin 杂记&url=https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2015/08/Android应用自动检测更新机制的实现/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADMklEQVR42u3awW4iQQwE0Pz/T7Pn1S5QZU8kpnmcIkSGfp2D47J/fuLX45/X6/efPSF55uvPPDvDz2+8sLGxsW/Cnj06R7bHev3tzy49t2BjY2Ofyp4dPbmaZ19cHDG4pvyc2NjY2NizluM1Nf/evLxhY2NjY7dfmZextrWYNS3Y2NjY38ZODpc0Fcnh9ll9XuQuyNKwsbGxP569CW4+7edfmW9jY2NjfzD7Ub42EdLmKvMGJlJgY2NjH8Ter+xctV7TBv2bpggbGxv7JHa7TDNb02lXefIGYxaBYWNjY5/HbstDfvSrkEl7kxRIbGxs7PPYs4Frvi7THi4fNrfl9g0eGxsb++bspFzln7wqZpoNHobjAWxsbOybs2fxUHKsfDCcD3fbU71pdbCxsbFvzt4EQ+2Qdd/w7MsbNjY29nnsthTtQ/w8fpo1IXUZw8bGxr45O497ZkH8bCibrwrN4ipsbGzsk9izo+SD3tnq5OtPts+PsjRsbGzs27KjUejianLe7JktHhsbG/s8dnK4/XVclc//4nwbGxsb++bsfB3n9UPbVZs2HmoXht6UPWxsbOwj2LMWYt8q5IPktkQlp8XGxsY+id0G8UmU015K0mDMQqiiNcLGxsa+ObstCbMYaLVYEz8/aVSwsbGxT2In4Paf/vzi8mu66g+AjY2NfR47byr2AVA+cpjFW5uRMzY2NvZ92fnSTL5wM3vm5jN1wcPGxsY+jt0Wns3STB4tXdXMRBMMbGxs7JuzZ0Vitpqz6o3WA4O/NpWwsbGxj2Anqzb5mk5b2Nr3k3fqIQE2Njb2Qeyr4qH2ajbU5M+WLCdhY2Nj3529WZcp/ulfhE15gSxaFGxsbOyvYSdXMBsDtOOHtnBeNhvBxsbG/mD2o3y1vzs7aBJptSPe/0xFsLGxsY9gt5FQUtLaAKjFtwtG7agDGxsb+47s/OhtZL9nbJZ16vEANjY29s3Zs0goj+k3yH1T8XRHCRsbG/uL2ZvQJ28kZsPj6PnY2NjYX89ux7dtMJSPnIdlDxsbG/s4dh79tCs+7UpNex3DC8LGxsY+iD0MZUYHbQGz9qNdAMLGxsa+LfsPUgIhTIBdMosAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1274482147&web_id=1274482147')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

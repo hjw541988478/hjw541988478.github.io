@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>代码热修复探究(Part1) | Garvin 杂记</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="HoxFix,CodeHotFix">
+    <meta name="description" content="热修复技术介绍代码修复技术底层替换：已经加载的类直接替换原有方法，由于修改了原来的类，导致方法数的变化，索引无法正常工作，不稳定，可能产生无法预知的结果；类加载：在 app 重新启动后让 classloader 加载新的类，由于已加载的类无法卸载，于是不重启无法加载新类，在重启以后，赶在业务逻辑之前抢先加载补丁的新类，达到热修复的目的。市场主流方案选择：  QZoneFix：侵入打包流程，不优雅；">
+<meta name="keywords" content="HoxFix,CodeHotFix">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码热修复探究(Part1)">
+<meta property="og:url" content="https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
+<meta property="og:description" content="热修复技术介绍代码修复技术底层替换：已经加载的类直接替换原有方法，由于修改了原来的类，导致方法数的变化，索引无法正常工作，不稳定，可能产生无法预知的结果；类加载：在 app 重新启动后让 classloader 加载新的类，由于已加载的类无法卸载，于是不重启无法加载新类，在重启以后，赶在业务逻辑之前抢先加载补丁的新类，达到热修复的目的。市场主流方案选择：  QZoneFix：侵入打包流程，不优雅；">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/dexopt.jpg">
+<meta property="og:image" content="https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/skip_dvmResolveClass.png">
+<meta property="og:image" content="https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/tinker_new_sol.png">
+<meta property="og:image" content="https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/header_classesdef_remove.png">
+<meta property="og:updated_time" content="2018-08-18T15:44:44.529Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="代码热修复探究(Part1)">
+<meta name="twitter:description" content="热修复技术介绍代码修复技术底层替换：已经加载的类直接替换原有方法，由于修改了原来的类，导致方法数的变化，索引无法正常工作，不稳定，可能产生无法预知的结果；类加载：在 app 重新启动后让 classloader 加载新的类，由于已加载的类无法卸载，于是不重启无法加载新类，在重启以后，赶在业务逻辑之前抢先加载补丁的新类，达到热修复的目的。市场主流方案选择：  QZoneFix：侵入打包流程，不优雅；">
+<meta name="twitter:image" content="https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/dexopt.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Garvin</h5>
+          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                存档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">代码热修复探究(Part1)</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">代码热修复探究(Part1)</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-07-20T12:22:00.000Z" itemprop="datePublished" class="page-time">
+  2017-07-20
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#热修复技术介绍"><span class="post-toc-number">1.</span> <span class="post-toc-text">热修复技术介绍</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码修复技术"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">代码修复技术</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#资源修复"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">资源修复</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#SO库修复"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">SO库修复</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#代码热修复技"><span class="post-toc-number">2.</span> <span class="post-toc-text">代码热修复技</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#权限问题"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">权限问题</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#反射调用非静态方法"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">反射调用非静态方法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#及时生效的限制"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">及时生效的限制</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Java知识基础"><span class="post-toc-number">3.</span> <span class="post-toc-text">Java知识基础</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#内部类编译"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">内部类编译</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#匿名内部类编译"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">匿名内部类编译</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#域编译"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">域编译</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#final-staitic-域编译"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">final staitic 域编译</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#方法编译"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">方法编译</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#switch-case-语句编译"><span class="post-toc-number">3.6.</span> <span class="post-toc-text">switch case 语句编译</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#泛型编译"><span class="post-toc-number">3.7.</span> <span class="post-toc-text">泛型编译</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Lambda-表达式编译"><span class="post-toc-number">3.8.</span> <span class="post-toc-text">Lambda 表达式编译</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#访问权限检查对热替换的影响"><span class="post-toc-number">3.9.</span> <span class="post-toc-text">访问权限检查对热替换的影响</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#冷启动类加载原理"><span class="post-toc-number">4.</span> <span class="post-toc-text">冷启动类加载原理</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#冷启动实现方案概述"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">冷启动实现方案概述</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#插桩实现前因后果"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">插桩实现前因后果</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#插桩导致类加载性能影响"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">插桩导致类加载性能影响</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#避免插桩的-QFix-方案"><span class="post-toc-number">4.4.</span> <span class="post-toc-text">避免插桩的 QFix 方案</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Art-下冷启动实现"><span class="post-toc-number">4.5.</span> <span class="post-toc-text">Art 下冷启动实现</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#其他点"><span class="post-toc-number">4.6.</span> <span class="post-toc-text">其他点</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#完整方案考虑"><span class="post-toc-number">4.7.</span> <span class="post-toc-text">完整方案考虑</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#多态对冷启动类加载影响"><span class="post-toc-number">5.</span> <span class="post-toc-text">多态对冷启动类加载影响</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#重新认识多态"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">重新认识多态</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#冷启动方案限制"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">冷启动方案限制</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#终极解决方案"><span class="post-toc-number">5.3.</span> <span class="post-toc-text">终极解决方案</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Dalvik下完整-DEX-方案的探索"><span class="post-toc-number">6.</span> <span class="post-toc-text">Dalvik下完整 DEX 方案的探索</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#冷启动类加载修复"><span class="post-toc-number">6.1.</span> <span class="post-toc-text">冷启动类加载修复</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#新的全量-Dex-方案"><span class="post-toc-number">6.2.</span> <span class="post-toc-text">新的全量 Dex 方案</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#对于-Application-处理"><span class="post-toc-number">6.3.</span> <span class="post-toc-text">对于 Application 处理</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#dvmOptResolveClass-问题与对策"><span class="post-toc-number">6.4.</span> <span class="post-toc-text">dvmOptResolveClass 问题与对策</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">7.</span> <span class="post-toc-text">参考</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-代码热修复探究-Part1"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">代码热修复探究(Part1)</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-07-20 20:22:00" datetime="2017-07-20T12:22:00.000Z"  itemprop="datePublished">2017-07-20</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="热修复技术介绍"><a href="#热修复技术介绍" class="headerlink" title="热修复技术介绍"></a>热修复技术介绍</h2><h3 id="代码修复技术"><a href="#代码修复技术" class="headerlink" title="代码修复技术"></a>代码修复技术</h3><p>底层替换：已经加载的类直接替换原有方法，由于修改了原来的类，导致方法数的变化，索引无法正常工作，不稳定，可能产生无法预知的结果；<br>类加载：在 app 重新启动后让 classloader 加载新的类，由于已加载的类无法卸载，于是不重启无法加载新类，在重启以后，赶在业务逻辑之前抢先加载补丁的新类，达到热修复的目的。市场主流方案选择：</p>
+<ul>
+<li>QZoneFix：侵入打包流程，不优雅；</li>
+<li>QFix：获取底层虚拟机函数，不稳定；</li>
+<li>Tinker：全量dex加载，粒度过细，性能消耗过大；</li>
+</ul>
+<h3 id="资源修复"><a href="#资源修复" class="headerlink" title="资源修复"></a>资源修复</h3><ol>
+<li>构造新的 AssetManager，反射调用 addAssetPath，把完整新资源包加入 AssetManager 中；</li>
+<li>找到所有引用原 AssetManager 地方，通过反射，把引用处替换成新的。<br>优点：</li>
+</ol>
+<ul>
+<li>只使用一个 package id 为 0x66 的资源包，该包只包含了改变了资源，然后直接在原 AssetManager 中 addAssetPath；</li>
+<li>不修改 AssetManager 引用处；</li>
+<li>不必下发完整包；</li>
+<li>不需要在运行时合成完整包<br>；<a id="more"></a><h3 id="SO库修复"><a href="#SO库修复" class="headerlink" title="SO库修复"></a>SO库修复</h3>SO 库修复本质是对 native 方法的修复和替换。采用类似修复反射注入的方式，把补丁的路径插入到 nativeLibraryDirectories 数组的最前面，达到加载到的 so 库是补丁库，达到修复目的。</li>
+</ul>
+<h2 id="代码热修复技"><a href="#代码热修复技" class="headerlink" title="代码热修复技"></a>代码热修复技</h2><p>术### 底层热替换<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">memcpy</span>(smeth, dmeth, <span class="keyword">sizeof</span>(ArtMehod));</span><br></pre></td></tr></table></figure></p>
+<p>不替换 ArtMethod 的成员，而是整个替换；由于 sizeof 计算可能有偏差，使用内部起止方法的地址差值作为 methSize 便可以解决问题；<br>这里关键点便是，忽略 ArtMethod 结构差异，使用统一的 memcpy，只要保证 ArtMethod 数组以线性结构排列，就可以适配。</p>
+<h3 id="权限问题"><a href="#权限问题" class="headerlink" title="权限问题"></a>权限问题</h3><p>dex2oat 生成 AOT 机器码是会做一些检查和优化的，由于 dex2oat 编译机器码时确认了两个方法属于同一个类，所以便不会存在权限问题。<br>在补丁类访问同包名其他类，会存在权限问题，是因为补丁包使用的类加载器不是原来的 classloader，也只需要设置新类的 classloader 为原来的 classloader 便可以了。</p>
+<h3 id="反射调用非静态方法"><a href="#反射调用非静态方法" class="headerlink" title="反射调用非静态方法"></a>反射调用非静态方法</h3><p>热替换的非静态方法，在反射调用时，由于 VerifyObjectlsClass 新旧类不匹配，导致检验不通过，而静态方法是在类级别上的，也就不需要接收对象实例作为参数，自然不会存在这个问题；</p>
+<h3 id="及时生效的限制"><a href="#及时生效的限制" class="headerlink" title="及时生效的限制"></a>及时生效的限制</h3><p>只支持方法的替换，无法增加或减少方法以及成员字段的增加或减少。是因为补丁类中方法的增加或减少，导致 Dex 方法数的变化，从而导致索引的变化，这样访问方法时无法索引到正确的方法了。总之，2种限制情况：</p>
+<ul>
+<li>引起原有类结构变化的修改</li>
+<li>修复的非静态方法会被反射调用时</li>
+</ul>
+<h2 id="Java知识基础"><a href="#Java知识基础" class="headerlink" title="Java知识基础"></a>Java知识基础</h2><h3 id="内部类编译"><a href="#内部类编译" class="headerlink" title="内部类编译"></a>内部类编译</h3><p>内部类会在编译期被编译为跟外部类一样顶级的类，非静态内部类持有外部类引用，而静态内部类不持有。</p>
+<ol>
+<li>内部类与外部类互相访问<br>外部类为了访问内部类私有域/方法，编译期会为自动类生产 access&amp;** 方法，用于返回其值或者相关方法给内部类使用；</li>
+<li>热部署解决<br>避免自动生成 access&amp;*** 方法：</li>
+</ol>
+<ul>
+<li>一个外部类如果有内部类，把所有 method/field 的 private 访问权限改成 protected 或者 default 或者 public；</li>
+<li>内部类所有 method/field 的 private 权限改成 protected 或者默认权限；</li>
+</ul>
+<h3 id="匿名内部类编译"><a href="#匿名内部类编译" class="headerlink" title="匿名内部类编译"></a>匿名内部类编译</h3><ol>
+<li>编译规则<br>匿名内部类的格式一般是外部类 &amp;numble，后面的 numble 是编译期根据该匿名内部类在外部类中出现的先后关系，依次累加命名；</li>
+<li>解决方案<br>匿名内部类插入到外部类末尾是允许的，其他都是不可取的；</li>
+</ol>
+<h3 id="域编译"><a href="#域编译" class="headerlink" title="域编译"></a>域编译</h3><ol>
+<li>静态域与非静态域<br>不支持 <clinit> 修复，这个方法在 Dalvik 虚拟机类加载的时候进行类初始化的时候调用，是 android 编译器自动合成的方法，静态 field 和代码块的初始化会被编译在 <clinit> 中；</clinit></clinit></li>
+<li>静态 field 初始化与静态代码块<br>静态代码块和静态域初始化在 clinit 中的先后关系就是在源码中的先后关系，类加载初始化的时候，一个类仅加载一次，可能会导致加载一个类的情况：</li>
+</ol>
+<ul>
+<li>new一个类的对象；</li>
+<li>调用类的静态方法；</li>
+<li>调用静态域的值；<br>执行流程：<code>dvmResolveClass-&gt;dvmLinkClass-&gt;dvmInitClass</code>，类的初始化在第三步，先对父类初始化，然后才调用本来的 clinit 方法；</li>
+</ul>
+<ol start="3">
+<li>非静态 field 初始化和非静态代码块<br>被翻译在 <init> 默认无参构造函数中，其执行顺序和源码顺序一致。如果是有参构造函数，每个有参构造函数都会执行一个非静态域和非静态代码块的初始化； <clinit> 在类加载初始化的时候被调用，<init> 在类对象初始化时候被调用，类似下面这样<code>String s = new String(&quot;test&quot;);</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">new-instance v0, Ljava/lang/String;</span><br><span class="line">invke-direct &#123;v0&#125;, Ljava/lang/String; -&gt; &lt;init&gt;()V</span><br></pre></td></tr></table></figure>
+</init></clinit></init></li>
+</ol>
+<p>首先分配堆内存，如果类没加载过则尝试加载类，然后指令调用类的init构造函数方法进行对象初始化；</p>
+<ol start="4">
+<li>热部署解决方案<br>由于不支持 <clinit> 方法热部署，只能冷启动生效。但是非静态 field 和代码块被翻译到 <init> 中，可以热部署；</init></clinit></li>
+</ol>
+<h3 id="final-staitic-域编译"><a href="#final-staitic-域编译" class="headerlink" title="final staitic 域编译"></a>final staitic 域编译</h3><p>final static 域并没有翻译到 clinit 方法中；</p>
+<ol>
+<li>final static 域编译规则</li>
+</ol>
+<ul>
+<li>final static 修饰的原始类型和 String 类型域（非引用类型），并不会翻译在 clinit 方法汇总，而是在 initSFields 方法中初始化；</li>
+<li>final static 修饰的引用类型仍然在 clinit 中；</li>
+</ul>
+<ol start="2">
+<li>final static 域优化<br>如果一个 field 是常量，那么使用 static 修饰，其实只对原始类型和 String 类型有用，对于引用类型是没有任何优化的；</li>
+<li>热部署方案</li>
+</ol>
+<ul>
+<li>修改 final static 基本类型或者 String 类型（非引用类型）域，由于编译期间引用基本类型地方被立即数替换，引用到 String 类型（非引用类型）地方被常量池索引 ID 替换，所以可以热更；</li>
+<li>修改 final static 引用类型域是不允许的，因为会翻译 clinit 方法，所以没法热部署；</li>
+</ul>
+<h3 id="方法编译"><a href="#方法编译" class="headerlink" title="方法编译"></a>方法编译</h3><ol>
+<li>应用混淆方法编译<br>除了以上内部类/匿名内部类可能会造成 method 新增，混淆也有可能导致方法的内联和裁剪，导致 method 的增加或减少；</li>
+<li>方法内联</li>
+</ol>
+<ul>
+<li>方法没有被其他任何地方运用到；</li>
+<li>方法简单，比如只有一行会被内联掉；</li>
+<li>方法只被一个地方引用，会被替换掉；</li>
+</ul>
+<ol start="3">
+<li>方法裁剪<br>有参的方法会被裁剪成无参的方法，那么只能冷启动；</li>
+<li>热部署解决<br>加上 -dontoptimize 参数即可；<br>混淆步骤：<br>input jars -&gt;shrink -&gt;optimize -&gt;obfuscate -&gt; preverify -&gt; output jars<br>optimize：不是入口的类和方法被设置为 private、static 或 final，无用参数被移除，一些方法可能会被内联或者裁剪，因此最好加上 -dontoptimize 参数；<br>preverification：对 .classs 预校验，在 .class 文件加上 StackMapTable 信息，这样在类校验阶段省去步骤，加载更快，android 中有自己的校验逻辑 dvmVerifyClass，所以最好加上 -dontpreverify 参数；</li>
+</ol>
+<h3 id="switch-case-语句编译"><a href="#switch-case-语句编译" class="headerlink" title="switch case 语句编译"></a>switch case 语句编译</h3><p>一个资源 id 肯定是 const final static 遍历，如果 switch case 语句被翻译成 packed-switch 指令，修改 smali 反编译流程，将 packed-switch 指令强转为 sparese-switch 指令，:pswitch_N 强转为 :sswitch_N 指令，然后替换资源 id，回编译 smali 为 dex，步骤为反编译-&gt;资源id替换-&gt;回编译；</p>
+<h3 id="泛型编译"><a href="#泛型编译" class="headerlink" title="泛型编译"></a>泛型编译</h3><p>泛型完全在编译器中实现，由编译器执行类型检查和类型推断，然后生成普通的非泛型字节码，这种技术叫做擦除，编译器使用泛型类型保证类型安全；<br>Java5 才引入泛型，扩展虚拟机指令集是不可取的，所以采用完全在编译器中实现擦除方法。<br>泛型在编译器实现，生成的字节码是不包含泛型中的类型信息的，使用参数时会在编译时候去掉，这个过程称为类型擦除；</p>
+<ol>
+<li>类型擦除与多态的冲突和解决<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">     <span class="keyword">private</span> T t;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">          <span class="keyword">return</span> t;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">          <span class="keyword">this</span>.t = t;  </span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span>&lt;<span class="title">Number</span>&gt; </span>&#123;</span><br><span class="line">       <span class="keyword">private</span> Number n;</span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> Number <span class="title">get</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(Number n)</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">       <span class="keyword">private</span> Number n;</span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> Number <span class="title">get</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(Number n)</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<blockquote>
+<p>@Override<br>表明方法可以重写，也就是子类中的方法与父类的具有相同的方法名，返回类型和参数表。<br>受类型擦除影响，A 类中 set(T t) 在字节码中实际上是 set(Object t)，B的 set(Number n)方法参数不一样，所以此时类 B 的 set 方法为重载，而本意为重写，实现多态，可是类型擦除后变成了重载，这样存在了冲突。</p>
+</blockquote>
+<p>但实际上，JVM 在字节码中使用了 bridge 方法完成重写。可以得到的结论就是：<br>子类中真正完成重写基类方法的是编译器自动合成的 bridge 方法，而类 B 定义的 get 和 set 方法上面的 @Override 只不过是假象，bridge 方法内部实现调用重写的 print 方法。虚拟机巧妙的使用了桥方法解决了冲突问题。<br>一般情况下，方法的重载只能以方法参数表区分而无法以返回类型区分，但虚拟机却允许这么做，<br>是因为编译器为了泛型的多态的实现。</p>
+<ul>
+<li>泛型类型转换<br>编译器发现如果有一个变量的申明加上了泛型类型的话，编译器会自动加上 check-cast 类型转换，而不需要在源码中强制类型转换，只是因为类型转换编译器自动帮我们完成了而已。</li>
+<li>热部署解决方案<br>在类型擦除中，如果 B extends A 变成了 B extends A，那么会增加对应的桥方法，此时新增方法，只能冷部署。<br>泛型方法内部实际上会生成一个 dalvik/annotation/Signature 系统注解，如果更换签名，泛型的类型擦除，方法的逻辑实际上没有发生任何变化，只是注解发生了变化而已。所以再热部署中，避免这种性能的修复。</li>
+</ul>
+<h3 id="Lambda-表达式编译"><a href="#Lambda-表达式编译" class="headerlink" title="Lambda 表达式编译"></a>Lambda 表达式编译</h3><p>java7 引入的一种表达式，类似匿名内部类，但是也有区别，也有可能导致方法的新增和减少。</p>
+<ol>
+<li>Lambda 编译规则<br>函数式接口主要特征，是一个接口，这个接口具有唯一的抽象方法，我们将满足这两个特性的接口称为函数式接口。java.lang.Runnable 和 java.util.Comparator 是典型的函数式接口，与匿名内部类的区别：</li>
+</ol>
+<ul>
+<li>关键字 this 匿名类的 this 关键字指向匿名类，而 lambda 表达式的 this 关键字指向包围的 lambda 表达式的类；</li>
+<li>编译方式，Java 编译器将 lambda 表达式编译成类的私有方法，使用 invokedynamic 字节码指令动态绑定这个方法，奖匿名内部类编译成外部类 &amp;numble 的新类；<br>比较匿名内部类与 Lambda 表达式的字节码可以发现：</li>
+<li>编译期间自动生成私有静态的 lambda$main$*() 方法，这个方法的实现就是 lambda 表达式里面的逻辑；</li>
+<li>invokedynamic 指令执行 lambda 表达式；</li>
+<li>相比较匿名内部类的区别，没有生成外部类 &amp;numble 的新类；<br>invokedynamic 指令：指令执行时，实际上会去调用 java/lang/invke/LambdaMetafactory 的 metafactory 静态方法，这个静态方法实际上会在运行时生成实现函数式接口的具体类，然后具体类会调用私有静态 lambda$main$*() 方法。当然这只是对标准 JVM 的执行而言。<br>android 虚拟机中会先把 javac 编译成 .class，然后再通过 dx 工具优化成适合移动设备的 dex 字节码文件。但是如果要使用 Java8 语言特性，还需要新的 Jack 工具链才行。Jack 将源码编译成 Android 可读取的 Dalvik 可执行字节码，.jack 格式，它可以将源码直接编译成 Dalvik 字节码。<br>对比发现，旧版本的 javac ：<br>javac(.java -&gt; .class) -&gt; dx(.class -&gt; .dex)<br>新版本：<br>Jack(.java -&gt; .jack -&gt; .dex)<br>反编译 .dex 字节码对比 .class 字节码可以看到：<br>共同点：编译期间为外部类合成一个 static 辅助方法，内部逻辑实现 lambda 表达式；<br>不通点：1. class 字节码通过 invokedynamic 指令执行 lambda 表达式，而 .dex 字节码执行 lambda 表达式跟普通方法没差； 2. .class 字节码运行时生成新类，.dex字节码在编译期生成新类；</li>
+</ul>
+<ol start="2">
+<li>热部署解决方案<br>新增一个 lambda 表达式，会导致外部类新增一个辅助方法，所以不支持热部署，可以看到合成类名的规则 Test$$Lambda$void_main_java_lang_String_args_LamdaImp10.smali：外部类名+Lambda+Lambda 表达式所在方法的签名+LambdaImpl+出现的顺序号，构成的合成类。所以如果增加或者减少 Lambda 表达式，会导致类方法乱套。<br>那么对于只修改 lambda 内部逻辑，如果 lambda 表达式访问外部类的非静态 field/method 场景，如果生成的辅助类一开始没有持有外部类的引用，而修改后需要持有外部类的引用，这样就会导致热部署失败。</li>
+</ol>
+<ul>
+<li>增加/减少一个 lambda 表达式会导致类方法错乱，所以热部署失败；</li>
+<li>修改一个 lambda 表达式，可能导致新增 field，也会热部署失败。</li>
+</ul>
+<h3 id="访问权限检查对热替换的影响"><a href="#访问权限检查对热替换的影响" class="headerlink" title="访问权限检查对热替换的影响"></a>访问权限检查对热替换的影响</h3><ol>
+<li>类加载阶段父类/实现接口访问权限检查<br>一个类的加载，必须经历 resolve -&gt; link -&gt; init 三个阶段，父类/实现接口权限检查发生在 link 阶段。<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">dvmLinkClass</span><span class="params">( )</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(...) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!dvmCheckClassAccess(..interface)) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line">        ...</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (!dvmCheckClassAccess(..super)) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>通过源码可以看到，会先对实现的接口和父类进行访问权限检查，如果当前类和实现接口/父类是非 public，同时加载两者的 classLoader 不一样的情况下，会 return false。所以如果不进行任何处理的话，那么在类加载阶段就报错。</p>
+<ol>
+<li>类校验阶段访问权限检查<br>在单独的补丁 dex 中，如果需要加载这个 dex，必须进行 dexopt，dexopt 会执行 dvmVerifyClass 校验 dex 每个类，方法调用链为：dvmVerifyClass 校验类 -&gt; verifyMethod 校验类中方法 -&gt; (dvmVerifyCodeFlow -&gt; doCodeVerification) 对每个方法逻辑校验 -&gt;verifyInstruction 校验指令。所以可以看到，补丁类中如果引用了非 public 类，那么 verifyInstruction 方法执行的结果会更新为潜在的错误指令码，最后会抛出异常，程序中断。</li>
+<li><code>&lt;clinit&gt;</code>方法<br>如果使用热部署的话，那么就没法改变类结构以及无法改变<clinit>方法，所以此时只能走冷启动生效。</clinit></li>
+</ol>
+<h2 id="冷启动类加载原理"><a href="#冷启动类加载原理" class="headerlink" title="冷启动类加载原理"></a>冷启动类加载原理</h2><h3 id="冷启动实现方案概述"><a href="#冷启动实现方案概述" class="headerlink" title="冷启动实现方案概述"></a>冷启动实现方案概述</h3><p>qzone：单独放一个帮助类在 dex 中让其他类调用，阻止类被打上 CLASS_ISPREVERIFIED 标志，最后加载补丁 dex 得到 dexFile 对象作为参数构建一个 Element 对象插入到 dexElements 数组最前面。没有合成完整包，产物小。Dalvik 下影响类加载性能，Art 下类地址写死，导致必须包含引用，补丁包大。<br>Tinker：提供 dex 差量包，整体替换 dex 方案。差量得到 patch.dex 与 classes.dex 合并得到完整dex，替换原来的 dexElements 数组。补丁包小，dex merge完成合并操作，不影响性能 dex 消耗在 vm heap 上，容易 OOM，导致合并失败。</p>
+<p>dex merge ：<br>在 java 层面的，所有对象分配都是在 java heap 上，如果此时进程申请的 java heap 对象超过了 vm heap 的大小，那么进程可能会发生 OOM，导致合成失败。另外在 jni 层面 C++ new/malloc 申请的内存分配在 native heap 中，native heap 的增长并不受 vm heap 大小限制，如果 ram 不足也会被杀死闪退。如果从 dex merge 方面思考，只在 jni 层面进行 dex merge，可以提高 dex 合并成功率，避免 OOM。</p>
+<h3 id="插桩实现前因后果"><a href="#插桩实现前因后果" class="headerlink" title="插桩实现前因后果"></a>插桩实现前因后果</h3><p>加载一个 dex 文件到本地内存的时候，如果不存在 odex 文件，那么首先会执行 dexopt，dexopt 的入口在 dalvik/opt/OptMain.cpp 的 main 方法中，最后调用 verifyAndOptimizeClass 执行真正的 verify/optimize 操作。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">verifyAndOptimizeClass</span><span class="params">(....)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (doVerify) &#123;</span><br><span class="line">             <span class="keyword">if</span> (dvmVerifyClass(clazz)) &#123;</span><br><span class="line">                      ( (DexClassDef*) pClassDef) -&gt; accessFlags |= CLASS_ISPREVERIFIED;            </span><br><span class="line">                      verified = <span class="keyword">true</span>;</span><br><span class="line">             &#125;        </span><br><span class="line">        &#125;</span><br><span class="line">       </span><br><span class="line">        <span class="keyword">if</span> (doOpt) &#123;</span><br><span class="line">              bool needVerify = (gDvm.dexOptMode == OPTIMIZE_MODE_VERIFIED || gDvm.dexOptMode == OPTIMIZE_MODE_FULL);</span><br><span class="line">              <span class="keyword">if</span> (!verified &amp;&amp; needVerify() &#123;</span><br><span class="line">                    ....</span><br><span class="line">              &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    dvmOptimizeClass(clazz, <span class="keyword">false</span>);</span><br><span class="line">                    ( (DexClassDef*)pClassDef) -&gt;accessFlags |= CLASS_ISOPTIMIZED;</span><br><span class="line">              &#125;        </span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>apk 第一次安装的时候，会对原 dex 执行 dexopt，假如只有一个 dex，所以 dvmVerifyClass(clazz) 结果为 true。所以 apk 中所有的类都会被打上 CLASS_ISPREVERIFIED 标志，接下来执行 dvmOptimizeClass，接着被打上 CLASS_ISOPTIMIZED 标志。</p>
+<ul>
+<li>dvmVerifyClass：类校验，防止类被篡改，校验类的合法性。如果所有的类的所有方法中直接引用到的类（第一层）和当前类在同一个 dex 中的话，dvmVerifyClass 会返回 true。</li>
+<li>dvmOptimizeClass：类优化，把部分指令优化成虚拟机内部指令，比如 invoke- 变成 invoke–quick，quick 指令从类的 vtable 表中直接取，vtable 是类的所有方法的一张大表，加快执行速率。<br>假如 A 类是补丁类，所以补丁 A 类在单独的 dex 中，类 B 中某个方法引用到类 A，所以此时会解析类 A :<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ClassObject * dvmResolveClass( ... ) &#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="comment">// 如果类被打上了 CLASS_ISPREVERIFIED 标志</span></span><br><span class="line">        <span class="keyword">if</span> ( !fromUnverifiedConstant &amp;&amp; IS_CLASS_FLAG_SET(referrer, CLASS_ISPREVERIFIED)) &#123;</span><br><span class="line">                <span class="keyword">if</span> (referrer -&gt; pDvmDex != resClassCheck -&gt; pDvmDex &amp;&amp; resClassCheck -&gt; classLoader != <span class="keyword">null</span> ) &#123;</span><br><span class="line">                    dvmThrowIllegalAccessError(<span class="string">"Class ref in pre-verified class resolved to unexpected implementation"</span>);</span><br><span class="line">                    <span class="keyword">return</span> NULL;</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>由于类 B 被打上了 CLASS_ISPREVERIFIED 标志，接下来 referrer 是类 B，resClassCheck 是补丁类 A，他们属于不同的 dex，所以 dvmThrowIllegalAccessError。为了解决这个问题，一个单独无关帮助类放在一个单独的 dex 中，原 dex 中所有类的构造函数都引用这个类，一般实现方法都是侵入 dex 打包流程，利用 .class 字节码修改技术，在所有 .class 文件的构造函数中引入这个帮助类，插桩由此而来。又由于 dvmVerifyClass 类校验返回 false，原 dex 中所有类都没有 CLASS_ISPREVERIFIED 标志，因此解决运行时的这个异常。<br>但是插桩会带来严重的效率问题，在 Dalvik 虚拟机中，一个类的加载一般分为三个阶段：dvmResolveClass -&gt; dvmLinkClass -&gt; dvmInitClass。dvmInitClass 阶段在类解析完毕开始初始化，这个方法主要完成父类的初始化，当前类的初始化，static 变量初始化赋值等。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">dvmInitClass</span><span class="params">(ClassObject* clazz)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (clazz -&gt; status &lt; CLASS_VERIFIED) &#123; <span class="comment">// 如果类还未打上 CLASS_ISPREVERIFIED 标志</span></span><br><span class="line">            clazz -&gt; status = CLASS_VERIFYING;</span><br><span class="line">            <span class="keyword">if</span> (!dvmVerifyClass(clazz)) &#123;</span><br><span class="line">                ...</span><br><span class="line">            &#125;</span><br><span class="line">            clazz -&gt; status = CLASS_VERIFIED;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 如果类还没打上 CLASS_ISOPTIMIZED 标志</span></span><br><span class="line">        <span class="keyword">if</span> (!IS_CLASS_FLAG_SET(clazz, CLASS_ISOPTIMIZED) &amp;&amp; !gDvm.optimizing) &#123;</span><br><span class="line">            dvmOptimizeClass(clazz, essentialOnly);</span><br><span class="line">            SET_CLASS_FLAG(clazz, CLASS_ISOPTIMIZED);</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>类在初始化时，如果类未被打上 CLASS_ISPREVERIFIED/CLASS_ISOPTIMIZED 标志，那么会进行 verify 和 optimize 操作。正常情况下，这两个操作是在 apk 第一次安装执行 dexopt 进行的，而类的 verify 是很重的，会对所有方法的所有指令进行校验，如果同时加载大量类的话，耗时会被放大，影响效率了。</p>
+<h3 id="插桩导致类加载性能影响"><a href="#插桩导致类加载性能影响" class="headerlink" title="插桩导致类加载性能影响"></a>插桩导致类加载性能影响</h3><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2017/07/代码热修复探究-Part1/dexopt.jpg" alt="dexopt过程" title="">
+                </div>
+                <div class="image-caption">dexopt过程</div>
+            </figure>
+<p>如果采用插桩所有类非 preverify，导致 verify 和 optimize 会在加载类时出发。经过数据测试发现，平均每个类 verify + optimize 耗时并不长，而且每个类只会有一次，但应用启动时同时加载大量类，容易白屏。</p>
+<h3 id="避免插桩的-QFix-方案"><a href="#避免插桩的-QFix-方案" class="headerlink" title="避免插桩的 QFix 方案"></a>避免插桩的 QFix 方案</h3><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2017/07/代码热修复探究-Part1/skip_dvmResolveClass.png" alt="dvmResolveClass绕过" title="">
+                </div>
+                <div class="image-caption">dvmResolveClass绕过</div>
+            </figure>
+<p>想让 dvmDexGetResolvedClass 返回不为 null，只需调用过一次 dvmDexSetResolvedClass(pDvmDex, classIdx, resClass); 就行，举个例子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">B</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">               A.a();</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>需要 patch 的是类 A，所以类 A 被打入到独立的 dex 中。当执行到类 B 的 test 方法时，会去解析类 A，此时 dvmResolveCLass(const ClassObject* referrer, u4 classIdx, bool fromUnverifiedConstant) :</p>
+<ul>
+<li>referrer：实际上是类 B</li>
+<li>classIdx：类 A 在原 dex 文件结构的索引 id</li>
+<li>fromUnverifiedConstant：是否 const-class/instance-of 指令<br>此时调用 A 的静态 a 方法，invoke-static 指令不属于 const-class/instance-of 任意一个。不做处理的话，dvmDexGetResolvedClass 一开始是 null 的，然后 A 从补丁 dex 解析加载，B 是在原 dex 中，A 在补丁dex 中，所以 B -&gt; pDvmDex != A -&gt; pDvmDex，接下来抛异常。所以需要修改的地方在于，一开始的时候，把补丁 A 类添加到原来 dex(pDvmDex) 的 pResClasses 数组中。具体实现：</li>
+<li>preResolveClz：需要 patch 的类 A 描述符，为了调试加上而已；</li>
+<li>refererClz：需要 patch 的类 A 所在 dex 的人和一个类描述符，不限定必须是引用补丁类 A 的某个类，实际上只要是同一个 dex 任何一个即可。</li>
+<li>classIdx：需要 patch 的类 A 在原 dex 文件中的索引 id。<br>然后通过 dlopen 拿到 libdvm.so 库的句柄，再通过 dlsym 拿到 so 库的 dvmResolveClass/dvmFindLoadedClass 函数指针。首先需要预加载引用类 android/support/annotation/AnimRes，这样 dvmFindLoadedClass(“android/support/annotation/AnimRes”) 才不会为 null ， dvmFindLoadedClass 执行结果得到的 ClassObject 作为第一个参数执行 dvmResolveClass(AnimRes, 2425, true) 即可。看看解决方案：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">jboolean <span class="title">resolveColdPatchClasses</span><span class="params">(JNIEnv *env, jclass clz, jstring preResolveClz, jstring refererClz, jlong classIdx, <span class="keyword">dexstuff_t</span> *dexstuff)</span> </span>&#123;</span><br><span class="line">     <span class="comment">// 先调用 dvmFindLoadedClass</span></span><br><span class="line">    ClassObject *refererObj = dexStuff-&gt;dvmFindLoadedClass_fnPtr(JString2CStr(env, refererClz));</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">strlen</span>(refererObj-&gt;descriptor) == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> JNI_FALSE;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 再调用 dvmResolveClass</span></span><br><span class="line">    ClassObject *resolveClass = dexStuff -&gt; dvmResolveClass_fnPtr(refererObj, classIdx, <span class="literal">true</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">strlen</span>(resolveClass-&gt;descriptor) == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> JNI_FALSE;    </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> JNI_TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>无需 hook 系统方法，直接在 native 层调用，无需插桩，需要注意的是：</p>
+<ul>
+<li>dvmResolveClass 的第三个参数 fromUnverifiedConstant 必须为 true；</li>
+<li>apk 多 dex 情况下，dvmResolveClass 第一个参数 referrer 类必须跟需要 patch 的类在同一个 dex，但是无需存在引用关系，任何一个在同一个 dex 中的类都可以作为 referer；</li>
+<li>referer 类必须提前加载；<br>然而 QFix 方案是在 dexopt 后进行绕过的，dexopt 会改变原先的很多逻辑，许多 odex 层面的优化会写死字段和方法的访问便宜，会导致严重的 BUG。</li>
+</ul>
+<h3 id="Art-下冷启动实现"><a href="#Art-下冷启动实现" class="headerlink" title="Art 下冷启动实现"></a>Art 下冷启动实现</h3><p>为了减少补丁包的大小，并没有为热部署和冷启动分别准备补丁，而是同一个热部署模式下的补丁能降级走冷启动，所以无需 dex merge。为了解决 Art 下类地址写死的问题， tinker 通过 dex merge 一个新的完整新 dex 替换就的 dexElements 数组。但事实上，Art 虚拟机默认支持多 dex 加载了。来具体分析 DexFile.loadDex 把一个 dex 文件解析到加载到 native 内存都发生了什么，都是调用了 DexFile.openDexFileNative 这个 native 方法。openDexFileNative -&gt; dvmJarFileOpen：<br>Dalvik 下：<br>static const char* kDexInJarName = “classes.dex”，明显 Dalvik 尝试加载一个压缩文件只会把 classes2.dex 加载到内存，如果存在着多 dex，那么会被忽略掉。<br>Art 下：<br>DexFile_openDexFileNative -&gt; openDexFilesFromOat -&gt;LoadDexFiles：<br>Art 下面可以看到默认支持加载多 dex，优先加载 primary dex，即 classes.dex，后续加载其他dex。所以得到的 Art 下冷启动方案：把补丁命名为 classes.dex，原 APK 中的 dex 一次名为 classes(2,3,4..）.dex 就好，然后一起打包成一个压缩文件。然后 DexFile.loadDex 得到 DexFile 对象，最后把 DexFile 对象替换旧的 dexElements 数组就好。<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2017/07/代码热修复探究-Part1/tinker_new_sol.png" alt="新的Art下补丁包方案" title="">
+                </div>
+                <div class="image-caption">新的Art下补丁包方案</div>
+            </figure><br>需要注意的是：</p>
+<ul>
+<li>补丁 dex 必须命名为 classes.dex；</li>
+<li>loadDex 得到的 DexFile 完整替换掉 dexElements 数组而不是插入；</li>
+</ul>
+<h3 id="其他点"><a href="#其他点" class="headerlink" title="其他点"></a>其他点</h3><p>DexFile.loadDex 尝试把一个 dex 文件解析并加载到 native 内存，在加载到 native 内存之前，如果 dex 不存在对应的 odex，那么 Dalvik 下会执行 dexopt，Art 下会执行 dexoat，最后得到的都是优化后的 odex，实际上虚拟机执行的也是 odex 而不是 dex。<br>如果 dex 足够大，那么 dexopt/dexoat 是很耗时的，Dalvik 影响比较小，因为 loadDex 仅仅是补丁包，但 Art 影响还是很大的，因为 loadDex 是补丁 dex 和原 dex 合并成的完整压缩包，所以 dexoat 非常耗时，所以如果优化后的 odex 没生成完整的 odex 时，会一直阻塞主线程。<br>所以，我们可以把 loadDex 当做一个事务来看，如果被打断，则删除 odex 文件，重启的时候发现存在 odex 文件，loadDex 完后，反射注入 dexElemens 数组，实现 patch，如果不存在 odex 文件，则重启子线程 loadDex，重启后再生效。再者为了安全性考虑，我们再虚拟机执行 odex 的时候，还需要对 odex 文件进行 md5 完整性校验，如果不匹配，重新生成 odex 文件。</p>
+<h3 id="完整方案考虑"><a href="#完整方案考虑" class="headerlink" title="完整方案考虑"></a>完整方案考虑</h3><p>Dalvik 下采用全量 dex 方案，Art 下，由于默认支持多 dex 加载， 把补丁dex 作为主dex加载。</p>
+<h2 id="多态对冷启动类加载影响"><a href="#多态对冷启动类加载影响" class="headerlink" title="多态对冷启动类加载影响"></a>多态对冷启动类加载影响</h2><h3 id="重新认识多态"><a href="#重新认识多态" class="headerlink" title="重新认识多态"></a>重新认识多态</h3><p>实现多态的技术叫做动态绑定，指在执行期间判断引用对象的实际类型，根据其实际类型调用相应方法。一般指非静态非 private 方法，field 和 静态方法不具有多态性。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A b = <span class="keyword">new</span> B()；</span><br></pre></td></tr></table></figure></p>
+<p>我们来分析下一个多态对象的实现，B 是 A 的子类，在执行 new 实例化 B 之后，尝试加载类 B，方法调用链 dvmResolveClass -&gt; dvmLinkClass -&gt; createVtable，此时类 B 创建一个 vtable，其实虚拟机中加载每个类都会为这个类生成一张 vtable 表，vtable 表就是当前类所有 virtual 方法的一个数组，当前类和所有继承父类的 public/protected/default 修饰的方法是可以被继承的。 private static 不属于。也就是说子类 vtable 的大小，等于子类 virtual 方法数 + 父类 vtable 大小：</p>
+<ul>
+<li>整个复制父类 vtable 到子类的 vtable；</li>
+<li>遍历子类的 virtual 方法集合，如果方法原型一致，说明是重写父类方法，子类重写方法覆盖掉 vtable 中父类方法；</li>
+<li>方法原型一致，则追加到 vtable 末尾；<br>如果父类A，vtable 为 vtable[0]=A.a_t1，vtable[1]=A.a_t2，那么子类B vtable为 vtable[0] = B.a_t1，vtable[1] = A.a_t2 ，vtable[2] =B.b_t1；而 field/static 为啥不具有多态性，是因为当前遍历的引用类型查找而不是从实际类型中查找，如果找不到父类才会递归查找。</li>
+</ul>
+<h3 id="冷启动方案限制"><a href="#冷启动方案限制" class="headerlink" title="冷启动方案限制"></a>冷启动方案限制</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test_addMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            A obj = <span class="keyword">new</span> A();</span><br><span class="line">            obj.a_t2();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">void</span> a_t1 -&gt; print <span class="string">"a_t1"</span>;</span><br><span class="line">        <span class="keyword">void</span> a_t2 -&gt; print <span class="string">"a_t2"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修复后新增了 a_t1 方法，运行后发现输出的竟然是 “a_t1”，重新分析下原因：<br>dex 文件第一次加载的时候会进行 dexopt，包含了两个过程：verify + optimize；其中 optimize 过程指在优化虚拟机指令，重写 invoke-virtual 为 invoke-virtual-quick，紧接着跟着立即数，就是方法在 vtable 的索引值。<br>invoke-virtual-quick 相比 invoke-virtuak 效率更高，直接从实际类型 vtable 取，省去了 dvmResolveMethod 从变量引用类型到 vtable 索引 id的过程。所以可以理解错乱的原因是因为，在 odex 中，调用此方法的立即数对应了 patch 后的 a_t1 方法。</p>
+<h3 id="终极解决方案"><a href="#终极解决方案" class="headerlink" title="终极解决方案"></a>终极解决方案</h3><p>由于多态的影响，QFix 无法进一步实施，可能也只能像 tinker 一样完整 dex 方案解决了。利用 google 已经开源的 dexmerge 方案，把补丁 dex 和原 dex 合并才完整的 dex，但也要考虑到 65535 方法数异常，内存不足导致失败，毕竟完整的 dex 合成在移动端进行还是相对复杂的。</p>
+<h2 id="Dalvik下完整-DEX-方案的探索"><a href="#Dalvik下完整-DEX-方案的探索" class="headerlink" title="Dalvik下完整 DEX 方案的探索"></a>Dalvik下完整 DEX 方案的探索</h2><h3 id="冷启动类加载修复"><a href="#冷启动类加载修复" class="headerlink" title="冷启动类加载修复"></a>冷启动类加载修复</h3><p>最早的实现方案是 Q-Zone 提出的 dex 插入方案，主要思想是，插入新 dex 到 ClassLoader 索引路径的最前面，这样在 load 一个 class 的时候，会被优先找到补丁中的。Tinker 和 QFix 在此基础上做了改进，但遇到的共同的问题都是，如何解决在 Dalvik 下类的 pre-verify 问题。<br>比较三大框架：</p>
+<ul>
+<li>Q-Zone 处理方式是，在每个类中插入一个来自其他 dex 的 hack.class，由此让所有类都无法满足 pre-verified 条件；</li>
+<li>Tinker 的方式，合成全量 Dex 文件，这样所有 class 都在全量 dex 中解决，消除 class 重复带来的冲突；</li>
+<li>QFix 的方式，取得虚拟机中某些底层函数，提前 resolve 所有补丁类，绕过 pre-verify 检查；<br>总结可以发现，Q-Zone 方案会侵入打包流程，实现并不优雅，而 QFix 方案需要获取底层虚拟机函数，不够稳定可靠，而且比较大的问题是无法新增 public 函数。现在看来 Tinker 全量合成完整新 dex 是个不错的方案，但是缺点在于粒度过细，实现复杂，性能消耗严重。</li>
+</ul>
+<h3 id="新的全量-Dex-方案"><a href="#新的全量-Dex-方案" class="headerlink" title="新的全量 Dex 方案"></a>新的全量 Dex 方案</h3><p>思路就是原来的 dex 和 patch 里的 dex 重新合并成一个，对于补丁中变动的类，把原来基线包 dex 里面的已有的 class 去掉，也就是补丁 + 去除补丁类的基线包。<br>在 Android 原生的 multi-dex 中，把一个 apk 所有类拆分成 classes.dex、classes2.dex … classesN.dex，每个 dex 只包含了部分类的定义，但单个 dex 也是可以加载的，只要把所有的 dex 都 load 进去，本 dex 中不存在的类就可以在运行期间在其他 dex 中找到。<br>在基线包 dex 里面在去掉了补丁 class 后，基线包 dex 里就只包含不变的 class ，而这些不变的 class 要用到补丁中新 class 时会自动找到补丁dex，补丁包新 class 在需要用到不变的 class 时也会找到基线包 dex 的 class，这样的话，基线包里面不使用补丁类的 class 仍旧可以按照原来的逻辑做 odex ，最大化保证 dexopt 效果。<br>这样的话，我们不再需要像传统合成的思路判断类的增加和修改情况，而且也不需要处理合成时方法数超过的情况，对于 dex 结构也不需要破坏性重构，已经完全把问题简化为了如何在基线包 dex 里面去掉补丁包包含的所有类。<br>观察 DexHeader 结构体，可以取得 dex 的各个属性，取得 class_defs 属性，在我们解析这个 dex 的时候，移除定义的入口，而对于 Class 的具体内容不进行删除，可以最大可能地减少 offset 的修改。一个类所有的 DexClassDef ，也就是类定义，是从 pHeader-&gt;classDefsOff 偏移处开始的，一个接一个地线性排列，一个 dex 里面一共有 pHeader -&gt; classDefsSie 这个类定义。这样我们这可以找到 pHeader-&gt;classDefsOff 偏移处，一个个遍历所有 DexClassDef，如果 DexClassDef 的类名包含在我们补丁中就把它移除。<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2017/07/代码热修复探究-Part1/header_classesdef_remove.png" alt="Dex 中 ClassDef 的移除" title="">
+                </div>
+                <div class="image-caption">Dex 中 ClassDef 的移除</div>
+            </figure><br>接着只要修改 pHeader-&gt;classDefsSize，变成去除补丁类之后的数目即可。而对于类的实体及其他 dex 信息不做移除，这样会把这个被移除类的无用信息残留在 dex 中，并不会有多大影响。</p>
+<h3 id="对于-Application-处理"><a href="#对于-Application-处理" class="headerlink" title="对于 Application 处理"></a>对于 Application 处理</h3><p>Application 作为 app 的入口，在进入到替换完整的 dex 之前，一定会通过 Application 的代码，因此，Application 必然是加载在原来的老 dex 里面，只有在补丁加载后使用的类，会在新的完整 dex 里面找到。因此在加载补丁后，如果 Application 类使用了新 dex 里的类，由于不在同一个 dex ，如果 Application 被打上了 pre-verified 标志，会抛异常：java.lang.IllegalAccessError：Class ref in pre-verified class resolved unexpected implementation. 解决方法为清除 pre-verified 标志，类的标志位于 ClassObject 的accessFlags 成员，而 pre-verified 标志定义是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CLASS_ISPREVERIFIED = (1&lt;&lt;16) // class has been pre-verified.</span><br></pre></td></tr></table></figure></p>
+<p>因此只需要在 jni 层清楚掉它即可：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clazzObj -&gt; accessFlags &amp;= ~CLASS_ISPREVERIFIED;</span><br></pre></td></tr></table></figure></p>
+<p>这样在 dvmResolveClass 找到了新 dex 里的类后，由于 CLASS_ISPREVERIFIED 标志被情况，所以不会判断所在 dex 是否相同，从而成功避免抛出异常。对于这个问题，看看其他方案的做法。<br>Tinker 在 AndroidManifest.xml 声明中要求开发者将自己的 Application 直接替换成 TinkerApplication，而真正的 Application，要在初始化 TinkerApplication 作为参数传入，这样 TinkerApplication 会接管这个传入的 Application，在生命周期回调时通过反射的方式调用实际 Application 的相关逻辑，但接入成本高。<br>Amigo 是在编译过程中，用自定义的 gradle 插件将 app 的 Application 替换成 Amigo 的另一个 Application，并且将原来的 Application 的 name 保存起来，在修复完成之后再调用之前保存的 Application 的 attach(context)，然后将它设回到 loadedApk 中，最后调用其 onCreate()，执行原来 Application 中的逻辑。其实掩耳盗铃，对系统反射替换存在着稳定性的风险。</p>
+<h3 id="dvmOptResolveClass-问题与对策"><a href="#dvmOptResolveClass-问题与对策" class="headerlink" title="dvmOptResolveClass 问题与对策"></a>dvmOptResolveClass 问题与对策</h3><p>上面的清除标志方案并不顺利，在开发工程中，发现如果入口 Application 没有 pre-verified ，反而更有问题。问你是，Dalvik 虚拟机如果发现某个类没有 pre-verified，就会在初始化这个类的时做 verified 操作，这将扫描这个类的所有代码，在扫描过程中对这个类代码里使用到的类都要进行 dvmOptResolveClass 操作。dvmOptResolveClass 会在 Resolve 的时候对使用到的类进行初始化，在一个 app 生命周期中，没有可能比 Application 初始化更早的时期了。<br>在多 dex 时，无法保证 Application 的用到的类和它处在同一个 dex 中，如果只有一个 dex，一般不会有问题。<br>多 dex 中要解决这个问题：</p>
+<ul>
+<li>第一种办法，让 Application 用到的所有非系统类和 Application 位于同一个 dex 里，这样保证 pre-verified 标志被打上，避免进入 dvmOptResolveClass，而在补丁加载完后，再清除 pre-verified 标志，保证使用其他类不会报错；</li>
+<li>第二种办法，让 Application 里面除了热修复框架代码以外的其他代码都单独放在一个其他类里面，这样使得 Application 不会直接用到过多非系统类，这样保证这个单独拿出来的类和 Application 处于同一个 dex 的几率还是比较大的，如果更保险的方式，Application 可以采用反射方式访问这个类，这样彻底把 Application 和其他类隔绝开。</li>
+</ul>
+<p>第一种方法实现，官方 multi-dex 机智就是自动将 Application 用到的类都打包到主 dex 中，因此只要把热修复初始化放在 attachBaseContext 最前面就没有问题了。但是第二种可以一劳永逸地解决问题。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<ol>
+<li>阿里Android热修复技术原理.pdf</li>
+</ol>
+</blockquote>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+
+        
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2017/07/代码热修复探究-Part1/" target="_blank" rel="external">https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://hjw541988478.github.io">
+            <img src="/img/avatar.jpg" alt="Garvin">
+            Garvin
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CodeHotFix/">CodeHotFix</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HoxFix/">HoxFix</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/&title=《代码热修复探究(Part1)》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/&title=《代码热修复探究(Part1)》 — Garvin 杂记&source=热修复技术介绍代码修复技术底层替换：已经加载的类直接替换原有方法，由于修改了原来的类，导致方法数的变化，索引无法正常工作，不稳定，可能产生无法预知的结果；..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《代码热修复探究(Part1)》 — Garvin 杂记&url=https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/07/资源热修复探究-Part2/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">资源热修复探究(Part2)</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/07/Android基础之Activity/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Android基础之Activity</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "Av3sk2Q4QhL7up87ziVVSeeS-gzGzoHsz",
+            appKey: "hVI7cltsWA2q1fvsUNRWEJ4e",
+            avatar: "retro",
+            placeholder: "Just go go",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Garvin &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/&title=《代码热修复探究(Part1)》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/&title=《代码热修复探究(Part1)》 — Garvin 杂记&source=热修复技术介绍代码修复技术底层替换：已经加载的类直接替换原有方法，由于修改了原来的类，导致方法数的变化，索引无法正常工作，不稳定，可能产生无法预知的结果；..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《代码热修复探究(Part1)》 — Garvin 杂记&url=https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2017/07/代码热修复探究-Part1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsElEQVR42u3aQU5jMRAE0Nz/0sx2JAip6rYDQu+vEAHb7yPZprofj/j5ePL8/+n+J/MZDz94eHh4h5b+bCmfF5qM+fnTZPb2JX6xKjw8PLxrvGdL/H7oZ99JkPtD5fvR8PDw8H4nrz0wknmffYqHh4f3V3nJwZBctZMR8PDw8H6W12737YU7X+4+wsDDw8O7zWuvv7/h6yv1PTw8PLx1VT25EOcl/3aW/Zh4eHh4N3j5hpsgNw0H+Wtq14mHh4d3jzcr0uexxaxgloQUL9aMh4eHd5TXbr5tW0C7uP0V/7E5W/Dw8PDSkYsUtF1W/hI3xa1h1IuHh4e3vkznU7bL2jccDI8oPDw8vMu8pLkqx8+28vZQiUpfeHh4eNd4SZjbTpzHvsNA4fvx8fDw8C7w2hLX/kqdHD+z6/WLrBoPDw/vKG8/aH5Rbn9rMwIeHh7ePV5yMLTNWG20MWsjiP4weHh4eEd57fT5xp3HvnkIklzri5s7Hh4e3po3a3tqW7Jmx0Ay14sTDw8PD+8Qb9YckOP3LV9tEFwXwPDw8PAO8fJtug0UkjaCJBApWhDw8PDwjvJuRw+bItk+/MXDw8O7zcuPh/3mnmz6UdCQF8Dw8PDwjvLabXd2hJwKJuoCGB4eHt5R3tkmp3xxbYmrPX6+yFrw8PDwLvD21fZZQ1V7Xc4DETw8PLz38JIFtVFsPkLCzl8KHh4e3jt5+TT5dXkW/j7K54vfwsPDwzvK+yif/etoY99N5IGHh4d3g9duuPkQpxoI9q8SDw8P7wavPQxmwevsJc4aCPDw8PDew2tbqfLS/r4MlgcQL7IWPDw8vB/izbbyWWBxoAUBDw8P7xfwZtlGHs4msCIcwcPDw7vGmw2aMNrYNxm/Phjw8PDwjvJm//Cfuoi3BbMVAw8PD2/L+weAMe9kFjBOOAAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1274482147&web_id=1274482147')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

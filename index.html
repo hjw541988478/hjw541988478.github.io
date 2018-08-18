@@ -17,6 +17,8 @@
     <title>Garvin 杂记</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
+    <meta name="theme-color" content="#3F51B5">
+    
     
     <meta name="keywords" content="">
     <meta property="og:type" content="website">
@@ -29,8 +31,8 @@
     
         <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/">
-    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
     <script>window.lazyScripts=[]</script>
 
     <!-- custom head -->
@@ -46,19 +48,47 @@
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap" style="background-image:url(/)">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
         <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/">
+          <img src="/img/avatar.jpg">
         </a>
         <hgroup class="introduce">
           <h5 class="nickname">Garvin</h5>
-          <a href="mailto:undefined" class="mail">
+          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
         </hgroup>
       </div>
     </div>
     <div class="scroll-wrap flex-col">
       <ul class="nav">
+        
+            <li class="waves-block waves-effect active">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                存档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
         
       </ul>
     </div>
@@ -73,6 +103,20 @@
         </a>
         <div class="flex-col header-title ellipsis">Garvin 杂记</div>
         
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
         
     </div>
 </header>
@@ -125,13 +169,13 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        问题https://leetcode.com/problems/4sum/description/
-Given an array nums of n integers and an integer target, are there elements a, b, c, and d in nums such that a + b + c + d = target? Find all unique quadruplets in the array which gives the sum of target.
-Note:
-The solution set must not contain duplicate quadruplets.
-Example:
-Given array nums = [1, 0, -1, 0, -2, 2], and target = 0.
-A solution set is:[  [-1,  0, 0, 1],  [-2, -1, 1, 2],  [-2,  0, 0, 2]]
+        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><a href="https://leetcode.com/problems/4sum/description/" target="_blank" rel="noopener">https://leetcode.com/problems/4sum/description/</a></p>
+<p>Given an array nums of n integers and an integer target, are there elements a, b, c, and d in nums such that a + b + c + d = target? Find all unique quadruplets in the array which gives the sum of target.</p>
+<p>Note:</p>
+<p>The solution set must not contain duplicate quadruplets.</p>
+<p>Example:</p>
+<p>Given array nums = [1, 0, -1, 0, -2, 2], and target = 0.</p>
+<p>A solution set is:<br>[<br>  [-1,  0, 0, 1],<br>  [-2, -1, 1, 2],<br>  [-2,  0, 0, 2]<br>]<br></p>
     
 
         <a href="/2018/08/18-4Sum/" class="post-more waves-effect waves-button">
@@ -178,11 +222,11 @@ A solution set is:[  [-1,  0, 0, 1],  [-2, -1, 1, 2],  [-2,  0, 0, 2]]
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        问题https://leetcode.com/problems/3sum-closest/description/
-Given an array nums of n integers and an integer target, find three integers in nums such that the sum is closest to target. Return the sum of the three integers. You may assume that each input would have exactly one solution.
-Example:
-Given array nums = [-1, 2, 1, -4], and target = 1.
-The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
+        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><a href="https://leetcode.com/problems/3sum-closest/description/" target="_blank" rel="noopener">https://leetcode.com/problems/3sum-closest/description/</a></p>
+<p>Given an array nums of n integers and an integer target, find three integers in nums such that the sum is closest to target. Return the sum of the three integers. You may assume that each input would have exactly one solution.</p>
+<p>Example:</p>
+<p>Given array nums = [-1, 2, 1, -4], and target = 1.</p>
+<p>The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).<br></p>
     
 
         <a href="/2018/08/16-3Sum-Closet/" class="post-more waves-effect waves-button">
@@ -229,9 +273,15 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        模式介绍模式定义确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。
-使用场景确保某个类只有一个对象的场景，例如日志类，访问 IO 和数据库资源。
-UML图
+        <h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><h3 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h3><p>确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>确保某个类只有一个对象的场景，例如日志类，访问 IO 和数据库资源。</p>
+<h2 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h2><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2017/08/设计模式之单例模式/singleton.png" alt="单例模式UML图" title="">
+                </div>
+                <div class="image-caption">单例模式UML图</div>
+            </figure>
     
 
         <a href="/2017/08/设计模式之单例模式/" class="post-more waves-effect waves-button">
@@ -278,7 +328,13 @@ UML图
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        概述
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2017/07/设计模式之七大基本原则/designpattern_index.png" alt="七大原则" title="">
+                </div>
+                <div class="image-caption">七大原则</div>
+            </figure>
     
 
         <a href="/2017/07/设计模式之七大基本原则/" class="post-more waves-effect waves-button">
@@ -325,15 +381,15 @@ UML图
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        SO 库加载原理Java 提供两个接口加载 so 库：
-
-System.loadLibrary(String libName)：参数为so库名称，位于 apk 压缩文件中的 libs 目录，最后复制到 apk 安装目录下；
-System.load(String pathName)：参数为 so 库在磁盘中完整的路径，可以加载自定义外部 so 库文件；其实最终都会调用 nativeLoad 这个 native 方法，这个方法参数为 so 库在磁盘中完整路径名。在 JNI 编程中，动态注册的 native 方法必须实现 JNI_OnLoad 方法，同时实现一个 JNINativeMethod[ ] 数组，静态注册的 native 方法必须是 Java+类完整路径+方法名 的格式。
-12native void test() -&gt;(JNI_OnLoad nativeMethods[] 匹配映射) -&gt; 动态注册 void test(env,jobject);native void test() -&gt;(1. test第一次执行dvmResolvedNativeCass 2. hashtable中查找匹配findMethodInLib) -&gt; 静态注册 void Java_包名_类名_test(env,jobject);
-
-动态注册的 native 方法映射通过加载 so 库过程中调用 JNI_OnLoad 方法调用完成；
-
-静态注册的 native 方法映射在 native 方法第一次执行的时候完成映射，当然前提是 so 库已经 load 过。
+        <h2 id="SO-库加载原理"><a href="#SO-库加载原理" class="headerlink" title="SO 库加载原理"></a>SO 库加载原理</h2><p>Java 提供两个接口加载 so 库：</p>
+<ul>
+<li><code>System.loadLibrary(String libName)</code>：参数为so库名称，位于 apk 压缩文件中的 libs 目录，最后复制到 apk 安装目录下；</li>
+<li><p><code>System.load(String pathName)</code>：参数为 so 库在磁盘中完整的路径，可以加载自定义外部 so 库文件；<br>其实最终都会调用 nativeLoad 这个 native 方法，这个方法参数为 so 库在磁盘中完整路径名。在 JNI 编程中，动态注册的 native 方法必须实现 JNI_OnLoad 方法，同时实现一个 JNINativeMethod[ ] 数组，静态注册的 native 方法必须是 Java+类完整路径+方法名 的格式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">native</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> -&gt;<span class="params">(JNI_OnLoad nativeMethods[] 匹配映射)</span> -&gt; 动态注册 <span class="keyword">void</span> <span class="title">test</span><span class="params">(env,jobject)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">native</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> -&gt;<span class="params">(<span class="number">1.</span> test第一次执行dvmResolvedNativeCass <span class="number">2.</span> hashtable中查找匹配findMethodInLib)</span> -&gt; 静态注册 <span class="keyword">void</span> Java_包名_类名<span class="title">_test</span><span class="params">(env,jobject)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>动态注册的 native 方法映射通过加载 so 库过程中调用 JNI_OnLoad 方法调用完成；</p>
+</li>
+<li>静态注册的 native 方法映射在 native 方法第一次执行的时候完成映射，当然前提是 so 库已经 load 过。</li></ul>
     
 
         <a href="/2017/07/SO库热修复探究-Part3/" class="post-more waves-effect waves-button">
@@ -380,12 +436,12 @@ System.load(String pathName)：参数为 so 库在磁盘中完整的路径，可
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        资源热修复原理InstantRun分两步
-构造新的 AssetManager，并反射调用 addAssetPath，把完整资源包加入到 AssetManager 中，这样得到一个含有所有新资源的 AssetManager；
-找到所有之前引用到原有 AssetManager 地方，通过反射，把引用处替换为新的 AssetManager；addAssetPath 在 native 层由 c++ 实现，通过传入资源包路径，先得到 resources.arsc，然后解析它的格式，存放在底层的 AssetManager 的 mResources 成员中：1mutable ResTable* mResources;
-
-
-mResources 是一个 ResTable 结构体，其成员 mPackageGroups 为资源包的实体，包含所有解析过的资源包的集合，任何一个资源包都含有 resources.arsc，它记录了所有资源 id 分配情况以及资源中的所有字符串，以二进制形式存储，底层的AssetManager就是用来解析这个文件，把相关信息存储到 mPackageGroups 中。
+        <h2 id="资源热修复原理"><a href="#资源热修复原理" class="headerlink" title="资源热修复原理"></a>资源热修复原理</h2><h3 id="InstantRun分两步"><a href="#InstantRun分两步" class="headerlink" title="InstantRun分两步"></a>InstantRun分两步</h3><ol>
+<li>构造新的 AssetManager，并反射调用 addAssetPath，把完整资源包加入到 AssetManager 中，这样得到一个含有所有新资源的 AssetManager；</li>
+<li>找到所有之前引用到原有 AssetManager 地方，通过反射，把引用处替换为新的 AssetManager；<br>addAssetPath 在 native 层由 c++ 实现，通过传入资源包路径，先得到 resources.arsc，然后解析它的格式，存放在底层的 AssetManager 的 mResources 成员中：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mutable</span> ResTable* mResources;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>mResources 是一个 ResTable 结构体，其成员 mPackageGroups 为资源包的实体，包含所有解析过的资源包的集合，任何一个资源包都含有 resources.arsc，它记录了所有资源 id 分配情况以及资源中的所有字符串，以二进制形式存储，底层的AssetManager就是用来解析这个文件，把相关信息存储到 mPackageGroups 中。<br></p>
     
 
         <a href="/2017/07/资源热修复探究-Part2/" class="post-more waves-effect waves-button">
@@ -432,21 +488,21 @@ mResources 是一个 ResTable 结构体，其成员 mPackageGroups 为资源包�
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        热修复技术介绍代码修复技术底层替换：已经加载的类直接替换原有方法，由于修改了原来的类，导致方法数的变化，索引无法正常工作，不稳定，可能产生无法预知的结果；类加载：在 app 重新启动后让 classloader 加载新的类，由于已加载的类无法卸载，于是不重启无法加载新类，在重启以后，赶在业务逻辑之前抢先加载补丁的新类，达到热修复的目的。市场主流方案选择：
-
-QZoneFix：侵入打包流程，不优雅；
-QFix：获取底层虚拟机函数，不稳定；
-Tinker：全量dex加载，粒度过细，性能消耗过大；
-
-资源修复
-构造新的 AssetManager，反射调用 addAssetPath，把完整新资源包加入 AssetManager 中；
-找到所有引用原 AssetManager 地方，通过反射，把引用处替换成新的。优点：
-
-
-只使用一个 package id 为 0x66 的资源包，该包只包含了改变了资源，然后直接在原 AssetManager 中 addAssetPath；
-不修改 AssetManager 引用处；
-不必下发完整包；
-不需要在运行时合成完整包；
+        <h2 id="热修复技术介绍"><a href="#热修复技术介绍" class="headerlink" title="热修复技术介绍"></a>热修复技术介绍</h2><h3 id="代码修复技术"><a href="#代码修复技术" class="headerlink" title="代码修复技术"></a>代码修复技术</h3><p>底层替换：已经加载的类直接替换原有方法，由于修改了原来的类，导致方法数的变化，索引无法正常工作，不稳定，可能产生无法预知的结果；<br>类加载：在 app 重新启动后让 classloader 加载新的类，由于已加载的类无法卸载，于是不重启无法加载新类，在重启以后，赶在业务逻辑之前抢先加载补丁的新类，达到热修复的目的。市场主流方案选择：</p>
+<ul>
+<li>QZoneFix：侵入打包流程，不优雅；</li>
+<li>QFix：获取底层虚拟机函数，不稳定；</li>
+<li>Tinker：全量dex加载，粒度过细，性能消耗过大；</li>
+</ul>
+<h3 id="资源修复"><a href="#资源修复" class="headerlink" title="资源修复"></a>资源修复</h3><ol>
+<li>构造新的 AssetManager，反射调用 addAssetPath，把完整新资源包加入 AssetManager 中；</li>
+<li>找到所有引用原 AssetManager 地方，通过反射，把引用处替换成新的。<br>优点：</li>
+</ol>
+<ul>
+<li>只使用一个 package id 为 0x66 的资源包，该包只包含了改变了资源，然后直接在原 AssetManager 中 addAssetPath；</li>
+<li>不修改 AssetManager 引用处；</li>
+<li>不必下发完整包；</li>
+<li>不需要在运行时合成完整包<br>；</li></ul>
     
 
         <a href="/2017/07/代码热修复探究-Part1/" class="post-more waves-effect waves-button">
@@ -493,15 +549,21 @@ Tinker：全量dex加载，粒度过细，性能消耗过大；
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        生命周期
-
-onCreate：生命周期只调用一次，用于初始化、必要对象创建等；
-onStart：界面完全不可见变为可见时调用；
-onResume：界面可点击交互，不被顶层任何其他Activity遮挡，开始执行界面交互；
-onPause：界面交互不可点击，部分可见，此时应该停止交互相关的耗资源操作；
-onStop：界面完全不可见，保存重要数据，在被强杀时onDestroy不会被调用；
-onDestroy：生命周期只会被调用一次，界面完全被销毁，用于释放资源等；
-onRestart：界面onStop后重新被打开调用；
+        <h2 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h2><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/2017/07/Android基础之Activity/activity_lifecycle.png" alt="生命周期" title="">
+                </div>
+                <div class="image-caption">生命周期</div>
+            </figure>
+<ul>
+<li>onCreate：生命周期只调用一次，用于初始化、必要对象创建等；</li>
+<li>onStart：界面完全不可见变为可见时调用；</li>
+<li>onResume：界面可点击交互，不被顶层任何其他Activity遮挡，开始执行界面交互；</li>
+<li>onPause：界面交互不可点击，部分可见，此时应该停止交互相关的耗资源操作；</li>
+<li>onStop：界面完全不可见，保存重要数据，在被强杀时onDestroy不会被调用；</li>
+<li>onDestroy：生命周期只会被调用一次，界面完全被销毁，用于释放资源等；</li>
+<li>onRestart：界面onStop后重新被打开调用；</li></ul>
     
 
         <a href="/2017/07/Android基础之Activity/" class="post-more waves-effect waves-button">
@@ -548,10 +610,10 @@ onRestart：界面onStop后重新被打开调用；
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        why ？
-创建和销毁线程伴随着系统开销，如果频繁创建销毁线程，影响处理效率；（创建时间T1，执行任务T2，销毁T3。如果T1+T3&gt;T2，那就划不来）
-线程并发数量过多，抢占系统资源导致阻塞；（线程共享系统资源，如果同时执行线程过多，导致系统资源不多而产生阻塞）
-能对线程进行简单管理；（延时执行，定时循环执行）
+        <h2 id="why-？"><a href="#why-？" class="headerlink" title="why ？"></a>why ？</h2><ul>
+<li>创建和销毁线程伴随着系统开销，如果频繁创建销毁线程，影响处理效率；（创建时间T1，执行任务T2，销毁T3。如果T1+T3&gt;T2，那就划不来）</li>
+<li>线程并发数量过多，抢占系统资源导致阻塞；（线程共享系统资源，如果同时执行线程过多，导致系统资源不多而产生阻塞）</li>
+<li>能对线程进行简单管理；（延时执行，定时循环执行）</li></ul>
     
 
         <a href="/2017/06/Java常用线程池理解/" class="post-more waves-effect waves-button">
@@ -598,12 +660,12 @@ onRestart：界面onStop后重新被打开调用；
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        代理模式（委托模式）限制对象的直接访问，保护内部对象；
-静态代理AIDL中asInterface方法中有应用到静态代理，如果不在同一进程就会返回Proxy对象，而且几乎所有系统服务采用代理模式。
-动态代理运行时指定代理类，实现InvocationHandler接口，重写invoke方法，通过Proxy.newInstance返回代理对象。分为jdk动态代理和cglib动态代理；
-
-jdk动态代理：基于类的反射机制，而且目标类基于同一的接口，Java 的继承机制注定了这些动态代理类们无法实现对 class 的动态代理；
-cglib动态代理：借助asm实现，没有jdk动态代理的限制；
+        <h2 id="代理模式（委托模式）"><a href="#代理模式（委托模式）" class="headerlink" title="代理模式（委托模式）"></a>代理模式（委托模式）</h2><p>限制对象的直接访问，保护内部对象；</p>
+<h3 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h3><p>AIDL中<code>asInterface</code>方法中有应用到静态代理，如果不在同一进程就会返回Proxy对象，而且几乎所有系统服务采用代理模式。</p>
+<h3 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h3><p>运行时指定代理类，实现<code>InvocationHandler</code>接口，重写invoke方法，通过<code>Proxy.newInstance</code>返回代理对象。分为jdk动态代理和cglib动态代理；</p>
+<ul>
+<li>jdk动态代理：基于类的反射机制，而且目标类基于同一的接口，Java 的继承机制注定了这些动态代理类们无法实现对 class 的动态代理；</li>
+<li>cglib动态代理：借助asm实现，没有jdk动态代理的限制；</li></ul>
     
 
         <a href="/2017/05/Android插件化原理探索/" class="post-more waves-effect waves-button">
@@ -636,6 +698,15 @@ cglib动态代理：借助asm实现，没有jdk动态代理的限制；
         <footer class="footer">
     <div class="top">
         
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
 
         <p>
             
@@ -645,7 +716,7 @@ cglib动态代理：借助asm实现，没有jdk动态代理的限制；
         </p>
     </div>
     <div class="bottom">
-        <p><span>Garvin &copy; 2018</span>
+        <p><span>Garvin &copy; 2015 - 2018</span>
             <span>
                 
                 Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
@@ -659,19 +730,89 @@ cglib动态代理：借助asm实现，没有jdk动态代理的限制；
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/&title=Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/&title=Garvin 杂记&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Garvin 杂记&url=https://hjw541988478.github.io/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAABtklEQVR42u3aS27DMAwFQN//0u4Jqj6KFuMUo5WBBPZIC4IfXVe87uLK33mdWLi4uG1u8uE1KN/A+jnaPC4u7iB3HWj6z79tMjfg4uK+mZuHoSTY4eLi/lduXqe8IpDh4uLG3L1Ak/9aLa4eqNVwcXEb3Gpz88Tzkf4uLi7uFndvQFJNXNbpS+HruLi4I9xny5i8vMnTF1xc3Hlu8uG8Mdo5syhQ4uLiDnI7BUm1tdEauuDi4g5yy8OMeOyaJDeFQQ4uLu4Id/2K/DN5eNob5eLi4k5yk3Hms+PVx4ofXFzcEW5nULqHbgUyXFzcY9zOKLQVkoIBTKH4wcXFfZSbpy/5ZqpXMcpxFxcX9zC32vrcS3fyEBYdEy4u7oe41YZIMl7N05o/jgAXF/dD3E4g22upJCUWLi7uPLd6SeuOVx4co//g4uIe5t7FtX7DUyPYq39CuLi4DW6+9jbTab7kQ1xcXNwT3HL5EW+sWvxEAQ4XF3eQ2xmyJmOVvZCHi4v7jdy9Cxmty1u4uLiv53YCU/UIcHFx57lJ8ZNfw6omN4WmCS4u7gi3HEqWm6ymMtX34OLiHub+AAbo4jHRaNBAAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
     <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
 <script>
-var BLOG = { ROOT: '/', SHARE: , REWARD: false };
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
 
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1274482147&web_id=1274482147')
 
 </script>
 
-<script src="/js/main.min.js?v=1.7.2"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 
