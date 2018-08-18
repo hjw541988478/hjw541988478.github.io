@@ -141,14 +141,14 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
-            <article id="post-MaterialDesign设计探索使用"
+            <article id="post-设计模式之单例模式"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
-        <time class="post-time" title="2015-09-09 19:24:14" datetime="2015-09-09T11:24:14.000Z"  itemprop="datePublished">2015-09-09</time>
+        <time class="post-time" title="2017-08-02 20:52:00" datetime="2017-08-02T12:52:00.000Z"  itemprop="datePublished">2017-08-02</time>
 
         
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/DesignPattern/">DesignPattern</a></li></ul>
 
 
 
@@ -159,7 +159,7 @@
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/MaterialDesign设计探索使用/">MaterialDesign设计探索使用</a>
+      <a class="post-title-link" href="/设计模式之单例模式/">设计模式之单例模式</a>
     </h3>
   
 
@@ -169,229 +169,25 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <p>在Android5.0之后，Google就开始推崇一门新的设计语言MaterialDesign，它更加新鲜和简洁，且能够非常有效的激发应用开发者的创作热情，也能够降低开发者自主开发设计UI的难度，对于MD风格的实现，Google后续完善了下面几个库，一步步的实现MD标准的交互效果。<br>需要在AndroidStudio引入的库：</p>
-<p>compile ‘com.android.support:design:23.0.0’<br>compile ‘com.android.support:appcompat-v7:23.0.0’<br>compile ‘com.android.support:recyclerview-v7:23.0.0’<br>compile ‘com.android.support:cardview-v7:23.0.0’<br>新的UI组件<br>CoordinatorLayout<br>CoordinatorLayout在android.support.deisgn中，是一种增强型的FrameLayout，主要有以下两大基础性作用：</p>
-<p>作为顶级应用的装饰器；<br>作为给多个子View之间进行特定交互的协调器；<br>通过对子View的Behaviors的指定，可以实现子View之间的通信，从而确定它们具体的交互行为。</p>
-<p>Behavior<br>官方提供的Behavior<br>Behaivor是CoordinatorLayout子View之间进行交互的插件，包括了一种或多种交互行为，如拖拉、滑动、下拉等各种手势。已知的子类有AppBarLayout.Behavior，AppBarLayout.ScrollingViewBehavior， FloatingActionButton.Behavior和SwipeDismissBehavior<v extends="" view="">,这些可以直接使用@string/**的形式在layout_behavior属性中使用。<br>自定义Behavior<br>自定义的Behavior需要重新实现的回调方法有：<br>public boolean layoutDependsOn (CoordinatorLayout parent, View child, View dependency)<br>该方法确定是否有另一个指定的兄弟View作为依赖布局，并且作为对布局请求的响应，至少会调用一次。如果指定的child和dependency返回为true,父ViewCoordinatorLayout可能会做以下两件事：<br>不管子View的命令，始终在dependencyView后展示child；<br>当dependency视图布局或位置发生变化时，调用onDepentViewChanged方法；<br>public boolean onDependentViewChanged (CoordinatorLayout parent, View child, View dependency)<br>无论dependency尺寸或者布局改变，该方法都会被调用。Behavor可能会合适地使用该方法来更新视图以此作为回应。当layoutDependsOn被调用时或者child设置了以一个锚视图，dependency也会改变。如果Behavor改变了child的位置或者大小，则返回true。<br>NestingScrolling<br>原始触摸事件分发<br>目前的触摸事件的分发机制都是从父View传递给子View，会经历dispatchTouchEvent、onInterceptTouchEvent、onTouchEvent，但是如果触摸事件分发给子View的时候，而子View想根据实际情况将事件向上层传递给父View，而这个时候子View并没有办法通知父View，只能将事件抛弃。</v></p>
-<p>嵌套滑动处理流程<br>在行的嵌套滑动机制中，可以使用到supportv4包中NestedScrollingChild类，包括下面几个关键的方法：</p>
-<p>public boolean startNestedScroll(int axes)<br>子View寻找能够接受嵌套滑动事件的ParentView，然后通知父View，配合处理触摸事件；<br>public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow)<br>在子View中的onInterceptTouch或者onTouch事件中，通过调用该方法通知父View滑动的距离。其中第三个参数父View消费掉的滑动长度，第四个参数返回子View的窗体偏移量。由于窗体进行了移动，为了下一次触摸事件计算正确，还需要根据第四个参数来计算偏移量。整个方法返回的值是根据父View是否有接受子View滚动参数的消费来决定返回true或者false；<br>public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow)<br>在子View进行了scroll后，如果父View接受到了它的滚动参数并进行了消费，则返回true，否则返回false；<br>public void stopNestedScroll()<br>整个嵌套处理流程结束。<br>AppBarLayout<br>AppBarLayout是实现了众多MD设计概念特性的垂直方向的LinearLayout，其中一个很重要的概念就是滚动手势。子View可以通过方法setScrollFlags(int)或者XML属性app:layout_scrollFlags去提供期望的滚动行为。该布局应该直接放在CoordinateLayout节点下，同时也需要兄弟View去决定何时滚动，但必须是AppBarLayout.ScrollingViewBehavior的实例。</p>
-<p>layout_scrollFlags<br>作为触发特定交互事件的标志，主要有四种：</p>
-<p>SCROLL_FLAG_ENTER_ALWAYS<br>这个flag让任意向下的滚动使得View可见；<br>SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED<br>当View既设置了minHeight属性又设置了此flag，只有滚动到顶部的时候才会时View可见；<br>SCROLL_FLAG_EXIT_UNTIL_COLLAPSED<br>当View离开屏幕时，保持折叠的状态；<br>SCROLL_FLAG_SCROLL<br>View会直接离开屏幕。<br>常用属性<br>属性名    解释<br>layout_scrollFlags    设置滚动出发事件的标志<br>layout_scrollInterpolator    设置滚动发生时的插值器<br>CollapsingToolbarLayout<br>CollapsingToolbarLayout是实现了折叠的ToolBar的包装，它用来设计作为AppBarLayout的直接子View，可以用来设置众多属性，包括折叠状态的标题、位置等。</p>
-<p>常用属性<br>属性名    解释<br>collapsedTitleGravity    指定折叠状态的标题如何放置，可选值:top、bottom等<br>collapsedTitleTextAppearance    指定折叠状态标题文字的样貌<br>contentScrim    指定CollapsingToolbarLayout完全被滚出到屏幕外时的ColorDrawable<br>expandedTitleGravity    指定展开状态的标题如何放置<br>title    指定标题文本<br>titleEnabled    指定是否显示标题文本<br>toolbarId    指定与之关联的ToolBar，如果未指定则默认使用第一个被发现的ToolBar子View<br>layout_collapseMode    COLLAPSE_MODE_OFF:View表现的像没有折叠行为一样； COLLAPSE_MODE_PARALLAX：View会以视差的样式滚动；<br>COLLAPSE_MODE_PIN：View会直到达到CollapsingToolbarLayout底部的时候固定；</p>
-<p>实例<br>特性<br>新的UI组件：Toolbar、DrawerLayout、DrawerNavigationView、SwipeRefreshLayout、RecyclerView、TabLayout、CollapsingToolbarLayout、AppBarLayout、CoordinateLayout、FloatingActionButton、SnackBar、CardView;<br>已实现效果<br>下拉刷新<br>抽屉菜单导航<br>Tab选项卡导航<br>视差折叠Toolbar<br>效果图<br>抽屉菜单和Tab布局效果图<br>视差效果图</p>
-<p>实现过程<br>下拉刷新<br>布局</p>
-<p>&lt;android.support.v4.widget.SwipeRefreshLayout<br>    android:id=”@+id/id_refresh”<br>    android:layout_width=”match_parent”<br>    android:layout_height=”match_parent”&gt;<br>    &lt;android.support.v7.widget.RecyclerView<br>        android:id=”@+id/id_list”<br>        android:layout_width=”match_parent”<br>        android:layout_height=”match_parent” /&gt;<br>&lt;/android.support.v4.widget.SwipeRefreshLayout&gt;<br>代码</p>
-<p>// 视图初始化设置刷新监听和适配器<br>RecyclerView recyclerView = (RecyclerView) root.findViewById(R.id.id_list);<br>        final SwipeRefreshLayout swipeRefresh = (SwipeRefreshLayout) root.findViewById(R.id.id_refresh);<br>        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {<br>            @Override<br>            public void onRefresh() {<br>                adapter.data.add(0, “onRefresh”);<br>                adapter.notifyDataSetChanged();<br>                swipeRefresh.setRefreshing(false);<br>            }<br>        });<br>        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));<br>        recyclerView.setHasFixedSize(true);<br>        recyclerView.setAdapter(adapter);<br>// 适配器<br>class RecyclerViewListAdapter extends RecyclerView.Adapter&lt;RecyclerViewListAdapter.MyViewHolder&gt; {<br>        private List<string> data = new ArrayList&lt;&gt;();<br>        public RecyclerViewListAdapter(List<string> data) {<br>            this.data.clear();<br>            this.data.addAll(data);<br>        }<br>        @Override<br>        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {<br>            View itemView = LayoutInflater.from(parent.getContext())<br>                    .inflate(R.layout.item_fragment_list, parent, false);<br>            return new MyViewHolder(itemView);<br>        }<br>        @Override<br>        public void onBindViewHolder(MyViewHolder holder, final int position) {<br>            holder.itemText.setText(data.get(position));<br>            holder.rootView.setOnClickListener(new View.OnClickListener() {<br>                @Override<br>                public void onClick(View v) {<br>                    Intent intent = new Intent(v.getContext(), DetailActivity.class);<br>                    intent.putExtra(“title”, data.get(position));<br>                    v.getContext().startActivity(intent);<br>                }<br>            });<br>        }<br>        @Override<br>        public int getItemCount() {<br>            return data.size();<br>        }<br>        class MyViewHolder extends RecyclerView.ViewHolder {<br>            @Bind(R.id.id_item_text)<br>            TextView itemText;<br>            View rootView;</string></string></p>
-<pre><code>        public MyViewHolder(View itemView) {
-            super(itemView);
-            rootView = itemView;
-            ButterKnife.bind(this, itemView);
-        }
-    }
-}
-</code></pre><p>关于下拉刷新部分的详细实现可参考上一篇博文：HarvestRecyclerView-RecyclerView下拉刷新上拉加载的封装 。</p>
-<p>抽屉菜单导航<br>布局</p>
-<p>&lt;android.support.v4.widget.DrawerLayout xmlns:android=”<a href="http://schemas.android.com/apk/res/android&quot;" target="_blank" rel="noopener">http://schemas.android.com/apk/res/android&quot;</a><br>    xmlns:app=”<a href="http://schemas.android.com/apk/res-auto&quot;" target="_blank" rel="noopener">http://schemas.android.com/apk/res-auto&quot;</a><br>    android:id=”@+id/id_drawer_layout”<br>    android:layout_width=”match_parent”<br>    android:layout_height=”match_parent”<br>    android:fitsSystemWindows=”true”&gt;<br>    <include layout="..."><br>    &lt;android.support.design.widget.NavigationView<br>        android:id=”@+id/id_drawer_nav_view”<br>        android:layout_width=”wrap_content”<br>        android:layout_height=”match_parent”<br>        android:layout_gravity=”start”<br>        android:fitsSystemWindows=”true”<br>        app:headerLayout=”@layout/nav_header”<br>        app:menu=”@menu/menu_drawer” /&gt;<br>&lt;/android.support.v4.widget.DrawerLayout&gt;<br>需要注意的是，对于抽屉菜单，分为头布局和菜单两部分，头布局是layout资源，而菜单是menu资源，极大地降低了使用的难度，降低了各自的耦合度。<br>抽屉菜单分解图<br>nav_header.xml</include></p>
-<p><relativelayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="200dp" android:background="?attr/colorPrimaryDark" android:padding="16dp"><br>    <textview android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centervertical="true" android:text="Hi, Doge!" android:textcolor="@android:color/white"><br>    <imageview android:layout_width="120dp" android:layout_height="120dp" android:layout_centerinparent="true" android:scaletype="centerCrop" android:src="@mipmap/doge_head"><br></imageview></textview></relativelayout><br>menu_drawer.xml</p>
-<p><menu xmlns:android="http://schemas.android.com/apk/res/android"><br>    <group android:checkablebehavior="single"><br>        <item android:icon="@mipmap/ic_dashboard" android:title="Home"><br>        <item android:icon="@mipmap/ic_forum" android:title="Setting"><br>        <item android:icon="@mipmap/ic_event" android:title="Like"><br>        <item android:icon="@mipmap/ic_headset" android:title="Music"><br>    </item></item></item></item></group><br></menu><br>布局中android:layout_gravity=”start”属性代表着抽屉菜单放在左边，此时通过设置抽屉菜单视图选中的监听器，可以边缘右滑和左上角的菜单图标打开抽屉，点击空白区域或者选中菜单项便可以关闭菜单。</p>
-<p>navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {<br>            @Override<br>            public boolean onNavigationItemSelected(MenuItem menuItem) {<br>                menuItem.setCheckable(true);<br>                navDrawer.closeDrawers();<br>                return true;<br>            }<br>        });<br>@Override<br>public boolean onOptionsItemSelected(MenuItem item) {<br>    int id = item.getItemId();<br>    if (id == android.R.id.home) {<br>        navDrawer.openDrawer(GravityCompat.START);<br>        return true;<br>    }<br>    return super.onOptionsItemSelected(item);<br>}<br>Tab选项卡导航<br>布局</p>
-<p>&lt;android.support.design.widget.CoordinatorLayout<br>    android:layout_width=”match_parent”<br>    android:layout_height=”match_parent”&gt;<br>    &lt;android.support.design.widget.AppBarLayout<br>        android:layout_width=”match_parent”<br>        android:layout_height=”wrap_content”<br>        android:theme=”@style/ThemeOverlay.AppCompat.Dark.ActionBar”&gt;<br>        &lt;android.support.v7.widget.Toolbar<br>            android:id=”@+id/id_toolbar”<br>            android:layout_width=”match_parent”<br>            android:layout_height=”?attr/actionBarSize”<br>            android:background=”?attr/colorPrimary”<br>            app:layout_scrollFlags=”scroll|enterAlways”<br>            app:popupTheme=”@style/ThemeOverlay.AppCompat.Light” /&gt;<br>        &lt;android.support.design.widget.TabLayout<br>            android:id=”@+id/id_tabs”<br>            android:layout_width=”match_parent”<br>            android:layout_height=”wrap_content” /&gt;<br>    &lt;/android.support.design.widget.AppBarLayout&gt;<br>    &lt;android.support.v4.view.ViewPager<br>        android:id=”@+id/id_pager”<br>        android:layout_width=”match_parent”<br>        android:layout_height=”match_parent”<br>        app:layout_behavior=”@string/appbar_scrolling_view_behavior” /&gt;<br>    &lt;android.support.design.widget.FloatingActionButton<br>        android:id=”@+id/id_fab”<br>        android:layout_width=”wrap_content”<br>        android:layout_height=”wrap_content”<br>        android:layout_gravity=”end|bottom”<br>        android:layout_margin=”16dp”<br>        android:src=”@mipmap/ic_done”<br>        app:layout_behavior=”.QuickReturnFooterBehavior” /&gt;<br>&lt;/android.support.design.widget.CoordinatorLayout&gt;<br>布局中使用到了CoordinateLayout作为根节点，辅以ViewPager作为事件行为触发器，再通过AppBarLayout的嵌套，便可以实现了向下滑动自动隐藏Toolbar，上滑恢复显示的功能，这里FloatingActionButton同时也用到了一个自定义的Behavior，可以实现自动隐藏与出现的功能，整个过程显得协调一致。<br>TabLayout一般是与ViewPager一起使用的，在ViewPager初始化并设置了适配器后，让TabLayout与之联动，最后达到一致的工作的效果。<br>TabLayout实现效果图</p>
-<p>这里只实现了3个Tab栏，按照实际情况需要可以通过对ViewPager适配器，来控制Tab栏的标题和个数。</p>
-<p>pager.setAdapter(new ListPagerAdapter(getSupportFragmentManager(), initData()));<br>tabs.setupWithViewPager(pager);<br>此外TabLayout还有一些其他可在布局文件自定义的属性，如下：</p>
-<!--Tab被选中字体的颜色-->
-<p>app:tabSelectedTextColor=@android:color/holo_blue_bright<br><!--Tab未被选中字体的颜色--><br>app:tabTextColor=@android:color/black<br><!--Tab指示器下标的颜色--><br>app:tabIndicatorColor=@android:color/holo_blue_bright<br>视差折叠效果视图<br>布局</p>
-<p>&lt;android.support.design.widget.CollapsingToolbarLayout<br>        android:id=”@+id/collapsing_toolbar”<br>        android:layout_width=”match_parent”<br>        android:layout_height=”match_parent”<br>        android:fitsSystemWindows=”true”<br>        app:contentScrim=”?attr/colorPrimary”<br>        app:expandedTitleMarginEnd=”64dp”<br>        app:expandedTitleMarginStart=”48dp”<br>        app:layout_scrollFlags=”scroll|exitUntilCollapsed”<br>        app:title=”doge”&gt;</p>
-<pre><code>    &lt;ImageView
-        android:layout_width=&quot;match_parent&quot;
-        android:layout_height=&quot;match_parent&quot;
-        android:fitsSystemWindows=&quot;true&quot;
-        android:scaleType=&quot;centerCrop&quot;
-        android:src=&quot;@mipmap/doge&quot;
-        app:layout_collapseMode=&quot;parallax&quot; /&gt;
-    &lt;android.support.v7.widget.Toolbar
-        android:id=&quot;@+id/toolbar&quot;
-        android:layout_width=&quot;match_parent&quot;
-        android:layout_height=&quot;?attr/actionBarSize&quot;
-        app:layout_collapseMode=&quot;pin&quot;
-        app:popupTheme=&quot;@style/ThemeOverlay.AppCompat.Light&quot; /&gt;
-
-&lt;/android.support.design.widget.CollapsingToolbarLayout&gt;
-</code></pre><p>CollapsingToolbarLayout直面意思就是可折叠的Toolbar布局，通过向下滚动可以使图片逐渐变大，向下滚动使得逐渐以视差效果的形式逐渐变小，最后只剩下Toolbar，在5.0(v21)版本上，通过Style的设置，可以让状态栏也变得透明，让图片和状态栏融为一体。</p>
-<p><style name="AppTheme" parent="BaseAppTheme"><br>    <item name="android:windowDrawsSystemBarBackgrounds">true</item><br>    <item name="android:statusBarColor">@android:color/transparent</item><br></style><br>展开状态</p>
-<p>折叠状态</p>
-<p>具体实现的关键点在于对layout_collapseMode、layout_scrollFlags和layout_behavior属性的设置，具体设置模式上面有说。</p>
-<p>综合使用范例<br>Google有给出的使用范例：</p>
-<p>&lt;android.support.design.widget.CoordinatorLayout<br>     xmlns:android=”<a href="http://schemas.android.com/apk/res/android&quot;" target="_blank" rel="noopener">http://schemas.android.com/apk/res/android&quot;</a><br>     xmlns:app=”<a href="http://schemas.android.com/apk/res-auto&quot;" target="_blank" rel="noopener">http://schemas.android.com/apk/res-auto&quot;</a><br>     android:layout_width=”match_parent”<br>     android:layout_height=”match_parent”&gt;<br> &lt;android.support.v4.widget.NestedScrollView<br>         android:layout_width=”match_parent”<br>         android:layout_height=”match_parent”<br>         app:layout_behavior=”@string/appbar_scrolling_view_behavior”&gt;<br>     <!-- Your scrolling content --><br> &lt;/android.support.v4.widget.NestedScrollView&gt;<br> &lt;android.support.design.widget.AppBarLayout<br>         android:layout_height=”wrap_content”<br>         android:layout_width=”match_parent”&gt;<br>     &lt;android.support.v7.widget.Toolbar<br>             …<br>             app:layout_scrollFlags=”scroll|enterAlways”/&gt;<br>     &lt;android.support.design.widget.TabLayout<br>             …<br>             app:layout_scrollFlags=”scroll|enterAlways”/&gt;<br> &lt;/android.support.design.widget.AppBarLayout&gt;<br>&lt;/android.support.design.widget.CoordinatorLayout&gt;<br>其他组件<br>CardView<br>布局</p>
-<p>&lt;android.support.v7.widget.CardView<br>    android:layout_width=”match_parent”<br>    android:layout_height=”wrap_content”<br>    android:layout_margin=”8dp”<br>    app:cardElevation=”8dp”<br>    app:contentPadding=”16dp”&gt;<br>    <textview android:layout_width="match_parent" android:layout_height="wrap_content" android:text="这只可爱的柴犬叫Kabosu（かぼす，一种类似于日本柚子的水果，果汁很酸却有种独特的芳香，经常被用作烤鱼或生鱼片的调料）"><br>&lt;/android.support.v7.widget.CardView&gt;<br>item即为卡片视图<br>CardView继承于Framelayout，所以Framelayout的属性都有，同时也有其它可自定义的属性，app:cardElevation表示在Z轴上的阴影，app:contentPadding表示卡片内容的内边距，app:cardCornerRadius表示卡片四个角的圆角矩形的程度。</textview></p>
-<p>Toolbar<br>布局</p>
-<p>&lt;android.support.v7.widget.Toolbar<br>    android:id=”@+id/toolbar”<br>    android:layout_width=”match_parent”<br>    android:layout_height=”?attr/actionBarSize”<br>    app:layout_collapseMode=”pin”<br>    app:popupTheme=”@style/ThemeOverlay.AppCompat.Light” /&gt;<br>作为未来ActionBar的替代品，Google为了统一MD设计的风格和AppBar的设计规范，Toolbar是为了更灵活的ActionBar而生的。通过Style设置NoActionBar，然后再代码中使用setSupportedActionBar方法来使用Toolbar替代ActionBar,此外还可以对其他属性，如标题，背景，LOGO等进行自定义的设置，但请记得要取得ActionBar，请使用getSupportedActionBar方法。</p>
-<p>FloatingActionButton<br>布局</p>
-<p>&lt;android.support.design.widget.FloatingActionButton<br>    android:layout_width=”wrap_content”<br>    android:layout_height=”wrap_content”<br>    android:layout_margin=”16dp”<br>    android:clickable=”true”<br>    android:src=”@mipmap/ic_heart_outline_white_24dp”<br>    app:layout_anchor=”@id/appbar”<br>    app:layout_anchorGravity=”bottom|right|end|center_vertical” /&gt;<br>上面的布局代码在设置完其基本属性后，同时还配置了layout_anchor和layout_anchorGravity属性，表示固定在某个视图上，同时也确定了在视图上的位置。</p>
-<p>SnackBar<br>使用<br>Snackbar.make(fab, “hey , it’s SnackBar”, Snackbar.LENGTH_SHORT).setAction(“Dismiss”, null).show();<br>SnackBar的用法与Toast很类似，但是它可以构造一个动作，监听动作后接受回调，执行自定义的事件。</p>
-<p>总结<br>目前对于MaterialDesign设计的实现，Google官方已经提供了足够多的第三方库了，而且使用起来相对灵活的自由，可以根据需求，适时使用一些新的特性，对于开发来说也减少了设计成本，能够提高开发效率和统一风格。<br>已将代码上传至Github：<a href="https://github.com/hjw541988478/materialdeisgn_tutorial" target="_blank" rel="noopener">https://github.com/hjw541988478/materialdeisgn_tutorial</a></p>
-<p>参考<br>Material Design 中文版<br>Material Design 原版(需FQ)<br>直接拿来用!十大Material Design开源项目-CSDN.NET<br>Android Support Design 中 CoordinatorLayout 与 Behaviors 初探<br>android：ToolBar详解<br>Android的材料设计兼容库（Design Support Library）<br>Github库<br>MaterialDesignLibrary<br>MaterialDesign</p>
-
-    
-
-        <a href="/MaterialDesign设计探索使用/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MaterialDesign/">MaterialDesign</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-RecyclerView下拉刷新上拉加载的封装"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2015-09-02 19:04:23" datetime="2015-09-02T11:04:23.000Z"  itemprop="datePublished">2015-09-02</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/RecyclerView下拉刷新上拉加载的封装/">RecyclerView下拉刷新上拉加载的封装</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        <h2 id="初识RecyclerView"><a href="#初识RecyclerView" class="headerlink" title="初识RecyclerView"></a>初识RecyclerView</h2><blockquote>
-<p>A flexible view for providing a limited window into a large data set.</p>
-</blockquote>
-<p>根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，<code>RecyclerView</code>就是应对这种情况而产生的。<code>RecyclerView</code>是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时需要在<code>build.gradle</code>文件中配置：<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">compile</span> <span class="string">'com.android.support:recyclerview-v7:22.2.1'</span></span><br></pre></td></tr></table></figure></p>
-<p>与<code>ListView</code>不同的是，<code>RecyclerView</code>不再负责Item布局绘制等方面的工作，转而拆分成不同的类去管理。作为未来<code>ListView、GridView</code>等替代的组件，虽然没有它们那么易用，所有的功能都需要自己重新实现，但正是因为这种特性使得<code>RecyclerView</code>更加Flexible。为了满足各种各样的需求，可能会使用到下面与<code>RecyclerView</code>相关紧密的类：<br></p>
-    
-
-        <a href="/RecyclerView下拉刷新上拉加载的封装/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Components/">Components</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CustomView/">CustomView</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PullDownToRefresh/">PullDownToRefresh</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PullUpToRefresh/">PullUpToRefresh</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RecyclerView/">RecyclerView</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-Android传感器编程之摇一摇"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2015-08-26 19:54:01" datetime="2015-08-26T11:54:01.000Z"  itemprop="datePublished">2015-08-26</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/Android传感器编程之摇一摇/">Android传感器编程之摇一摇</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。<br>对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:<span class="built_in">name</span>=<span class="string">"android.hardware.sensor.accelerometer"</span> /&gt; <span class="comment"># 加速度传感器</span></span><br><span class="line">&lt;uses-permission android:<span class="built_in">name</span>=<span class="string">"android.permission.VIBRATE"</span>/&gt;  <span class="comment"># 振动传感器</span></span><br></pre></td></tr></table></figure></p>
-    
-
-        <a href="/Android传感器编程之摇一摇/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Sensor/">Sensor</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vibrator/">Vibrator</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-Android应用自动检测更新机制的实现"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2015-08-25 20:42:39" datetime="2015-08-25T12:42:39.000Z"  itemprop="datePublished">2015-08-25</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/Android应用自动检测更新机制的实现/">Android应用自动检测更新机制的实现</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        <h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>在安卓应用程序中，随着业务的升级或者BUG的修复，往往需要进行版本的迭代与更新。在更新的过程中，选择合理的更新方式显得尤为重要。但大多数思路都是一样，从服务端获取版本号比对当前包的版本号，如果大于当前版本号则提示用户升级，而对于某些需要强制更新的版本号，则不允许用户取消版本的升级，必须强制更新。整个流程大概如下图所示：<br><figure class="image-bubble">
+        <h2 id="模式介绍"><a href="#模式介绍" class="headerlink" title="模式介绍"></a>模式介绍</h2><h3 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h3><p>确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>确保某个类只有一个对象的场景，例如日志类，访问 IO 和数据库资源。</p>
+<h2 id="UML图"><a href="#UML图" class="headerlink" title="UML图"></a>UML图</h2><figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="/Android应用自动检测更新机制的实现/app_update_flowchart.png" alt="更新流程图" title="">
+                    <img src="/设计模式之单例模式/singleton.png" alt="单例模式UML图" title="">
                 </div>
-                <div class="image-caption">更新流程图</div>
-            </figure><br>可以看到，整个流程的关键在于对VerisonCode版本号的大小比较，VersionCode标识了同一应用的不同版本号，对于修改版本号后打包的安装包便是最新版本的安装包。在AndroidStudio中，VersionCode的配置一般在应用模块的<code>*.build</code>文件中，如下：<br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">defaultConfig &#123;</span><br><span class="line">    applicationId <span class="string">"com.test.app"</span></span><br><span class="line">    minSdkVersion 9</span><br><span class="line">    targetSdkVersion 22</span><br><span class="line">    <span class="keyword">version</span>Code 6 <span class="comment">#这里便是对版本号的设置</span></span><br><span class="line">    <span class="keyword">version</span>Name <span class="string">"2.0.0"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+                <div class="image-caption">单例模式UML图</div>
+            </figure>
     
 
-        <a href="/Android应用自动检测更新机制的实现/" class="post-more waves-effect waves-button">
+        <a href="/设计模式之单例模式/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
     
     <div class="post-footer">
         
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Handler/">Handler</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Notification/">Notification</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Service/">Service</a></li></ul>
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DesignPattern/">DesignPattern</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Singleton/">Singleton</a></li></ul>
 
     </div>
     
@@ -400,11 +196,64 @@
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-PropertyAnimation使用总结"
+            <article id="post-设计模式之七大基本原则"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
-        <time class="post-time" title="2015-08-24 19:27:14" datetime="2015-08-24T11:27:14.000Z"  itemprop="datePublished">2015-08-24</time>
+        <time class="post-time" title="2017-07-31 19:52:00" datetime="2017-07-31T11:52:00.000Z"  itemprop="datePublished">2017-07-31</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/DesignPattern/">DesignPattern</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/设计模式之七大基本原则/">设计模式之七大基本原则</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/设计模式之七大基本原则/designpattern_index.png" alt="七大原则" title="">
+                </div>
+                <div class="image-caption">七大原则</div>
+            </figure>
+    
+
+        <a href="/设计模式之七大基本原则/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DesignPattern/">DesignPattern</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-SO库热修复探究-Part3"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-07-25 21:50:00" datetime="2017-07-25T13:50:00.000Z"  itemprop="datePublished">2017-07-25</time>
 
         
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
@@ -418,7 +267,7 @@
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/PropertyAnimation使用总结/">PropertyAnimation使用总结</a>
+      <a class="post-title-link" href="/SO库热修复探究-Part3/">SO库热修复探究(Part3)</a>
     </h3>
   
 
@@ -428,21 +277,25 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="ObjectAnimator"><a href="#ObjectAnimator" class="headerlink" title="ObjectAnimator"></a>ObjectAnimator</h2><ul>
-<li>淡入效果<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ObjectAnimator.ofFloat(tv, <span class="string">"alpha"</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>)</span><br><span class="line">            .setDuration(<span class="number">500</span>)</span><br><span class="line">            .start();</span><br></pre></td></tr></table></figure>
+        <h2 id="SO-库加载原理"><a href="#SO-库加载原理" class="headerlink" title="SO 库加载原理"></a>SO 库加载原理</h2><p>Java 提供两个接口加载 so 库：</p>
+<ul>
+<li><code>System.loadLibrary(String libName)</code>：参数为so库名称，位于 apk 压缩文件中的 libs 目录，最后复制到 apk 安装目录下；</li>
+<li><p><code>System.load(String pathName)</code>：参数为 so 库在磁盘中完整的路径，可以加载自定义外部 so 库文件；<br>其实最终都会调用 nativeLoad 这个 native 方法，这个方法参数为 so 库在磁盘中完整路径名。在 JNI 编程中，动态注册的 native 方法必须实现 JNI_OnLoad 方法，同时实现一个 JNINativeMethod[ ] 数组，静态注册的 native 方法必须是 Java+类完整路径+方法名 的格式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">native</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> -&gt;<span class="params">(JNI_OnLoad nativeMethods[] 匹配映射)</span> -&gt; 动态注册 <span class="keyword">void</span> <span class="title">test</span><span class="params">(env,jobject)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">native</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> -&gt;<span class="params">(<span class="number">1.</span> test第一次执行dvmResolvedNativeCass <span class="number">2.</span> hashtable中查找匹配findMethodInLib)</span> -&gt; 静态注册 <span class="keyword">void</span> Java_包名_类名<span class="title">_test</span><span class="params">(env,jobject)</span></span>;</span><br></pre></td></tr></table></figure>
 </li>
-</ul>
-<p><code>ofFloat</code>对应着三个参数值，分别是目标<code>View</code>，动画属性名<code>Property</code>，以及属性值，一个则为终点值，两个对应着起点和终点值，多个则为起点值，将会调用的值和终点值。与<code>ofFloat</code>类似的还有<code>ofInt</code>、<code>ofObject</code>，这些都是用来设置动画动作的元素。<br></p>
+<li><p>动态注册的 native 方法映射通过加载 so 库过程中调用 JNI_OnLoad 方法调用完成；</p>
+</li>
+<li>静态注册的 native 方法映射在 native 方法第一次执行的时候完成映射，当然前提是 so 库已经 load 过。</li></ul>
     
 
-        <a href="/PropertyAnimation使用总结/" class="post-more waves-effect waves-button">
+        <a href="/SO库热修复探究-Part3/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
     
     <div class="post-footer">
         
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Animation/">Animation</a></li></ul>
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HotFix/">HotFix</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SoLibHotFix/">SoLibHotFix</a></li></ul>
 
     </div>
     
@@ -451,11 +304,11 @@
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-多行文本可折叠展开TextView实现"
+            <article id="post-资源热修复探究-Part2"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
-        <time class="post-time" title="2015-08-23 19:28:19" datetime="2015-08-23T11:28:19.000Z"  itemprop="datePublished">2015-08-23</time>
+        <time class="post-time" title="2017-07-21 21:43:00" datetime="2017-07-21T13:43:00.000Z"  itemprop="datePublished">2017-07-21</time>
 
         
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
@@ -469,7 +322,7 @@
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/多行文本可折叠展开TextView实现/">多行文本的可展开折叠的TextView实现</a>
+      <a class="post-title-link" href="/资源热修复探究-Part2/">资源热修复探究(Part2)</a>
     </h3>
   
 
@@ -479,18 +332,342 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>在实现商家评论区的需求时，对于多行评论的显示，采用的是使用<code>maxLines</code>属性去限定显示的行数，同时使用<code>android:ellipsize=end</code>在限定行数的末尾显示<code>...</code>，这种方式可以很好的避免评论文字过多显示过长的情况。但是对于有价值的评论，有必要显示所有评论文字，采用展开折叠的交互，能够更加的灵活地去应对长文字的多行显示，给用户给好的体验。</p>
-<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>首先，继承<code>LinearLayout</code>，并对文本和标记组件进行一层包装，通过对折叠状态下的行数、展开折叠的动画时长、展开和折叠状态的视图控制，进行可自定义的属性封装。然后对父类的<code>onClick</code>方法进行重写，用户在对组件点击的时候，文本会自动的展开或折叠。然而当文本正在处于折叠或展开过程的动画中时，应该重写<code>onInterceptTouchEvent</code>方法拦截所有的点击事件，防止出现异常。<br></p>
+        <h2 id="资源热修复原理"><a href="#资源热修复原理" class="headerlink" title="资源热修复原理"></a>资源热修复原理</h2><h3 id="InstantRun分两步"><a href="#InstantRun分两步" class="headerlink" title="InstantRun分两步"></a>InstantRun分两步</h3><ol>
+<li>构造新的 AssetManager，并反射调用 addAssetPath，把完整资源包加入到 AssetManager 中，这样得到一个含有所有新资源的 AssetManager；</li>
+<li>找到所有之前引用到原有 AssetManager 地方，通过反射，把引用处替换为新的 AssetManager；<br>addAssetPath 在 native 层由 c++ 实现，通过传入资源包路径，先得到 resources.arsc，然后解析它的格式，存放在底层的 AssetManager 的 mResources 成员中：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mutable</span> ResTable* mResources;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>mResources 是一个 ResTable 结构体，其成员 mPackageGroups 为资源包的实体，包含所有解析过的资源包的集合，任何一个资源包都含有 resources.arsc，它记录了所有资源 id 分配情况以及资源中的所有字符串，以二进制形式存储，底层的AssetManager就是用来解析这个文件，把相关信息存储到 mPackageGroups 中。<br></p>
     
 
-        <a href="/多行文本可折叠展开TextView实现/" class="post-more waves-effect waves-button">
+        <a href="/资源热修复探究-Part2/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
     
     <div class="post-footer">
         
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CustomView/">CustomView</a></li></ul>
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HotFix/">HotFix</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ResourceHotFix/">ResourceHotFix</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-代码热修复探究-Part1"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-07-20 20:22:00" datetime="2017-07-20T12:22:00.000Z"  itemprop="datePublished">2017-07-20</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/代码热修复探究-Part1/">代码热修复探究(Part1)</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="热修复技术介绍"><a href="#热修复技术介绍" class="headerlink" title="热修复技术介绍"></a>热修复技术介绍</h2><h3 id="代码修复技术"><a href="#代码修复技术" class="headerlink" title="代码修复技术"></a>代码修复技术</h3><p>底层替换：已经加载的类直接替换原有方法，由于修改了原来的类，导致方法数的变化，索引无法正常工作，不稳定，可能产生无法预知的结果；<br>类加载：在 app 重新启动后让 classloader 加载新的类，由于已加载的类无法卸载，于是不重启无法加载新类，在重启以后，赶在业务逻辑之前抢先加载补丁的新类，达到热修复的目的。市场主流方案选择：</p>
+<ul>
+<li>QZoneFix：侵入打包流程，不优雅；</li>
+<li>QFix：获取底层虚拟机函数，不稳定；</li>
+<li>Tinker：全量dex加载，粒度过细，性能消耗过大；</li>
+</ul>
+<h3 id="资源修复"><a href="#资源修复" class="headerlink" title="资源修复"></a>资源修复</h3><ol>
+<li>构造新的 AssetManager，反射调用 addAssetPath，把完整新资源包加入 AssetManager 中；</li>
+<li>找到所有引用原 AssetManager 地方，通过反射，把引用处替换成新的。<br>优点：</li>
+</ol>
+<ul>
+<li>只使用一个 package id 为 0x66 的资源包，该包只包含了改变了资源，然后直接在原 AssetManager 中 addAssetPath；</li>
+<li>不修改 AssetManager 引用处；</li>
+<li>不必下发完整包；</li>
+<li>不需要在运行时合成完整包<br>；</li></ul>
+    
+
+        <a href="/代码热修复探究-Part1/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CodeHotFix/">CodeHotFix</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HoxFix/">HoxFix</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-Android基础之Activity"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-07-13 19:52:00" datetime="2017-07-13T11:52:00.000Z"  itemprop="datePublished">2017-07-13</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/Android基础之Activity/">Android基础之Activity</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h2><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/Android基础之Activity/activity_lifecycle.png" alt="生命周期" title="">
+                </div>
+                <div class="image-caption">生命周期</div>
+            </figure>
+<ul>
+<li>onCreate：生命周期只调用一次，用于初始化、必要对象创建等；</li>
+<li>onStart：界面完全不可见变为可见时调用；</li>
+<li>onResume：界面可点击交互，不被顶层任何其他Activity遮挡，开始执行界面交互；</li>
+<li>onPause：界面交互不可点击，部分可见，此时应该停止交互相关的耗资源操作；</li>
+<li>onStop：界面完全不可见，保存重要数据，在被强杀时onDestroy不会被调用；</li>
+<li>onDestroy：生命周期只会被调用一次，界面完全被销毁，用于释放资源等；</li>
+<li>onRestart：界面onStop后重新被打开调用；</li></ul>
+    
+
+        <a href="/Android基础之Activity/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Activity/">Activity</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-Java常用线程池理解"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-06-14 18:32:00" datetime="2017-06-14T10:32:00.000Z"  itemprop="datePublished">2017-06-14</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Java/">Java</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/Java常用线程池理解/">Java常用线程池理解</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="why-？"><a href="#why-？" class="headerlink" title="why ？"></a>why ？</h2><ul>
+<li>创建和销毁线程伴随着系统开销，如果频繁创建销毁线程，影响处理效率；（创建时间T1，执行任务T2，销毁T3。如果T1+T3&gt;T2，那就划不来）</li>
+<li>线程并发数量过多，抢占系统资源导致阻塞；（线程共享系统资源，如果同时执行线程过多，导致系统资源不多而产生阻塞）</li>
+<li>能对线程进行简单管理；（延时执行，定时循环执行）</li></ul>
+    
+
+        <a href="/Java常用线程池理解/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiThread/">MultiThread</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ThreadPool/">ThreadPool</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-Android插件化原理探索"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-05-16 22:01:00" datetime="2017-05-16T14:01:00.000Z"  itemprop="datePublished">2017-05-16</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/Android插件化原理探索/">Android插件化原理探索</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="代理模式（委托模式）"><a href="#代理模式（委托模式）" class="headerlink" title="代理模式（委托模式）"></a>代理模式（委托模式）</h2><p>限制对象的直接访问，保护内部对象；</p>
+<h3 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h3><p>AIDL中<code>asInterface</code>方法中有应用到静态代理，如果不在同一进程就会返回Proxy对象，而且几乎所有系统服务采用代理模式。</p>
+<h3 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h3><p>运行时指定代理类，实现<code>InvocationHandler</code>接口，重写invoke方法，通过<code>Proxy.newInstance</code>返回代理对象。分为jdk动态代理和cglib动态代理；</p>
+<ul>
+<li>jdk动态代理：基于类的反射机制，而且目标类基于同一的接口，Java 的继承机制注定了这些动态代理类们无法实现对 class 的动态代理；</li>
+<li>cglib动态代理：借助asm实现，没有jdk动态代理的限制；</li></ul>
+    
+
+        <a href="/Android插件化原理探索/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AIDL/">AIDL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiProcess/">MultiProcess</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/插件化/">插件化</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-AIDL基本使用理解"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-04-24 20:39:00" datetime="2017-04-24T12:39:00.000Z"  itemprop="datePublished">2017-04-24</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/AIDL基本使用理解/">AIDL基本使用理解</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="AIDL基本使用"><a href="#AIDL基本使用" class="headerlink" title="AIDL基本使用"></a>AIDL基本使用</h2><p>主要用于IPC，首先建立aidl文件：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> aidl;</span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IMyInterface</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">getTestStr</span><span class="params">(String s)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后，sync一下便可以看到生成的java文件，保持这样的结构，可以分析下具体用到的接口：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">IBinder</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IInterface <span class="title">queryLocalInterface</span><span class="params">(String descriptor)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">Binder</span> <span class="keyword">implements</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">IBinder</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">Interface</span> </span>&#123;</span><br><span class="line">    <span class="function">IBinder <span class="title">asBinder</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 自动生成的接口类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IMyInterface</span> <span class="keyword">extends</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">IInterface</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getTestStr</span><span class="params">(String s)</span></span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Stub</span> <span class="keyword">extends</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">Binder</span> <span class="keyword">implements</span> <span class="title">IMyInterface</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">               <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IMyInterface <span class="title">asInterface</span><span class="params">(IBinder binder)</span> </span>&#123;</span><br><span class="line">                &#125; </span><br><span class="line">         </span><br><span class="line">         <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTransact</span><span class="params">(..)</span> </span>&#123;</span><br><span class="line">         &#125;</span><br><span class="line">        </span><br><span class="line">         <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Proxy</span> <span class="keyword">implements</span> <span class="keyword">implements</span> <span class="title">IMyInterface</span> </span>&#123;</span><br><span class="line">            </span><br><span class="line">              <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transact</span><span class="params">()</span></span>&#123;</span><br><span class="line">              &#125;</span><br><span class="line">         &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+    
+
+        <a href="/AIDL基本使用理解/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AIDL/">AIDL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiProcess/">MultiProcess</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-LeakCanary源码浅析"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-03-02 20:22:00" datetime="2017-03-02T12:22:00.000Z"  itemprop="datePublished">2017-03-02</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/LeakCanary源码浅析/">LeakCanary源码浅析</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="两步使用"><a href="#两步使用" class="headerlink" title="两步使用"></a>两步使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  debugCompile &apos;com.squareup.leakcanary:leakcanary-android:1.5.1&apos;</span><br><span class="line">  releaseCompile &apos;com.squareup.leakcanary:leakcanary-android-no-op:1.5.1&apos;</span><br><span class="line">  testCompile &apos;com.squareup.leakcanary:leakcanary-android-no-op:1.5.1&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleApplication</span> <span class="keyword">extends</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line">     <span class="meta">@Override</span> </span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate();</span><br><span class="line">        <span class="keyword">if</span> (LeakCanary.isInAnalyzerProcess(<span class="keyword">this</span>)) &#123;</span><br><span class="line">        <span class="comment">// This process is dedicated to LeakCanary for heap analysis.</span></span><br><span class="line">        <span class="comment">// You should not init your app in this process.</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      LeakCanary.install(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    
+
+        <a href="/LeakCanary源码浅析/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LeanCanary/">LeanCanary</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MemeoryLeak/">MemeoryLeak</a></li></ul>
 
     </div>
     
@@ -501,6 +678,12 @@
     </ul>
 
     
+<nav id="page-nav">
+    <div class="inner">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
+    </div>
+</nav>
+
 
 </div>
 

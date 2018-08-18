@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>SO库热修复探究(Part3) | Garvin 杂记</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="HotFix,SoLibHotFix">
+    <meta name="description" content="SO 库加载原理Java 提供两个接口加载 so 库：  System.loadLibrary(String libName)：参数为so库名称，位于 apk 压缩文件中的 libs 目录，最后复制到 apk 安装目录下； System.load(String pathName)：参数为 so 库在磁盘中完整的路径，可以加载自定义外部 so 库文件；其实最终都会调用 nativeLoad 这个 n">
+<meta name="keywords" content="HotFix,SoLibHotFix">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SO库热修复探究(Part3)">
+<meta property="og:url" content="https://hjw541988478.github.io/SO库热修复探究-Part3/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
+<meta property="og:description" content="SO 库加载原理Java 提供两个接口加载 so 库：  System.loadLibrary(String libName)：参数为so库名称，位于 apk 压缩文件中的 libs 目录，最后复制到 apk 安装目录下； System.load(String pathName)：参数为 so 库在磁盘中完整的路径，可以加载自定义外部 so 库文件；其实最终都会调用 nativeLoad 这个 n">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-08-18T12:36:29.403Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SO库热修复探究(Part3)">
+<meta name="twitter:description" content="SO 库加载原理Java 提供两个接口加载 so 库：  System.loadLibrary(String libName)：参数为so库名称，位于 apk 压缩文件中的 libs 目录，最后复制到 apk 安装目录下； System.load(String pathName)：参数为 so 库在磁盘中完整的路径，可以加载自定义外部 so 库文件；其实最终都会调用 nativeLoad 这个 n">
+    
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Garvin</h5>
+          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                存档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">SO库热修复探究(Part3)</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">SO库热修复探究(Part3)</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-07-25T13:50:00.000Z" itemprop="datePublished" class="page-time">
+  2017-07-25
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#SO-库加载原理"><span class="post-toc-number">1.</span> <span class="post-toc-text">SO 库加载原理</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#SO-库热部署实时生效分析"><span class="post-toc-number">2.</span> <span class="post-toc-text">SO 库热部署实时生效分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#动态注册-native-方法实时生效"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">动态注册 native 方法实时生效</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#静态注册-native-方法生效"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">静态注册 native 方法生效</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#SO-库实时生效方案总结"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">SO 库实时生效方案总结</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#SO-库冷部署重启生效方案"><span class="post-toc-number">3.</span> <span class="post-toc-text">SO 库冷部署重启生效方案</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#接口调用替换方案"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">接口调用替换方案</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#反射注入方案"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">反射注入方案</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#如何正确复制补丁-SO-库"><span class="post-toc-number">4.</span> <span class="post-toc-text">如何正确复制补丁 SO 库</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">5.</span> <span class="post-toc-text">总结</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">6.</span> <span class="post-toc-text">参考</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-SO库热修复探究-Part3"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">SO库热修复探究(Part3)</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-07-25 21:50:00" datetime="2017-07-25T13:50:00.000Z"  itemprop="datePublished">2017-07-25</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="SO-库加载原理"><a href="#SO-库加载原理" class="headerlink" title="SO 库加载原理"></a>SO 库加载原理</h2><p>Java 提供两个接口加载 so 库：</p>
+<ul>
+<li><code>System.loadLibrary(String libName)</code>：参数为so库名称，位于 apk 压缩文件中的 libs 目录，最后复制到 apk 安装目录下；</li>
+<li><p><code>System.load(String pathName)</code>：参数为 so 库在磁盘中完整的路径，可以加载自定义外部 so 库文件；<br>其实最终都会调用 nativeLoad 这个 native 方法，这个方法参数为 so 库在磁盘中完整路径名。在 JNI 编程中，动态注册的 native 方法必须实现 JNI_OnLoad 方法，同时实现一个 JNINativeMethod[ ] 数组，静态注册的 native 方法必须是 Java+类完整路径+方法名 的格式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">native</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> -&gt;<span class="params">(JNI_OnLoad nativeMethods[] 匹配映射)</span> -&gt; 动态注册 <span class="keyword">void</span> <span class="title">test</span><span class="params">(env,jobject)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">native</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> -&gt;<span class="params">(<span class="number">1.</span> test第一次执行dvmResolvedNativeCass <span class="number">2.</span> hashtable中查找匹配findMethodInLib)</span> -&gt; 静态注册 <span class="keyword">void</span> Java_包名_类名<span class="title">_test</span><span class="params">(env,jobject)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>动态注册的 native 方法映射通过加载 so 库过程中调用 JNI_OnLoad 方法调用完成；</p>
+</li>
+<li>静态注册的 native 方法映射在 native 方法第一次执行的时候完成映射，当然前提是 so 库已经 load 过。<a id="more"></a>
+<h2 id="SO-库热部署实时生效分析"><a href="#SO-库热部署实时生效分析" class="headerlink" title="SO 库热部署实时生效分析"></a>SO 库热部署实时生效分析</h2><h3 id="动态注册-native-方法实时生效"><a href="#动态注册-native-方法实时生效" class="headerlink" title="动态注册 native 方法实时生效"></a>动态注册 native 方法实时生效</h3>动态注册的 native 方法调用一次 JNI_OnLoad 方法都会重新完成一次映射，所以我们可以先加载原来的 so 库，再加载补丁 so 库，就能完成 Java 层 native 方法到 native 层 patch 后新方法的映射，实测 art 是没问题的，但是 Dalvik 无法实时生效，原因在于 Dalvik 第二次 load 补丁 so 库执行的仍然是原来 so 库的 JNI_OnLoad 方法，而非补丁 so 库的。<br>定位到主要的两个方法：</li>
+<li>dlopen()：返回给我们一个动态链接库的句柄；</li>
+<li>dlsym()：通过 dlopen 得到动态链接库句柄，来查找一个 symbol；<br>在 Dalvik 中 dlopen 的实现，源码在 /bionic/linker/dlfcn.cpp 中，调用关系：dlopen -&gt; do_dlopen -&gt; find_library -&gt; find_library_internal，其中有：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">soinfo* si = find_loaded_library(name);</span><br><span class="line"><span class="keyword">if</span> (si != <span class="literal">NULL</span>) &#123;</span><br><span class="line">     <span class="keyword">if</span> (si -&gt; flags &amp; FLAG_LINKED) &#123;</span><br><span class="line">           <span class="keyword">return</span>  si;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>find_loaded_library 方法判断 name 表示的 so 库是否加载过，如果加载过直接返回，如果没有加载过则进行加载。而其中判断是否已经加载过的是依赖 so 库的文件名作为 key，那么补丁 so 库的路径与原来 so 库就算不一样，也会看作是同一 so 库，这样执行的还是原来 so 库的 JNI_OnLoad 方法，ART是以完整路径作为 key 去查找加载的，自然也不存在这种问题。<br>所以解决 Dalvik 下的这个问题，可以对 so 进行改名，自然会重新加载。</p>
+<h3 id="静态注册-native-方法生效"><a href="#静态注册-native-方法生效" class="headerlink" title="静态注册 native 方法生效"></a>静态注册 native 方法生效</h3><p>静态注册 native 方法的映射是在 native 方法第一次执行的时候就完成了映射，系统 JNI API 提供了解注册的接口，UnregisterNatives 函数会把 jclazz 所在类的所有 native 方法都重新指向为 dvmResolveNativeMethod，所以调用了 UnRegisterNatives 之后，不管静态注册还是动态注册的 native 方法都会重新去做映射。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">patchNativeMethod</span><span class="params">(JNIEnv *env, jclass clz)</span> </span>&#123;</span><br><span class="line">     env -&gt; UnregisterNatives(clz);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果我们知道了哪个类需要解注册 native 方法，然后 load 补丁 so 库之后，再次指向该 native 方法，但实际上，java 层的 native 方法可能映射到原 so 库方法，也有可能映射到补丁 so 库的新方法。<br>如果静态注册的 native 方法从未执行，首先尝试解析该方法，或者调用了 unregisterJNINativeMethods 解注册方法，那么该方法指向 meth -&gt; nativeFunc = dvmResolveNativeMethod，实际运行该方法的时候，执行的是 dvmResolveNativeMethod 函数，该函数主要完成 java 层 native 方法到 native 层的映射。其中具体涉及到的关键变量为 gDvm.nativeLibs ，它是一个全局变量，是一个 hashtable，存放着整个虚拟机加载 so 库的 SharedLib 结构指针，通过它找到对应 native 函数指针，如果找到就直接 return。</p>
+<blockquote>
+<p>c.hashtable 与 java.hashtable 异同点：<br>共同点：都是数组实现，容量超过默认值会进行扩容，都是对 key 进行 hash 计算后与 hashtable 的长度进行取模作为 bucket；<br>不同点：Dalvik 下 hashtable put/get 操作方法比 java hashmap 简单一些，java hashmap 要处理 hash 冲突的情况，一般情况下增加一个链表处理冲突，然后 get 实现会遍历这个链表 通过 equals 方法比较 value 是否一致进行查找，而在 dalvik 下 hashtable 的 put 实&gt; 现只是简单 的把指针下移直到下一个空节点，get实现则是根据 hash 值计算出 bucket 位置，通过 cmpFunc 比较值是否一致，不一致指针下移。<br>如果在对补丁 so 库重命名后，补丁 so 库在 hashtable 中的位置比原 so 库靠前，就可以修复，否则就无法修复。</p>
+</blockquote>
+<h3 id="SO-库实时生效方案总结"><a href="#SO-库实时生效方案总结" class="headerlink" title="SO 库实时生效方案总结"></a>SO 库实时生效方案总结</h3><ol>
+<li>so 库为了兼容 Dalvik 动态注册的 native 方法的实时生效，必须对 so 文件改名；</li>
+<li>针对 so 库静态注册的 native 方法的实时生效，需要先解注册静态注册的 native 方法，难点在于无法知道哪几个 native 方法发生了变更。假设我们知道静态注册的 native 方法需要解注册，重新 load 补丁 so 库有可能也无法生效不被修复；</li>
+<li>如果补丁 so 库足够多足够大，在加载过程中，可能导致 JNI 层的 OOM；</li>
+<li>如果补丁 so 库新增动态注册方法，而 dex 中没有相应方法，直接去加载会报 NoSuchMethodError 异常，具体逻辑在 dvmRegisterJNIMethod 中。此时只能冷启动生效。</li>
+</ol>
+<h2 id="SO-库冷部署重启生效方案"><a href="#SO-库冷部署重启生效方案" class="headerlink" title="SO 库冷部署重启生效方案"></a>SO 库冷部署重启生效方案</h2><h3 id="接口调用替换方案"><a href="#接口调用替换方案" class="headerlink" title="接口调用替换方案"></a>接口调用替换方案</h3><p>使用<code>SOPatchManager.loadLibrary</code>接口加载 so 库优先尝试加载 sdk 指定目录下的补丁 so：</p>
+<ul>
+<li>如果存在，则加载补丁 so 库而不去加载 apk 目录下的 so 库；</li>
+<li>如果不存在 so，那么调用 System.loadLibrary 加载 apk 目录下的 so 库。<br>这个方案的优缺点：</li>
+<li>优点：不需要对不同 sdk 版本兼容，因为所有 sdk 版本都有 System.loadLibrary 这个接口；</li>
+<li>缺点：调用方需要替换 System 默认加载 so 库接口为 sdk 提供的接口，如果是已经编译混淆好的三方库的 so 库 patch，很难做到接口替换，无法修复三方包 so 库；</li>
+</ul>
+<h3 id="反射注入方案"><a href="#反射注入方案" class="headerlink" title="反射注入方案"></a>反射注入方案</h3><p><code>System.loadLibrary(&quot;native-lib&quot;)</code>，在加载过程中，最终传给 native 方法执行的参数是 so 库在磁盘中的完整路径，比如：<code>/data/app-lib/com.test.jni/libnative-lib.so</code>，so 库会在 <code>DexPathList.nativeLibraryDirectories/nativeLibraryPathElements</code> 变量所表示的目录下遍历搜索。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//sdk &lt; 23, DexPathList.java</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> FIle[] nativeLibararyDirectories;</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">findLibrary</span><span class="params">(String libraryName)</span> </span>&#123;</span><br><span class="line">     String fileName = System.mapLibraryName(libraryName);</span><br><span class="line">     <span class="keyword">for</span> (File directory : nativeLibraryDirectories) &#123;</span><br><span class="line">           String path = <span class="keyword">new</span> File(directory, fileName).getPath();</span><br><span class="line">            <span class="comment">// path文件存在同时可读，返回</span></span><br><span class="line">            <span class="keyword">if</span> (IoUtils.canOpenReadOnly(path)) &#123;</span><br><span class="line">                 <span class="keyword">return</span> path;    </span><br><span class="line">            &#125;   </span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>IoUtils.canOpenReadOnly(path)</code>返回 true 的前提必须 path 表示的 so 文件存在，我们可以采用反射注入方式，把我们补丁 so 库的路径插入到 nativeLibraryDirectories 数组的最前面，就可以达到加载的是补丁 so 库而不是原来 so 库。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// sdk&gt;=23 DexPathList.java</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Element[] nativeLibraryPathElements;</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">findLibrary</span><span class="params">(String libraryName)</span> </span>&#123;</span><br><span class="line">     String fileName = System.mapLibraryName(libraryName);</span><br><span class="line">     <span class="keyword">for</span> (Element element : nativeLibraryPathElements) &#123;    </span><br><span class="line">             String path = element.findNativeLibrary(fileName);</span><br><span class="line">             <span class="keyword">if</span> (path != <span class="keyword">null</span>) &#123;</span><br><span class="line">                     <span class="keyword">return</span> path;</span><br><span class="line">             &#125;</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在 sdk23 以上使用的是Element类，与上面类似，我们只需要把补丁 so 库完整路径作为参数构建一个 Element 对象，插入到 nativeLibraryPathElements 数组最前面。<br>这种方案的特点：</p>
+<ul>
+<li>可以修复三方库的 so 库，同时接入方不需要强制侵入用户接口调用；</li>
+<li>需要对 sdk 做兼容适配，以 sdk23 为分界线，findLibrary 接口实现已经发生变化；</li>
+</ul>
+<h2 id="如何正确复制补丁-SO-库"><a href="#如何正确复制补丁-SO-库" class="headerlink" title="如何正确复制补丁 SO 库"></a>如何正确复制补丁 SO 库</h2><p>如果支持64位并且 apk 文件 libs 目录中存在 arm64-v8a，则 使用 arm64-v8a，否则检查是否是 32 位系统，如果存在 armabi-v7a，则使用 armabi-v7a，否则只能使用 armabi，具体可以参考 PMS 加载 SO 库的过程。补丁 so 库文件放到补丁包的 libs 目录，libs 目录和 .dex 文件和 res 资源文件打包成一个压缩文件作为补丁包，libs 目录可能包含多个 abis 目录，所以需要选择最合适的 primaryCpuAbi，然后从 libs 目录下选择 primaryCpuAbi 子目录插入到 nativeLibraryDirectories/nativeLibraryPathElements 数组中。所以关键点在于如何选取 primaryCpuAbi，在 sdk 中：</p>
+<ul>
+<li>sdk&gt;=21 时，直接反射拿到 Application 对象的 primaryCpuAbi 即可；</li>
+<li>sdk&lt;21 时，由于不支持 64 位，所以把 Build.CPU_ABI，Build.CPU_ABI2 作为 primaryCpuAbi 即可。<br>此后拿到 primaryCpuAbi 便可可以构造 PathClassLoader 加载 so 库。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从稳定性出发，使用反射注入的方案进行 SO 库修复，重启生效，更具有普遍性，但是实时生效的需求也可以做到部分，只是存在着限制。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<ol>
+<li><a href="http://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&amp;mid=2653577702&amp;idx=1&amp;sn=1288c77cd8fc2db68dc92cf18d675ace&amp;scene=4#wechat_redirect" target="_blank" rel="noopener">Android 动态链接库加载原理及 HotFix 方案介绍</a></li>
+<li>阿里Android热修复技术原理.pdf</li>
+</ol>
+</blockquote>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+
+        
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/SO库热修复探究-Part3/" target="_blank" rel="external">https://hjw541988478.github.io/SO库热修复探究-Part3/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://hjw541988478.github.io">
+            <img src="/img/avatar.jpg" alt="Garvin">
+            Garvin
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HotFix/">HotFix</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SoLibHotFix/">SoLibHotFix</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/SO库热修复探究-Part3/&title=《SO库热修复探究(Part3)》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/SO库热修复探究-Part3/&title=《SO库热修复探究(Part3)》 — Garvin 杂记&source=SO 库加载原理Java 提供两个接口加载 so 库：
+
+System.loadLibrary(String libName)：参数为so库名称，位于 a..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/SO库热修复探究-Part3/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《SO库热修复探究(Part3)》 — Garvin 杂记&url=https://hjw541988478.github.io/SO库热修复探究-Part3/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/SO库热修复探究-Part3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/设计模式之七大基本原则/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">设计模式之七大基本原则</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/资源热修复探究-Part2/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">资源热修复探究(Part2)</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "Av3sk2Q4QhL7up87ziVVSeeS-gzGzoHsz",
+            appKey: "hVI7cltsWA2q1fvsUNRWEJ4e",
+            avatar: "retro",
+            placeholder: "Just go go",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Garvin &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/SO库热修复探究-Part3/&title=《SO库热修复探究(Part3)》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/SO库热修复探究-Part3/&title=《SO库热修复探究(Part3)》 — Garvin 杂记&source=SO 库加载原理Java 提供两个接口加载 so 库：
+
+System.loadLibrary(String libName)：参数为so库名称，位于 a..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/SO库热修复探究-Part3/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《SO库热修复探究(Part3)》 — Garvin 杂记&url=https://hjw541988478.github.io/SO库热修复探究-Part3/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/SO库热修复探究-Part3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACI0lEQVR42u3aQZLDIAwF0dz/0p4DpOz0l/BUIZpVahIwzwsNkvh88Lhuxve3d395Xud77ueNIUOGjG0Z6dJ8u8+/T9e/mytDhoxzGHcR7O43HMDX58FXhgwZMgiDHxnTkC1DhgwZHQYJiHyLMmTIkJEyeEGNlMP4dvmLWJaLy5AhY0MGr7r//+dX+hsyZMjYinGFI6WmKW5tyJAhYzajfwEibV6mBz7eWpAhQ8ZUBi/387CYbuJ5FporQ4aM0YxaMpk2I3mDgYfvYp4tQ4aMzRlkId7aTC9k8MOoDBkyTmPwaem76bc/g6RXhgwZoxlpTzBNd2sH0GVdWRkyZAxikGQybSHwZJWTUH9DhgwZ4xiklM/TzlUNhvi5MmTIGM3gKStvGHS2lT5FhgwZ5zD40un7qBX9eWsTnXBlyJCxOYOnr6sKbf0rF60sXIYMGdsyVh3p+LY6J7qgjyFDhowRjLRNmCaWtfIZX+dH7VCGDBnjGLXAx7fFk14e1mXIkHEyg1+D6Jfn+HN/hGYZMmQcwEhLY/wCRNq2LP4DkCFDxmgGH7XwygtznSsgMmTImMq4wlG7QlE7LAZlOBkyZIxmvB1q05YnSWJlyJBxJqN/beKN6xfpRQ0ZMmScwOBlMh6IeXmuf+FDhgwZMmopK/+8IGWVIUOGjMfHrC201ebKkCHjBEatGcCDaa2EF6S4MmTIGM3opI58K53LXv3UV4YMGdsy/gB0PzMIG+hOuQAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1274482147&web_id=1274482147')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

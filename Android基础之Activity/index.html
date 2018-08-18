@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Android基础之Activity | Garvin 杂记</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Activity">
+    <meta name="description" content="生命周期                                                                                             生命周期               onCreate：生命周期只调用一次，用于初始化、必要对象创建等； onStart：界面完全不可见变为可见时调用； onResume：界面可点击交互，不被顶层任何其他A">
+<meta name="keywords" content="Activity">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android基础之Activity">
+<meta property="og:url" content="https://hjw541988478.github.io/Android基础之Activity/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
+<meta property="og:description" content="生命周期                                                                                             生命周期               onCreate：生命周期只调用一次，用于初始化、必要对象创建等； onStart：界面完全不可见变为可见时调用； onResume：界面可点击交互，不被顶层任何其他A">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://hjw541988478.github.io/Android基础之Activity/activity_lifecycle.png">
+<meta property="og:image" content="https://hjw541988478.github.io/Android基础之Activity/diagram_backstack_singletask_multiactivity.png">
+<meta property="og:updated_time" content="2018-08-18T15:39:28.410Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android基础之Activity">
+<meta name="twitter:description" content="生命周期                                                                                             生命周期               onCreate：生命周期只调用一次，用于初始化、必要对象创建等； onStart：界面完全不可见变为可见时调用； onResume：界面可点击交互，不被顶层任何其他A">
+<meta name="twitter:image" content="https://hjw541988478.github.io/Android基础之Activity/activity_lifecycle.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Garvin</h5>
+          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                存档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Android基础之Activity</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Android基础之Activity</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2017-07-13T11:52:00.000Z" itemprop="datePublished" class="page-time">
+  2017-07-13
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#生命周期"><span class="post-toc-number">1.</span> <span class="post-toc-text">生命周期</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#onPause和onStop调用时机？"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">onPause和onStop调用时机？</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#异常状态下的生命周期"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">异常状态下的生命周期</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#状态保存与恢复"><span class="post-toc-number">2.</span> <span class="post-toc-text">状态保存与恢复</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#启动模式"><span class="post-toc-number">3.</span> <span class="post-toc-text">启动模式</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#设置方法"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">设置方法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Activity任务栈"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">Activity任务栈</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4种类型"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">4种类型</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#标识FLAGS"><span class="post-toc-number">4.</span> <span class="post-toc-text">标识FLAGS</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Activity到底进入哪个栈-？"><span class="post-toc-number">5.</span> <span class="post-toc-text">Activity到底进入哪个栈 ？</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Android基础之Activity"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Android基础之Activity</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2017-07-13 19:52:00" datetime="2017-07-13T11:52:00.000Z"  itemprop="datePublished">2017-07-13</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h2><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/Android基础之Activity/activity_lifecycle.png" alt="生命周期" title="">
+                </div>
+                <div class="image-caption">生命周期</div>
+            </figure>
+<ul>
+<li>onCreate：生命周期只调用一次，用于初始化、必要对象创建等；</li>
+<li>onStart：界面完全不可见变为可见时调用；</li>
+<li>onResume：界面可点击交互，不被顶层任何其他Activity遮挡，开始执行界面交互；</li>
+<li>onPause：界面交互不可点击，部分可见，此时应该停止交互相关的耗资源操作；</li>
+<li>onStop：界面完全不可见，保存重要数据，在被强杀时onDestroy不会被调用；</li>
+<li>onDestroy：生命周期只会被调用一次，界面完全被销毁，用于释放资源等；</li>
+<li>onRestart：界面onStop后重新被打开调用；<a id="more"></a>
+<h3 id="onPause和onStop调用时机？"><a href="#onPause和onStop调用时机？" class="headerlink" title="onPause和onStop调用时机？"></a>onPause和onStop调用时机？</h3></li>
+<li>当Activity A打开透明熟悉的 B时，A只会调用onPause，onStop不会调用，A部分可见不可交互，此时按返回键关闭B，只会调用A的onResume，A.onResume -&gt; A.onPause -&gt; B.onCreate -&gt; B.onStart -&gt; B.onResume -&gt; B.onPause -&gt; B.onStop -&gt; A.onResume；</li>
+<li>当A打开的不透明的B时，A.onPause -&gt; B.onCreate -&gt; B.onStart -&gt; B.onResume -&gt; A.onStop；<br>可以看到如果在onPause里面做太多的耗时操作，可能导致下一个界面的卡顿；</li>
+</ul>
+<h3 id="异常状态下的生命周期"><a href="#异常状态下的生命周期" class="headerlink" title="异常状态下的生命周期"></a>异常状态下的生命周期</h3><ul>
+<li>系统配置改变<br>如屏幕旋转、键盘灯，会出发Activity的重建，若需要不触发重启，可以在AndroidManifest配置configChanges熟悉，常用的locale、orentation、keyboardHidden和screenSize。</li>
+<li>系统资源不足<br>Activity优先级分为：</li>
+</ul>
+<ol>
+<li>前台：可交互；</li>
+<li>可见非前台：打开Dialog或者透明Activity；</li>
+<li>后台：跳转到其他Activity；<br>内存不足由3到1进行销毁；</li>
+</ol>
+<h2 id="状态保存与恢复"><a href="#状态保存与恢复" class="headerlink" title="状态保存与恢复"></a>状态保存与恢复</h2><p>由于内存不足系统回收，可以使用Bundle进行数据存储与恢复；</p>
+<ul>
+<li>保存：在onStop之前调用onSaveInstanceState，在此处存储；</li>
+<li>恢复：在onCreate方法里恢复，首先判断bundle是否为空，也可以在onRestoreSaveInstance里面完成；</li>
+</ul>
+<h2 id="启动模式"><a href="#启动模式" class="headerlink" title="启动模式"></a>启动模式</h2><h3 id="设置方法"><a href="#设置方法" class="headerlink" title="设置方法"></a>设置方法</h3><p>AndroidManifest配置：无法配置clear_top标识；<br>intent中追加addFlags方法，以代码动态设置为准，无法设置singleInstance模式；</p>
+<h3 id="Activity任务栈"><a href="#Activity任务栈" class="headerlink" title="Activity任务栈"></a>Activity任务栈</h3><ul>
+<li>存放Activity，采用后进先出的结构；</li>
+<li>从栈A启动到栈B，按返回键，先将栈B回退到空，再入栈A<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/Android基础之Activity/diagram_backstack_singletask_multiactivity.png" alt="Activity任务栈" title="">
+                </div>
+                <div class="image-caption">Activity任务栈</div>
+            </figure></li>
+<li>查看命令： adb shel dumpsys activity</li>
+</ul>
+<h3 id="4种类型"><a href="#4种类型" class="headerlink" title="4种类型"></a>4种类型</h3><ol>
+<li>standard：标准模式，每次启动新的Activity并加入到当前栈的顶部；</li>
+<li>singleTop：栈顶复用模式，若打开的Activity位于栈顶，直接复用，按照onPause -&gt; onNewIntent -&gt; onResume 顺序出发，可以在onNewIntent内处理业务；</li>
+<li>singleTask：栈内复用模式：Activity A在栈S1，若A打开singleTask模式的Activity B；<br>B目标栈为S2，S2不存在，则创建S2，将B入栈S2；<br>B目标栈为S1，S1存在且无B，则将B放入栈顶；<br>B目标栈为S1，S1存在且有B，复用B，将B上面的Activity出栈，回调onNewIntent方法；</li>
+<li>singleInstance：单例模式，单独位于一个任务栈中，栈中不会有其他Activity；</li>
+</ol>
+<h2 id="标识FLAGS"><a href="#标识FLAGS" class="headerlink" title="标识FLAGS"></a>标识FLAGS</h2><ul>
+<li>FLAG_ACTIVITY_NEW_TASK：不等同于singleTask；<br>目标栈不存在，则创建栈并入栈；<br>目标栈存在，若Activity未打开过，创建放入栈顶；<br>目标栈存在，若Activity已打开过，将目标栈移动到前台，不会创建新的；</li>
+<li>FLAG_ACTIVITY_SINGLE_TOP：等同于singleTop；</li>
+<li>FLAG_ACTIVITY_CLEAR_TOP：singleTask自带该效果；</li>
+<li>FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS：不出现在多任务列表中；</li>
+</ul>
+<h2 id="Activity到底进入哪个栈-？"><a href="#Activity到底进入哪个栈-？" class="headerlink" title="Activity到底进入哪个栈 ？"></a>Activity到底进入哪个栈 ？</h2><ol>
+<li>taskAffinity：亲和关系，表示更倾向于进入哪个栈，所以并不是设置了该属性，就一定位于这个栈中；</li>
+<li>taskAffinity不设置时，默认为包名；</li>
+<li>当A启动standard、singleTop的B时，且不带FLAG_ACIVITY_NEW_TASK，则B加入A所在的栈顶；</li>
+<li>只有singleTask、singleInstance或者带FLAG_ACTIVITY_NEW_TASK才能让taskAffinity生效；</li>
+<li>allowTaskReparenting这个属性会让taskAffinity生效，如A启动带taskAffinity的B，B肯定放入taskAffinity声明的栈中；</li>
+</ol>
+<p>##参考</p>
+<blockquote>
+<ol>
+<li><a href="http://www.jianshu.com/p/8aed27750f1e" target="_blank" rel="noopener">Activity你该懂的</a></li>
+</ol>
+</blockquote>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+
+        
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/Android基础之Activity/" target="_blank" rel="external">https://hjw541988478.github.io/Android基础之Activity/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://hjw541988478.github.io">
+            <img src="/img/avatar.jpg" alt="Garvin">
+            Garvin
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Activity/">Activity</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/Android基础之Activity/&title=《Android基础之Activity》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/Android基础之Activity/&title=《Android基础之Activity》 — Garvin 杂记&source=生命周期
+                
+                    
+                    
+             ..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/Android基础之Activity/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android基础之Activity》 — Garvin 杂记&url=https://hjw541988478.github.io/Android基础之Activity/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/Android基础之Activity/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/代码热修复探究-Part1/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">代码热修复探究(Part1)</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/Java常用线程池理解/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Java常用线程池理解</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "Av3sk2Q4QhL7up87ziVVSeeS-gzGzoHsz",
+            appKey: "hVI7cltsWA2q1fvsUNRWEJ4e",
+            avatar: "retro",
+            placeholder: "Just go go",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Garvin &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/Android基础之Activity/&title=《Android基础之Activity》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/Android基础之Activity/&title=《Android基础之Activity》 — Garvin 杂记&source=生命周期
+                
+                    
+                    
+             ..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/Android基础之Activity/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android基础之Activity》 — Garvin 杂记&url=https://hjw541988478.github.io/Android基础之Activity/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/Android基础之Activity/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACHUlEQVR42u3aS07EMBAFwLn/pcMaIWXea2eQxi6vEJjElUXL/Xm94nX9WcnO12it/C8GBsaujOt2JXsS2D3y7578bBgYGOcwktcnwbfdmXy+KChjYGBg3O5JXp+E0fa9GBgYGMnjVkJzkgBjYGBgrFzRcuQnQjMGBsZpjLZY/58/f6S/gYGB8VWMq1yz0LnSPIhOhYGBsTVjdrG7TyZnzcj1dBcDA2Nvxqxk9lQgTkppyW8wMDBOYOSb2mbkykUzL8xhYGCcwJiloO3AxCx8Fx8aAwNjO0ZbYksS2vyC2A5YDMcsMDAwvpyRHDE/dJtR3j+hHqrAwMDYlNGmiHkRf2UIrG5LYGBgbM1oA1/edMxLcisADAyM0xjt4MV6avpU0ouBgbE349OFtvY5w2ELDAyMYxhJ6zFPcfPn52W7N7k4BgbGpoz2StcWztabB8P9GBgY2zHyclh7rFmJPwm7RSqLgYGxBWMWcPOSWV3/G7VCMTAw9ma0bcXkIjhrANx/iDcYDAyMAxjr6Whbbms/RzFsgYGBsTWjfWUyGJEH0zwBLmZGMDAwvpxxlSsvkLXNyDZx/fVXDAyMrRnrBf3ZE54K6xgYGOcwkiD7ieL+U/sxMDDOYSQpaM5uG6L5cd8MWGBgYGA8GiJngxoYGBgYbcBtW57tKEbR5sTAwDiAkYe/JAiuDFgMk2cMDIytGW3quELNxy9mTQUMDIztGD8pwbJQ3lIPSAAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1274482147&web_id=1274482147')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

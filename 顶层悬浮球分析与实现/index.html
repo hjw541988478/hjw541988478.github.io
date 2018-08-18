@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>顶层悬浮球分析与实现 | Garvin 杂记</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Service,FloatWindow,WindowManager">
+    <meta name="description" content="悬浮球功能作为顶层视图，在用户关闭了 APP 后也能方便快捷操作，而这类应用主要是系统级别的安全应用，比如一键清理内存。在后续的 Android 版本中，Google 和很多厂商对于此类权限做了更为敏感的控制，需要用户手动设置才能看到悬浮球。下面手动实现了一个悬浮球来分析整个过程，其核心部分就是WindowManager类对Window的管理。 WindowManager对于WindowManag">
+<meta name="keywords" content="Service,FloatWindow,WindowManager">
+<meta property="og:type" content="article">
+<meta property="og:title" content="顶层悬浮球分析与实现">
+<meta property="og:url" content="https://hjw541988478.github.io/顶层悬浮球分析与实现/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
+<meta property="og:description" content="悬浮球功能作为顶层视图，在用户关闭了 APP 后也能方便快捷操作，而这类应用主要是系统级别的安全应用，比如一键清理内存。在后续的 Android 版本中，Google 和很多厂商对于此类权限做了更为敏感的控制，需要用户手动设置才能看到悬浮球。下面手动实现了一个悬浮球来分析整个过程，其核心部分就是WindowManager类对Window的管理。 WindowManager对于WindowManag">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://hjw541988478.github.io/顶层悬浮球分析与实现/alert_window.jpg">
+<meta property="og:updated_time" content="2018-08-18T15:52:03.169Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="顶层悬浮球分析与实现">
+<meta name="twitter:description" content="悬浮球功能作为顶层视图，在用户关闭了 APP 后也能方便快捷操作，而这类应用主要是系统级别的安全应用，比如一键清理内存。在后续的 Android 版本中，Google 和很多厂商对于此类权限做了更为敏感的控制，需要用户手动设置才能看到悬浮球。下面手动实现了一个悬浮球来分析整个过程，其核心部分就是WindowManager类对Window的管理。 WindowManager对于WindowManag">
+<meta name="twitter:image" content="https://hjw541988478.github.io/顶层悬浮球分析与实现/alert_window.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Garvin</h5>
+          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                存档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">顶层悬浮球分析与实现</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">顶层悬浮球分析与实现</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2015-11-19T11:12:00.000Z" itemprop="datePublished" class="page-time">
+  2015-11-19
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#WindowManager"><span class="post-toc-number">1.</span> <span class="post-toc-text">WindowManager</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现"><span class="post-toc-number">2.</span> <span class="post-toc-text">实现</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">3.</span> <span class="post-toc-text">总结</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">4.</span> <span class="post-toc-text">参考</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-顶层悬浮球分析与实现"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">顶层悬浮球分析与实现</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2015-11-19 19:12:00" datetime="2015-11-19T11:12:00.000Z"  itemprop="datePublished">2015-11-19</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>悬浮球功能作为顶层视图，在用户关闭了 APP 后也能方便快捷操作，而这类应用主要是系统级别的安全应用，比如一键清理内存。在后续的 Android 版本中，Google 和很多厂商对于此类权限做了更为敏感的控制，需要用户手动设置才能看到悬浮球。下面手动实现了一个悬浮球来分析整个过程，其核心部分就是<code>WindowManager</code>类对Window的管理。</p>
+<h2 id="WindowManager"><a href="#WindowManager" class="headerlink" title="WindowManager"></a>WindowManager</h2><p>对于<code>WindowManager</code>的工作过程，可以通过手动添加一个<code>Window</code>为例去分析：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">TextView mFloatingText = <span class="keyword">new</span> TextView(<span class="keyword">this</span>);</span><br><span class="line">mFloatingText.setText(<span class="string">"FloatingText"</span>);</span><br><span class="line">WindowManager.LayoutParams params = <span class="keyword">new</span> WindowManager.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,<span class="number">0</span>,<span class="number">0</span>,PixelFormat.TRANSPARENT);</span><br><span class="line">params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_SHOW_WHEN_LOCKED;</span><br><span class="line">params.gravity = Gravity.LEFT | Gravity.TOP;</span><br><span class="line">params.x = <span class="number">300</span>;</span><br><span class="line">params.y = <span class="number">100</span>;</span><br><span class="line">mWindowManager.addView(mFloatingText,params);</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>上述代码将一个<code>TextView</code>添加到屏幕坐标为(300,100)的位置上。其中对于flags和type参数比较重要，flags表示Window显示属性，有主要的值：</p>
+<ul>
+<li>FLAG_NOT_FOCUSABLE<br>表示 Window 不需要获取焦点，最终的触摸事件会直接传递到下层具有焦点的 Window；</li>
+<li>FLAG_NOT_TOUCH_MODAL<br>表示当前 Window 区域的点击事件自己处理，其他区域交给底层 Window 去处理；</li>
+<li>FLAG_SHOW_WHEN_LOCKED<br>表示可以显示在锁屏界面上。<br>type参数表示 Window 的类型，Window有三种类型，分别是应用 Window，子 Window和系统 Window，层级越大表示越顶层：</li>
+<li>应用 Window<br>对应着一个 Activity，1~99层；</li>
+<li>子 Window<br>不能单独存在，必须附属于父 Window之上，比如 Dialog，1000-1999层；</li>
+<li>系统 Window<br>声明权限才能创建，比如 Toast 和系统状态栏，2000-2999层。<br>首先加上权限，<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">"android.permission.SYSTEM_ALERT_WINDOW"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>然后设置 type 属性，<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mParams.type = LayoutParams.TYPE_SYSTEM_ERROR;</span><br></pre></td></tr></table></figure></p>
+<p>对于仅有的<code>addView、updateViewLayout和removeView</code>方法，已经可以满足添加视图、更新视图和删除视图了。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>首先是主布局，提供一个Button，通过单击该按钮来打开浮窗，主要涉及到的是一个主入口Activity和主布局文件。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> android.content.Intent;</span><br><span class="line"><span class="keyword">import</span> android.support.v7.app.AppCompatActivity;</span><br><span class="line"><span class="keyword">import</span> android.os.Bundle;</span><br><span class="line"><span class="keyword">import</span> android.view.View;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        findViewById(R.id.start_float_window).setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">                startService(<span class="keyword">new</span> Intent(MainActivity.<span class="keyword">this</span>,FloatWindowService.class));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到的是，实际上是启动了一个<code>Service</code>，也就是说对于悬浮球的操作都是在FloatWindowService类中完成的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> android.app.ActivityManager;</span><br><span class="line"><span class="keyword">import</span> android.app.Service;</span><br><span class="line"><span class="keyword">import</span> android.content.Context;</span><br><span class="line"><span class="keyword">import</span> android.content.Intent;</span><br><span class="line"><span class="keyword">import</span> android.content.pm.PackageManager;</span><br><span class="line"><span class="keyword">import</span> android.content.pm.ResolveInfo;</span><br><span class="line"><span class="keyword">import</span> android.os.Handler;</span><br><span class="line"><span class="keyword">import</span> android.os.IBinder;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Timer;</span><br><span class="line"><span class="keyword">import</span> java.util.TimerTask;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FloatWindowService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 用于在线程中创建或移除悬浮窗。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Handler handler = <span class="keyword">new</span> Handler();</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 定时器，定时进行检测当前应该创建还是移除悬浮窗。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Timer timer;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">onStartCommand</span><span class="params">(Intent intent, <span class="keyword">int</span> flags, <span class="keyword">int</span> startId)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 开启定时器，每隔0.5秒刷新一次</span></span><br><span class="line">        <span class="keyword">if</span> (timer == <span class="keyword">null</span>) &#123;</span><br><span class="line">            timer = <span class="keyword">new</span> Timer();</span><br><span class="line">            timer.scheduleAtFixedRate(<span class="keyword">new</span> RefreshTask(), <span class="number">0</span>, <span class="number">500</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onStartCommand(intent, flags, startId);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy();</span><br><span class="line">        <span class="comment">// Service被终止的同时也停止定时器继续运行</span></span><br><span class="line">        timer.cancel();</span><br><span class="line">        timer = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">RefreshTask</span> <span class="keyword">extends</span> <span class="title">TimerTask</span> </span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">// 当前界面是桌面，且没有悬浮窗显示，则创建悬浮窗。</span></span><br><span class="line">            <span class="keyword">if</span> (isHome() &amp;&amp; !MyWindowManager.isWindowShowing()) &#123;</span><br><span class="line">                handler.post(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                        MyWindowManager.createSmallWindow(getApplicationContext());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 当前界面不是桌面，且有悬浮窗显示，则移除悬浮窗。</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (!isHome() &amp;&amp; MyWindowManager.isWindowShowing()) &#123;</span><br><span class="line">                handler.post(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                        MyWindowManager.removeSmallWindow(getApplicationContext());</span><br><span class="line">                        MyWindowManager.removeBigWindow(getApplicationContext());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 当前界面是桌面，且有悬浮窗显示，则更新内存数据。</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (isHome() &amp;&amp; MyWindowManager.isWindowShowing()) &#123;</span><br><span class="line">                handler.post(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                        MyWindowManager.updateUsedPercent(getApplicationContext());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 判断当前界面是否是桌面</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isHome</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ActivityManager mActivityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);</span><br><span class="line">        List&lt;ActivityManager.RunningTaskInfo&gt; rti = mActivityManager.getRunningTasks(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> getHomes().contains(rti.get(<span class="number">0</span>).topActivity.getPackageName());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获得属于桌面的应用的应用包名称</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 返回包含所有包名的字符串列表</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> List&lt;String&gt; <span class="title">getHomes</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; names = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">        PackageManager packageManager = <span class="keyword">this</span>.getPackageManager();</span><br><span class="line">        Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_MAIN);</span><br><span class="line">        intent.addCategory(Intent.CATEGORY_HOME);</span><br><span class="line">        List&lt;ResolveInfo&gt; resolveInfo = packageManager.queryIntentActivities(intent,</span><br><span class="line">                PackageManager.MATCH_DEFAULT_ONLY);</span><br><span class="line">        <span class="keyword">for</span> (ResolveInfo ri : resolveInfo) &#123;</span><br><span class="line">            names.add(ri.activityInfo.packageName);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> names;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可见FloatWindowService在<code>onStartCommand</code>方法中开启了一个定时器，每隔500毫秒就会执行RefreshTask任务。任务主要执行的操作是，当前界面是桌面的话则显示悬浮球并刷新内存使用率，否则隐藏悬浮球。且当服务停止时，将定时器销毁，防止内存泄露。<br>从上面的代码我们也可以看出，创建和移除悬浮窗，以及更新悬浮窗的内容，都是由MyWindowManager这个类来管理的，比起直接写在<code>Service</code>中，能够更好的分离代码。既然悬浮窗能够显示了，接下来就是悬浮窗视图 View 的实现了。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> android.content.Context;</span><br><span class="line"><span class="keyword">import</span> android.view.LayoutInflater;</span><br><span class="line"><span class="keyword">import</span> android.view.MotionEvent;</span><br><span class="line"><span class="keyword">import</span> android.view.View;</span><br><span class="line"><span class="keyword">import</span> android.view.WindowManager;</span><br><span class="line"><span class="keyword">import</span> android.widget.LinearLayout;</span><br><span class="line"><span class="keyword">import</span> android.widget.TextView;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FloatWindowSmallView</span> <span class="keyword">extends</span> <span class="title">LinearLayout</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 记录小悬浮窗的宽度</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> viewWidth;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 记录小悬浮窗的高度</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> viewHeight;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 记录系统状态栏的高度</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> statusBarHeight;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 用于更新小悬浮窗的位置</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> WindowManager windowManager;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 小悬浮窗的参数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> WindowManager.LayoutParams mParams;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 记录当前手指位置在屏幕上的横坐标值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> xInScreen;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 记录当前手指位置在屏幕上的纵坐标值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> yInScreen;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 记录手指按下时在屏幕上的横坐标的值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> xDownInScreen;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 记录手指按下时在屏幕上的纵坐标的值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> yDownInScreen;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 记录手指按下时在小悬浮窗的View上的横坐标的值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> xInView;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 记录手指按下时在小悬浮窗的View上的纵坐标的值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> yInView;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FloatWindowSmallView</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(context);</span><br><span class="line">        windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);</span><br><span class="line">        LayoutInflater.from(context).inflate(R.layout.float_window_small, <span class="keyword">this</span>);</span><br><span class="line">        View view = findViewById(R.id.small_window_layout);</span><br><span class="line">        viewWidth = view.getLayoutParams().width;</span><br><span class="line">        viewHeight = view.getLayoutParams().height;</span><br><span class="line">        TextView percentView = (TextView) findViewById(R.id.percent);</span><br><span class="line">        percentView.setText(MyWindowManager.getUsedPercentValue(context));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (event.getAction()) &#123;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_DOWN:</span><br><span class="line">                <span class="comment">// 手指按下时记录必要数据,纵坐标的值都需要减去状态栏高度</span></span><br><span class="line">                xInView = event.getX();</span><br><span class="line">                yInView = event.getY();</span><br><span class="line">                xDownInScreen = event.getRawX();</span><br><span class="line">                yDownInScreen = event.getRawY() - getStatusBarHeight();</span><br><span class="line">                xInScreen = event.getRawX();</span><br><span class="line">                yInScreen = event.getRawY() - getStatusBarHeight();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</span><br><span class="line">                xInScreen = event.getRawX();</span><br><span class="line">                yInScreen = event.getRawY() - getStatusBarHeight();</span><br><span class="line">                <span class="comment">// 手指移动的时候更新小悬浮窗的位置</span></span><br><span class="line">                updateViewPosition();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_UP:</span><br><span class="line">                <span class="comment">// 如果手指离开屏幕时，xDownInScreen和xInScreen相等，且yDownInScreen和yInScreen相等，则视为触发了单击事件。</span></span><br><span class="line">                <span class="keyword">if</span> (xDownInScreen == xInScreen &amp;&amp; yDownInScreen == yInScreen) &#123;</span><br><span class="line">                    openBigWindow();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 将小悬浮窗的参数传入，用于更新小悬浮窗的位置。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> params 小悬浮窗的参数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setParams</span><span class="params">(WindowManager.LayoutParams params)</span> </span>&#123;</span><br><span class="line">        mParams = params;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 更新小悬浮窗在屏幕中的位置。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateViewPosition</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mParams.x = (<span class="keyword">int</span>) (xInScreen - xInView);</span><br><span class="line">        mParams.y = (<span class="keyword">int</span>) (yInScreen - yInView);</span><br><span class="line">        windowManager.updateViewLayout(<span class="keyword">this</span>, mParams);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 打开大悬浮窗，同时关闭小悬浮窗。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">openBigWindow</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        MyWindowManager.createBigWindow(getContext());</span><br><span class="line">        MyWindowManager.removeSmallWindow(getContext());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 用于获取状态栏的高度。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 返回状态栏高度的像素值。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getStatusBarHeight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (statusBarHeight == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Class&lt;?&gt; c = Class.forName(<span class="string">"com.android.internal.R$dimen"</span>);</span><br><span class="line">                Object o = c.newInstance();</span><br><span class="line">                Field field = c.getField(<span class="string">"status_bar_height"</span>);</span><br><span class="line">                <span class="keyword">int</span> x = (Integer) field.get(o);</span><br><span class="line">                statusBarHeight = getResources().getDimensionPixelSize(x);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> statusBarHeight;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>为了实现悬浮球随手指移动而移动的效果，于是对<code>onTouchEvent</code>事件进行了重写。在用户按下瞬间触发ACTION_DOWN事件，按下的点在屏幕中的坐标，以及相对于视图的位置，然后随着手指的移动会触发ACTION_MOVE事件，此时获取新的屏幕坐标，更新悬浮球在屏幕中位置，最后手指抬起来，则触发ACTION_UP事件，如果此时的坐标和ACTION_DOWN中坐标是一致的，则表示单击了悬浮窗。记得处理屏幕状态栏的高度，在处理坐标的时候应该减掉这一部分值。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> android.app.ActivityManager;</span><br><span class="line"><span class="keyword">import</span> android.content.Context;</span><br><span class="line"><span class="keyword">import</span> android.graphics.PixelFormat;</span><br><span class="line"><span class="keyword">import</span> android.view.Gravity;</span><br><span class="line"><span class="keyword">import</span> android.view.ViewGroup;</span><br><span class="line"><span class="keyword">import</span> android.view.WindowManager;</span><br><span class="line"><span class="keyword">import</span> android.widget.TextView;</span><br><span class="line"><span class="keyword">import</span> java.io.BufferedReader;</span><br><span class="line"><span class="keyword">import</span> java.io.FileReader;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyWindowManager</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 小悬浮窗View的实例</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> FloatWindowSmallView smallWindow;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 大悬浮窗View的实例</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> FloatWindowBigView bigWindow;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 小悬浮窗View的参数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> WindowManager.LayoutParams smallWindowParams;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 大悬浮窗View的参数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> WindowManager.LayoutParams bigWindowParams;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 用于控制在屏幕上添加或移除悬浮窗</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> WindowManager mWindowManager;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 用于获取手机可用内存</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ActivityManager mActivityManager;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 创建一个小悬浮窗。初始位置为屏幕的右部中间位置。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">     *            必须为应用程序的Context.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">createSmallWindow</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        WindowManager windowManager = getWindowManager(context);</span><br><span class="line">        <span class="keyword">int</span> screenWidth = windowManager.getDefaultDisplay().getWidth();</span><br><span class="line">        <span class="keyword">int</span> screenHeight = windowManager.getDefaultDisplay().getHeight();</span><br><span class="line">        <span class="keyword">if</span> (smallWindow == <span class="keyword">null</span>) &#123;</span><br><span class="line">            smallWindow = <span class="keyword">new</span> FloatWindowSmallView(context);</span><br><span class="line">            <span class="keyword">if</span> (smallWindowParams == <span class="keyword">null</span>) &#123;</span><br><span class="line">                smallWindowParams = <span class="keyword">new</span> WindowManager.LayoutParams();</span><br><span class="line">                smallWindowParams.type = WindowManager.LayoutParams.TYPE_PHONE;</span><br><span class="line">                smallWindowParams.format = PixelFormat.RGBA_8888;</span><br><span class="line">                smallWindowParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL</span><br><span class="line">                        | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;</span><br><span class="line">                smallWindowParams.gravity = Gravity.LEFT | Gravity.TOP;</span><br><span class="line">                smallWindowParams.width = FloatWindowSmallView.viewWidth;</span><br><span class="line">                smallWindowParams.height = FloatWindowSmallView.viewHeight;</span><br><span class="line">                smallWindowParams.x = screenWidth;</span><br><span class="line">                smallWindowParams.y = screenHeight / <span class="number">2</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            smallWindow.setParams(smallWindowParams);</span><br><span class="line">            windowManager.addView(smallWindow, smallWindowParams);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 将小悬浮窗从屏幕上移除。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">     *            必须为应用程序的Context.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">removeSmallWindow</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (smallWindow != <span class="keyword">null</span>) &#123;</span><br><span class="line">            WindowManager windowManager = getWindowManager(context);</span><br><span class="line">            windowManager.removeView(smallWindow);</span><br><span class="line">            smallWindow = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 创建一个大悬浮窗。位置为屏幕正中间。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">     *            必须为应用程序的Context.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">createBigWindow</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        WindowManager windowManager = getWindowManager(context);</span><br><span class="line">        <span class="keyword">int</span> screenWidth = windowManager.getDefaultDisplay().getWidth();</span><br><span class="line">        <span class="keyword">int</span> screenHeight = windowManager.getDefaultDisplay().getHeight();</span><br><span class="line">        <span class="keyword">if</span> (bigWindow == <span class="keyword">null</span>) &#123;</span><br><span class="line">            bigWindow = <span class="keyword">new</span> FloatWindowBigView(context);</span><br><span class="line">            <span class="keyword">if</span> (bigWindowParams == <span class="keyword">null</span>) &#123;</span><br><span class="line">                bigWindowParams = <span class="keyword">new</span> WindowManager.LayoutParams();</span><br><span class="line">                bigWindowParams.x = screenWidth / <span class="number">2</span> - FloatWindowBigView.viewWidth / <span class="number">2</span>;</span><br><span class="line">                bigWindowParams.y = screenHeight / <span class="number">2</span> - FloatWindowBigView.viewHeight / <span class="number">2</span>;</span><br><span class="line">                bigWindowParams.type = WindowManager.LayoutParams.TYPE_PHONE;</span><br><span class="line">                bigWindowParams.format = PixelFormat.RGBA_8888;</span><br><span class="line">                bigWindowParams.gravity = Gravity.LEFT | Gravity.TOP;</span><br><span class="line">                bigWindowParams.width = FloatWindowBigView.viewWidth;</span><br><span class="line">                bigWindowParams.height = FloatWindowBigView.viewHeight;</span><br><span class="line">            &#125;</span><br><span class="line">            windowManager.addView(bigWindow, bigWindowParams);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 将大悬浮窗从屏幕上移除。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">     *            必须为应用程序的Context.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">removeBigWindow</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (bigWindow != <span class="keyword">null</span>) &#123;</span><br><span class="line">            WindowManager windowManager = getWindowManager(context);</span><br><span class="line">            windowManager.removeView(bigWindow);</span><br><span class="line">            bigWindow = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 更新小悬浮窗的TextView上的数据，显示内存使用的百分比。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">     *            可传入应用程序上下文。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">updateUsedPercent</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (smallWindow != <span class="keyword">null</span>) &#123;</span><br><span class="line">            TextView percentView = (TextView) smallWindow.findViewById(R.id.percent);</span><br><span class="line">            percentView.setText(getUsedPercentValue(context));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 是否有悬浮窗(包括小悬浮窗和大悬浮窗)显示在屏幕上。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 有悬浮窗显示在桌面上返回true，没有的话返回false。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isWindowShowing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> smallWindow != <span class="keyword">null</span> || bigWindow != <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 如果WindowManager还未创建，则创建一个新的WindowManager返回。否则返回当前已创建的WindowManager。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">     *            必须为应用程序的Context.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> WindowManager的实例，用于控制在屏幕上添加或移除悬浮窗。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> WindowManager <span class="title">getWindowManager</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mWindowManager == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mWindowManager;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 如果ActivityManager还未创建，则创建一个新的ActivityManager返回。否则返回当前已创建的ActivityManager。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">     *            可传入应用程序上下文。</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> ActivityManager的实例，用于获取手机可用内存。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> ActivityManager <span class="title">getActivityManager</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mActivityManager == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mActivityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mActivityManager;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 计算已使用内存的百分比，并返回。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">     *            可传入应用程序上下文。</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 已使用内存的百分比，以字符串形式返回。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getUsedPercentValue</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        String dir = <span class="string">"/proc/meminfo"</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            FileReader fr = <span class="keyword">new</span> FileReader(dir);</span><br><span class="line">            BufferedReader br = <span class="keyword">new</span> BufferedReader(fr, <span class="number">2048</span>);</span><br><span class="line">            String memoryLine = br.readLine();</span><br><span class="line">            String subMemoryLine = memoryLine.substring(memoryLine.indexOf(<span class="string">"MemTotal:"</span>));</span><br><span class="line">            br.close();</span><br><span class="line">            <span class="keyword">long</span> totalMemorySize = Integer.parseInt(subMemoryLine.replaceAll(<span class="string">"\\D+"</span>, <span class="string">""</span>));</span><br><span class="line">            <span class="keyword">long</span> availableSize = getAvailableMemory(context) / <span class="number">1024</span>;</span><br><span class="line">            <span class="keyword">int</span> percent = (<span class="keyword">int</span>) ((totalMemorySize - availableSize) / (<span class="keyword">float</span>) totalMemorySize * <span class="number">100</span>);</span><br><span class="line">            <span class="keyword">return</span> percent + <span class="string">"%"</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"悬浮窗"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取当前可用内存，返回数据以字节为单位。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> context</span></span><br><span class="line"><span class="comment">     *            可传入应用程序上下文。</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 当前可用内存。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">getAvailableMemory</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        ActivityManager.MemoryInfo mi = <span class="keyword">new</span> ActivityManager.MemoryInfo();</span><br><span class="line">        getActivityManager(context).getMemoryInfo(mi);</span><br><span class="line">        <span class="keyword">return</span> mi.availMem;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>MyWindowManager主要负责了控制悬浮窗的创建和移除，以及悬浮窗在桌面上显示时系统内存使用率计算操作。其中<code>WindowManager.LayoutParams</code>布局参数在一开始就进行了说明，在设置好了后进行<code>addView</code>悬浮窗便可以显示了，而在需要移除的时候，获取到悬浮窗 View 的引用直接进行<code>removeView</code>操作便好。<br>最后记得在<code>AndroidManifest.xml</code>文件中配置好Service和相关权限：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">"android.permission.SYSTEM_ALERT_WINDOW"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">"android.permission.SYSTEM_OVERLAY_WINDOW"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">"android.permission.GET_TASKS"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">application</span> <span class="attr">android:allowBackup</span>=<span class="string">"true"</span> <span class="attr">android:icon</span>=<span class="string">"@mipmap/ic_launcher"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:label</span>=<span class="string">"@string/app_name"</span> <span class="attr">android:supportsRtl</span>=<span class="string">"true"</span> <span class="attr">android:theme</span>=<span class="string">"@style/AppTheme"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">activity</span> <span class="attr">android:name</span>=<span class="string">".MainActivity"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">"android.intent.action.MAIN"</span> /&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">"android.intent.category.LAUNCHER"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">service</span> <span class="attr">android:name</span>=<span class="string">".FloatWindowService"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/顶层悬浮球分析与实现/alert_window.jpg" alt="59%内存使用率效果图" title="">
+                </div>
+                <div class="image-caption">59%内存使用率效果图</div>
+            </figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来说，悬浮窗简单的控制还是容易实现的，但对于业务功能稍微复杂来说，合理的内存控制以及交互效果实现是需要花时间研究的地方。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<ol>
+<li><a href="http://blog.csdn.net/dawanganban/article/details/9751305" target="_blank" rel="noopener">Android桌面悬浮窗效果实现，仿360手机卫士悬浮窗效果</a></li>
+</ol>
+</blockquote>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+
+        
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/顶层悬浮球分析与实现/" target="_blank" rel="external">https://hjw541988478.github.io/顶层悬浮球分析与实现/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://hjw541988478.github.io">
+            <img src="/img/avatar.jpg" alt="Garvin">
+            Garvin
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FloatWindow/">FloatWindow</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Service/">Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WindowManager/">WindowManager</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/顶层悬浮球分析与实现/&title=《顶层悬浮球分析与实现》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/顶层悬浮球分析与实现/&title=《顶层悬浮球分析与实现》 — Garvin 杂记&source=悬浮球功能作为顶层视图，在用户关闭了 APP 后也能方便快捷操作，而这类应用主要是系统级别的安全应用，比如一键清理内存。在后续的 Android 版本中，..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/顶层悬浮球分析与实现/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《顶层悬浮球分析与实现》 — Garvin 杂记&url=https://hjw541988478.github.io/顶层悬浮球分析与实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/顶层悬浮球分析与实现/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/数据结构之排序算法/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">数据结构之排序算法</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/IPC通信机制理解实践/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">IPC通信机制理解实践</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "Av3sk2Q4QhL7up87ziVVSeeS-gzGzoHsz",
+            appKey: "hVI7cltsWA2q1fvsUNRWEJ4e",
+            avatar: "retro",
+            placeholder: "Just go go",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.jpg" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.jpg" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Garvin &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/顶层悬浮球分析与实现/&title=《顶层悬浮球分析与实现》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/顶层悬浮球分析与实现/&title=《顶层悬浮球分析与实现》 — Garvin 杂记&source=悬浮球功能作为顶层视图，在用户关闭了 APP 后也能方便快捷操作，而这类应用主要是系统级别的安全应用，比如一键清理内存。在后续的 Android 版本中，..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/顶层悬浮球分析与实现/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《顶层悬浮球分析与实现》 — Garvin 杂记&url=https://hjw541988478.github.io/顶层悬浮球分析与实现/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/顶层悬浮球分析与实现/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACLklEQVR42u3a0WrDMAwF0P7/T2ewp8GIeyU3hSjHTyNt3ZwMVMnS6xWv43etr/x/9exTf6+fXXldsTAwMG7LOJbr/9YJaX2jZ9+7/uzZ+zEwMJ7DWAfZJHTmgTi53fzeMDAwMMqBb4OEgYGBcV3AzYvVaqKJgYGBUS1ik9I0OXpbX7m8FsfAwLgho9oY+ObfF/Y3MDAwbsI4tlfe7MzbCeV7wMDAGM2oJnnVr8+bmh8YwsDAwBjK6JWX+RPaHx2L9sfAwBjNSMLop8ranbBb+JHAwMAYx6hulAfi3o3m+zR/NzAwMG7I2G9hVpPCK47tMDAwZjN6AxB5cZuPYuTB9zQ1xMDAGM1IQl4v+evxqq1NDAyM2YydzKpX6Pb2vDBBxMDAuAkjT8WqIxo5o5pKvvmfYGBgjGMkxWpv/Gt/gKMQjjEwMEYzkoP+5qbbbdEkTcTAwJjN6DUa88OyakKZhO/TMQsMDIyhjHx4qzeikQf0BB8lhRgYGKMZ1RRwp3zND9QKgRsDA+NhjN7WvffngfvNfWJgYDyS0Wsr9tLBauOhcF6IgYExgpE0Mqu8fNTsFa+oYMbAwBjHOIrrwsOy4IGe7oyBgTGaUQ12O4di+03Q6uPAwMCYxEiCbK9ATUa+9utQDAyM5zCqgS8vSj+V3r15uBgYGBjF0NnLRrfyWQwMDIygofjNMVYMDIxnMpIitlfcrvepppiFMQsMDIxBjF7StiZVwfsDHBgYGEMZPzWg5PNw9+ojAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1274482147&web_id=1274482147')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

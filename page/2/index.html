@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Garvin 杂记</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="">
+    <meta property="og:type" content="website">
+<meta property="og:title" content="Garvin 杂记">
+<meta property="og:url" content="https://hjw541988478.github.io/page/2/index.html">
+<meta property="og:site_name" content="Garvin 杂记">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Garvin 杂记">
+    
+        <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Garvin</h5>
+          <a href="mailto:huangjiawendanny@gmail.com" title="huangjiawendanny@gmail.com" class="mail">huangjiawendanny@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                存档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Garvin 杂记</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header index-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Garvin 杂记</h1>
+        <h5 class="subtitle">
+            
+                
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+<div class="container body-wrap">
+
+    <ul class="post-list">
+    
+        <li class="post-list-item fade">
+            <article id="post-Java线程常用场景"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-11-07 20:04:00" datetime="2016-11-07T12:04:00.000Z"  itemprop="datePublished">2016-11-07</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Java/">Java</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/Java线程常用场景/">Java线程常用场景</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="如何让两个线程依次执行？"><a href="#如何让两个线程依次执行？" class="headerlink" title="如何让两个线程依次执行？"></a>如何让两个线程依次执行？</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">demo2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Thread A = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         printNumber(<span class="string">"A"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  Thread B = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">          System.out.println(<span class="string">"B 开始等待 A"</span>);</span><br><span class="line">          <span class="keyword">try</span> &#123;</span><br><span class="line">             A.join();</span><br><span class="line">          &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">             e.printStackTrace();</span><br><span class="line">          &#125;</span><br><span class="line">          printNumber(<span class="string">"B"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  B.start();</span><br><span class="line">  A.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用<code>threadA.join()</code>，让线程B等待线程A执行完后，再执行自己；<br></p>
+    
+
+        <a href="/Java线程常用场景/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiThread/">MultiThread</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-游戏2048原理探索与实现"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-09-22 21:22:00" datetime="2016-09-22T13:22:00.000Z"  itemprop="datePublished">2016-09-22</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/游戏2048原理探索与实现/">游戏2048原理探索与实现</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>2048有着简单的游戏规则有趣的游戏过程，在早年的时候着实火了一把，以致在后来也出现了很多不同的版本。但主要的规则都是相似的，4*4的格子，数字随机出现2或者4，手指进行上下左右的滑动，所有数字向滑动方向靠拢，相同的相邻数字相加合并，合并成功或者移动后在剩下的空格中随机出现新的数字，直到合并出现2048，则挑战成功。<br></p>
+    
+
+        <a href="/游戏2048原理探索与实现/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CustomView/">CustomView</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RandomNumber/">RandomNumber</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-MultiDex65535探索"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-07-03 19:22:00" datetime="2016-07-03T11:22:00.000Z"  itemprop="datePublished">2016-07-03</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/MultiDex65535探索/">MultiDex65535探索</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><blockquote>
+<p>UNEXPECTED TOP-LEVEL EXCEPTION: java.lang.IllegalArgumentException: method ID not in [0, 0xffff]: 65536<br>Dex文件中保存所有classes的方法个数的变量范围值在<code>0~65535</code>之间，但随着业务一直在增长，引入到的库以及业务代码越来越多，超过这个限制只是时间问题。<br>一般来说 APK 安装的流程大多是这样构成的，首先复制apk文件到<code>data/app</code>目录下，然后解压扫描安装包将dex文件安装到<code>data/dalvik-cache</code>目录下，同时在<code>data/data</code>目录下创建以APK包名的应用数据目录。由于5.0及以上版本ART模式的存在，app第一次安装之后会进行一次预编译，如果这时候发现了<code>classes(..N).dex</code>文件的存在就会将他们最终合成为一个<code>.oat</code>的文件。<br></p></blockquote>
+    
+
+        <a href="/MultiDex65535探索/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HotFix/">HotFix</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiDex/">MultiDex</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-数据结构之排序算法"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-04-09 18:32:00" datetime="2016-04-09T10:32:00.000Z"  itemprop="datePublished">2016-04-09</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/DataStructure/">DataStructure</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/数据结构之排序算法/">数据结构之排序算法</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><ul>
+<li>概念<br>假设含有n个记录的序列为{r1..rn}，其对应关键字{k1..kn}，确定1…n的一种排列p1..pn,使得其关键字按照kp1..kpn呈非递增或者非递减关系，这样操作称为排序。</li>
+<li>稳定性<br>假设ki=kj且排序前的序列中ri领先于rj，如12果排序后ri仍领先于rj，则称排序方法稳定。</li>
+</ul>
+<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>主要分为内排序和外排序。<br>影响到性能的因素：1.时间 2.辅助空间 3.算法复杂性；<br>内排序主要分为：插入、交换、选择和归并排序；<br></p>
+    
+
+        <a href="/数据结构之排序算法/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DataStructure/">DataStructure</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Sort/">Sort</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-顶层悬浮球分析与实现"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-11-19 19:12:00" datetime="2015-11-19T11:12:00.000Z"  itemprop="datePublished">2015-11-19</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/顶层悬浮球分析与实现/">顶层悬浮球分析与实现</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <p>悬浮球功能作为顶层视图，在用户关闭了 APP 后也能方便快捷操作，而这类应用主要是系统级别的安全应用，比如一键清理内存。在后续的 Android 版本中，Google 和很多厂商对于此类权限做了更为敏感的控制，需要用户手动设置才能看到悬浮球。下面手动实现了一个悬浮球来分析整个过程，其核心部分就是<code>WindowManager</code>类对Window的管理。</p>
+<h2 id="WindowManager"><a href="#WindowManager" class="headerlink" title="WindowManager"></a>WindowManager</h2><p>对于<code>WindowManager</code>的工作过程，可以通过手动添加一个<code>Window</code>为例去分析：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">TextView mFloatingText = <span class="keyword">new</span> TextView(<span class="keyword">this</span>);</span><br><span class="line">mFloatingText.setText(<span class="string">"FloatingText"</span>);</span><br><span class="line">WindowManager.LayoutParams params = <span class="keyword">new</span> WindowManager.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT,<span class="number">0</span>,<span class="number">0</span>,PixelFormat.TRANSPARENT);</span><br><span class="line">params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_SHOW_WHEN_LOCKED;</span><br><span class="line">params.gravity = Gravity.LEFT | Gravity.TOP;</span><br><span class="line">params.x = <span class="number">300</span>;</span><br><span class="line">params.y = <span class="number">100</span>;</span><br><span class="line">mWindowManager.addView(mFloatingText,params);</span><br></pre></td></tr></table></figure></p>
+    
+
+        <a href="/顶层悬浮球分析与实现/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FloatWindow/">FloatWindow</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Service/">Service</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WindowManager/">WindowManager</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-IPC通信机制理解实践"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-11-19 19:12:00" datetime="2015-11-19T11:12:00.000Z"  itemprop="datePublished">2015-11-19</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/IPC通信机制理解实践/">IPC通信机制理解实践</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>IPC含义为进程间通信或者跨进程通信，指的是两个进程之间进行数据交换的过程。线程是CPU调度的最小单元，也是一种有限的系统资源，而进程是指一个执行单元。在Android系统中，一个进程一般指一个应用。</p>
+<h2 id="多进程模式"><a href="#多进程模式" class="headerlink" title="多进程模式"></a>多进程模式</h2><h3 id="开启多进程模式"><a href="#开启多进程模式" class="headerlink" title="开启多进程模式"></a>开启多进程模式</h3><p>在Android中使用多进程只有一种方法，那就是在AndroidManifest.xml中指定<code>android:process</code>属性，除此之外并无其他办法。如下面的例子所示:<br></p>
+    
+
+        <a href="/IPC通信机制理解实践/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Binder/">Binder</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IPC/">IPC</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiProcess/">MultiProcess</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-OkHttp探索使用"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-09-16 20:12:00" datetime="2015-09-16T12:12:00.000Z"  itemprop="datePublished">2015-09-16</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/OkHttp探索使用/">OkHttp探索使用</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <p>为Android和Java应用设计并且支持SPDY和HTTP请求的客户端。</p>
+<h2 id="Calls"><a href="#Calls" class="headerlink" title="Calls"></a>Calls</h2><h3 id="Requests-请求"><a href="#Requests-请求" class="headerlink" title="Requests(请求)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Request.html" target="_blank" rel="noopener">Requests(请求)</a></h3><p>每个HTTP请求包含了URL、METHOD和一系列头部信息。当然，头部也可以包含指定类型的数据流。</p>
+<h3 id="Responses-响应"><a href="#Responses-响应" class="headerlink" title="Responses(响应)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Response.html" target="_blank" rel="noopener">Responses(响应)</a></h3><p>带有状态码，Header和一些可选信息的对请求的响应。</p>
+<h3 id="Calls-调用"><a href="#Calls-调用" class="headerlink" title="Calls(调用)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Call.html" target="_blank" rel="noopener">Calls(调用)</a></h3><p>调用能够以Synchronous(同步)或者Asynchronous(异步)的形式被执行:</p>
+<ul>
+<li>Synchronous：请求线程直到响应能够可读时才会释放阻塞；</li>
+<li>Asynchronous：请求线程能够将请求进行入队操作，直到响应发生时以回调接口的形式返回。</li>
+</ul>
+<h2 id="Connections"><a href="#Connections" class="headerlink" title="Connections"></a>Connections</h2><h3 id="URLS-统一资源定位符"><a href="#URLS-统一资源定位符" class="headerlink" title="URLS(统一资源定位符)"></a><a href="http://developer.android.com/reference/java/net/URL.html" target="_blank" rel="noopener">URLS(统一资源定位符)</a></h3><p>URLs对于HTTP和互联网世界来说是至关重要的，除了成为通用的、web世界里唯一命名的解决方案，它们同时也描述了如何获取web资源。</p>
+<h3 id="Addresses-地址"><a href="#Addresses-地址" class="headerlink" title="Addresses(地址)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Address.html" target="_blank" rel="noopener">Addresses(地址)</a></h3><p>地址描述了一个web服务器和一切对于连接到服务器必要的静态配置信息，比如端口号，HTTPS设置等。共享同一地址的URL同样也共享同一的TCP连接，这样做的好处是：更低的延迟、更高的吞吐量和低消耗电量。OkHttp使用自动重用HTTP/1.x协议的连接和多路复用HTTP/2和SPDY的连接的ConnectionPool（连接池）。</p>
+<h3 id="Routes-路由"><a href="#Routes-路由" class="headerlink" title="Routes(路由)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Route.html" target="_blank" rel="noopener">Routes(路由)</a></h3><p>路由提供连接到web服务器的必要的动态信息。对于一个地址来说可能存在着多条路由选择。</p>
+<h3 id="Connections-连接"><a href="#Connections-连接" class="headerlink" title="Connections(连接)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Connection.html" target="_blank" rel="noopener">Connections(连接)</a></h3><p>如果使用OkHttp进行请求的话，它会这么做：<br></p>
+    
+
+        <a href="/OkHttp探索使用/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Okhttp/">Okhttp</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-MaterialDesign设计探索使用"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-09-09 19:24:14" datetime="2015-09-09T11:24:14.000Z"  itemprop="datePublished">2015-09-09</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/MaterialDesign设计探索使用/">MaterialDesign设计探索使用</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <p>在Android5.0之后，Google就开始推崇一门新的设计语言<code>MaterialDesign</code>，它更加新鲜和简洁，且能够非常有效的激发应用开发者的创作热情，也能够降低开发者自主开发设计UI的难度，对于MD风格的实现，Google后续完善了下面几个库，一步步的实现MD标准的交互效果。<br>需要在AndroidStudio引入的库：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">compile &apos;com.android.support:design:23.0.0&apos;</span><br><span class="line">compile &apos;com.android.support:appcompat-v7:23.0.0&apos;</span><br><span class="line">compile &apos;com.android.support:recyclerview-v7:23.0.0&apos;</span><br><span class="line">compile &apos;com.android.support:cardview-v7:23.0.0&apos;</span><br></pre></td></tr></table></figure></p>
+<h2 id="新的UI组件"><a href="#新的UI组件" class="headerlink" title="新的UI组件"></a>新的UI组件</h2><h3 id="CoordinatorLayout"><a href="#CoordinatorLayout" class="headerlink" title="CoordinatorLayout"></a>CoordinatorLayout</h3><p><code>CoordinatorLayout</code>在<code>android.support.deisgn</code>中，是一种增强型的<code>FrameLayout</code>，主要有以下两大基础性作用：</p>
+<ul>
+<li>作为顶级应用的装饰器；</li>
+<li>作为给多个子View之间进行特定交互的协调器；<br>通过对子<code>View</code>的<code>Behavior</code>的指定，可以实现子<code>View</code>之间的通信，从而确定它们具体的交互行为。</li></ul>
+    
+
+        <a href="/MaterialDesign设计探索使用/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MaterialDesign/">MaterialDesign</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-RecyclerView下拉刷新上拉加载的封装"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-09-02 19:04:23" datetime="2015-09-02T11:04:23.000Z"  itemprop="datePublished">2015-09-02</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/RecyclerView下拉刷新上拉加载的封装/">RecyclerView下拉刷新上拉加载的封装</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="初识RecyclerView"><a href="#初识RecyclerView" class="headerlink" title="初识RecyclerView"></a>初识RecyclerView</h2><blockquote>
+<p>A flexible view for providing a limited window into a large data set.</p>
+</blockquote>
+<p>根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，<code>RecyclerView</code>就是应对这种情况而产生的。<code>RecyclerView</code>是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时需要在<code>build.gradle</code>文件中配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile &apos;com.android.support:recyclerview-v7:22.2.1&apos;</span><br></pre></td></tr></table></figure></p>
+<p>与<code>ListView</code>不同的是，<code>RecyclerView</code>不再负责Item布局绘制等方面的工作，转而拆分成不同的类去管理。作为未来<code>ListView、GridView</code>等替代的组件，虽然没有它们那么易用，所有的功能都需要自己重新实现，但正是因为这种特性使得<code>RecyclerView</code>更加Flexible。为了满足各种各样的需求，可能会使用到下面与<code>RecyclerView</code>相关紧密的类：<br></p>
+    
+
+        <a href="/RecyclerView下拉刷新上拉加载的封装/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CustomView/">CustomView</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RecyclerView/">RecyclerView</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-Android传感器编程之摇一摇"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-08-26 19:54:01" datetime="2015-08-26T11:54:01.000Z"  itemprop="datePublished">2015-08-26</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/Android传感器编程之摇一摇/">Android传感器编程之摇一摇</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。<br>对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:name=&quot;android.hardware.sensor.accelerometer&quot; /&gt; # 加速度传感器</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.VIBRATE&quot;/&gt;  # 振动传感器</span><br></pre></td></tr></table></figure></p>
+    
+
+        <a href="/Android传感器编程之摇一摇/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Sensor/">Sensor</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vibrator/">Vibrator</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+    </ul>
+
+    
+<nav id="page-nav">
+    <div class="inner">
+    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
+    </div>
+</nav>
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Garvin &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/page/2/&title=Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/page/2/&title=Garvin 杂记&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/page/2/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=Garvin 杂记&url=https://hjw541988478.github.io/page/2/&via=https://hjw541988478.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/page/2/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAABxElEQVR42u3aS46DMBAFwNz/0sx2pCjmPYwdIpVXUUC4YNHqj1+veB3/1vs/46vjZ75WLFxc3GnuMVzJPe93fmKNf4+fjIuLu587DjRJkGqD2vglP/6Pi4v7YG6e+uQpES4u7u9ykzuTZAUXF/f53DzQRCXKrcUVLi7ufm7epVz3e0l/FxcX9xL3KFdS3uQjk3p3XFzcLdw8oFxLStqWa7IvLi7uTm4RSuLXaF9+HChxcXF3cvMBybWQ1LZU6kMYuLi4i7k5pQ1tydVi0IKLi7uMe9vo4sPG818x6uLg4uIu414rbNoG61Txg4uL+yXutdFIW8zcFshwcXGXca8dpWo3O6Ek5RMuLu52btsEmUlcbghkuLi4y7h5QElSnynETGcXFxd3GTcZk9zVQm0/zck5Mlxc3MXcvAE6P1LNj4Lh4uJ+i5ukMsVD49BW34OLi7uYe5RrXJy0xzjqYx+4uLhbuG0Z0yZDdx3bql8GFxd3mjtf8CQBLg98J18UFxd3IzcfaSTb1Ijhvif9XVxc3Adw21dqU6V6PoOLi/sYbjtAzT/BiRAXF3cjt01QroWq9qAGLi7ut7j7j1itKJlwcXFv4v4Bun7YVztcn+MAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1274482147&web_id=1274482147')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

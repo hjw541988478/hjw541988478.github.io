@@ -20,9 +20,9 @@
     <meta name="theme-color" content="#3F51B5">
     
     
-    <meta name="keywords" content="PullDownToRefresh,PullUpToRefresh,RecyclerView,CustomView,Components">
+    <meta name="keywords" content="RecyclerView,CustomView">
     <meta name="description" content="初识RecyclerView A flexible view for providing a limited window into a large data set.  根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，RecyclerView就是应对这种情况而产生的。RecyclerView是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时">
-<meta name="keywords" content="PullDownToRefresh,PullUpToRefresh,RecyclerView,CustomView,Components">
+<meta name="keywords" content="RecyclerView,CustomView">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RecyclerView下拉刷新上拉加载的封装">
 <meta property="og:url" content="https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/index.html">
@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/recycler_menu_view.png">
 <meta property="og:image" content="https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/recycler_refresh_view.png">
 <meta property="og:image" content="https://hjw541988478.github.io/RecyclerView下拉刷新上拉加载的封装/recycler_loadmore_view.png">
-<meta property="og:updated_time" content="2018-08-17T15:13:02.051Z">
+<meta property="og:updated_time" content="2018-08-18T15:44:37.906Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RecyclerView下拉刷新上拉加载的封装">
 <meta name="twitter:description" content="初识RecyclerView A flexible view for providing a limited window into a large data set.  根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，RecyclerView就是应对这种情况而产生的。RecyclerView是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时">
@@ -186,7 +186,7 @@
             <h2 id="初识RecyclerView"><a href="#初识RecyclerView" class="headerlink" title="初识RecyclerView"></a>初识RecyclerView</h2><blockquote>
 <p>A flexible view for providing a limited window into a large data set.</p>
 </blockquote>
-<p>根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，<code>RecyclerView</code>就是应对这种情况而产生的。<code>RecyclerView</code>是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时需要在<code>build.gradle</code>文件中配置：<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">compile</span> <span class="string">'com.android.support:recyclerview-v7:22.2.1'</span></span><br></pre></td></tr></table></figure></p>
+<p>根据Google提供的官方说明，意思是为了解决大量数据子在有限的屏幕中显示的情况，<code>RecyclerView</code>就是应对这种情况而产生的。<code>RecyclerView</code>是supportV7包中最新的组件，有着非常高的可定制性和灵活性。使用时需要在<code>build.gradle</code>文件中配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile &apos;com.android.support:recyclerview-v7:22.2.1&apos;</span><br></pre></td></tr></table></figure></p>
 <p>与<code>ListView</code>不同的是，<code>RecyclerView</code>不再负责Item布局绘制等方面的工作，转而拆分成不同的类去管理。作为未来<code>ListView、GridView</code>等替代的组件，虽然没有它们那么易用，所有的功能都需要自己重新实现，但正是因为这种特性使得<code>RecyclerView</code>更加Flexible。为了满足各种各样的需求，可能会使用到下面与<code>RecyclerView</code>相关紧密的类：<br><a id="more"></a></p>
 <h3 id="RecyclerView-Adapter"><a href="#RecyclerView-Adapter" class="headerlink" title="RecyclerView.Adapter"></a>RecyclerView.Adapter</h3><p><code>Adapter</code>与在此前用到过的<code>BaseAdapter</code>很相似，准确的说是做了缓存优化的<code>BaseAdapter</code>，它负责为Item创建合适的视图同时为这些视图通过<code>ViewHolder</code>去绑定数据，以下3个方法是必须重写的：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ViewHolder <span class="title">onCreateViewHolder</span><span class="params">(ViewGroup parent,<span class="keyword">int</span> viewType)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBindViewHolder</span><span class="params">(ViewHolder holder,<span class="keyword">int</span> position)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getItemCount</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure></p>
 <h3 id="RecyclerView-ViewHolder"><a href="#RecyclerView-ViewHolder" class="headerlink" title="RecyclerView.ViewHolder"></a>RecyclerView.ViewHolder</h3><p><code>ViewHolder</code>早前在<code>ListView</code>的使用时就推荐用来做性能优化，只不过在<code>RecyclerView.Adapter</code>中变成了必须实现的一部分。它保存着Item中所需要使用到的视图ID，方便在绑定数据的时候使用，使用的方法如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyViewHolder</span> <span class="keyword">extends</span> <span class="title">ViewHolder</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyViewHolder</span><span class="params">(View itemView)</span></span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(itemView);</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -274,7 +274,7 @@
 
         <div class="post-footer">
             
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Components/">Components</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CustomView/">CustomView</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PullDownToRefresh/">PullDownToRefresh</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PullUpToRefresh/">PullUpToRefresh</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RecyclerView/">RecyclerView</a></li></ul>
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CustomView/">CustomView</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RecyclerView/">RecyclerView</a></li></ul>
 
 
             
