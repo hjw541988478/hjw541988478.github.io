@@ -141,6 +141,57 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-17-Letter-Combinations-of-a-Phone-Number"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2018-08-20 18:15:53" datetime="2018-08-20T10:15:53.000Z"  itemprop="datePublished">2018-08-20</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2018/08/17-Letter-Combinations-of-a-Phone-Number/">17. Letter Combinations of a Phone Number</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><a href="https://leetcode.com/problems/letter-combinations-of-a-phone-number/description/" target="_blank" rel="noopener">https://leetcode.com/problems/letter-combinations-of-a-phone-number/description/</a><br>Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.</p>
+<p>A mapping of digit to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.</p>
+<p>Example:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: &quot;23&quot;</span><br><span class="line">Output: [&quot;ad&quot;, &quot;ae&quot;, &quot;af&quot;, &quot;bd&quot;, &quot;be&quot;, &quot;bf&quot;, &quot;cd&quot;, &quot;ce&quot;, &quot;cf&quot;].</span><br></pre></td></tr></table></figure></p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>方法一：如果只有2组我们可以直接找出所有的组合，所以只要遍历出前面的N-1位的所有组合再与最后1位组合就可以找到所有的可能;<br>方法二：采用DFS(深度优先遍历)实现，使用回溯的思想，递归所有的可能组合；</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String[] table = &#123;</span><br><span class="line">        <span class="string">""</span>, <span class="string">""</span>,<span class="string">"abc"</span>, <span class="string">"def"</span>, <span class="string">"ghi"</span>, <span class="string">"jkl"</span>,</span><br><span class="line">        <span class="string">"mno"</span>,<span class="string">"pqrs"</span>,<span class="string">"tuv"</span>, <span class="string">"wxyz"</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法一</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">letterCombinations</span><span class="params">(String digits)</span> </span>&#123;</span><br><span class="line">    List&lt;String&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; digits.length(); i ++) &#123;</span><br><span class="line">        String nextNumberLetters = table[Character.getNumericValue(digits.charAt(i))];</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; nextNumberLetters.length(); j ++ ) &#123;</span><br><span class="line">                res.add(String.valueOf(nextNumberLetters.charAt(j)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            res = letterCombine(res, nextNumberLetters);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> List&lt;String&gt; <span class="title">letterCombine</span><span class="params">(List&lt;String&gt; left, String right)</span> </span>&#123;</span><br><span class="line">    List&lt;String&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; left.size(); i ++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; right.length(); j ++) &#123;</span><br><span class="line">            String combinedStr = left.get(i) + right.charAt(j);</span><br><span class="line">            res.add(combinedStr);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法二</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">letterCombinations2</span><span class="params">(String digits)</span> </span>&#123;</span><br><span class="line">    List&lt;String&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    letterCombine2(digits, res, <span class="keyword">new</span> StringBuilder(), <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">letterCombine2</span><span class="params">(String digits, List&lt;String&gt; res, StringBuilder sb, <span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sb.length() == digits.length()) &#123;</span><br><span class="line">        res.add(sb.toString());</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    String curNumberPanel = table[Character.getNumericValue(digits.charAt(index))];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; curNumberPanel.length(); i ++) &#123;</span><br><span class="line">        sb.append(curNumberPanel.charAt(i));</span><br><span class="line">        letterCombine2(digits, res, sb, index + <span class="number">1</span>);</span><br><span class="line">        sb.deleteCharAt(sb.length() - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    
+
+        <a href="/2018/08/17-Letter-Combinations-of-a-Phone-Number/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Backtracking/">Backtracking</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-18-4Sum"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -173,9 +224,7 @@
 <p>Given an array nums of n integers and an integer target, are there elements a, b, c, and d in nums such that a + b + c + d = target? Find all unique quadruplets in the array which gives the sum of target.</p>
 <p>Note:</p>
 <p>The solution set must not contain duplicate quadruplets.</p>
-<p>Example:</p>
-<p>Given array nums = [1, 0, -1, 0, -2, 2], and target = 0.</p>
-<p>A solution set is:<br>[<br>  [-1,  0, 0, 1],<br>  [-2, -1, 1, 2],<br>  [-2,  0, 0, 2]<br>]<br></p>
+<p>Example:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Given array nums = [1, 0, -1, 0, -2, 2], and target = 0.</span><br><span class="line"></span><br><span class="line">A solution set is:</span><br><span class="line">[</span><br><span class="line">  [-1,  0, 0, 1],</span><br><span class="line">  [-2, -1, 1, 2],</span><br><span class="line">  [-2,  0, 0, 2]</span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
     
 
         <a href="/2018/08/18-4Sum/" class="post-more waves-effect waves-button">
@@ -222,11 +271,8 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><a href="https://leetcode.com/problems/3sum-closest/description/" target="_blank" rel="noopener">https://leetcode.com/problems/3sum-closest/description/</a></p>
-<p>Given an array nums of n integers and an integer target, find three integers in nums such that the sum is closest to target. Return the sum of the three integers. You may assume that each input would have exactly one solution.</p>
-<p>Example:</p>
-<p>Given array nums = [-1, 2, 1, -4], and target = 1.</p>
-<p>The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).<br></p>
+        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><a href="https://leetcode.com/problems/3sum-closest/description/" target="_blank" rel="noopener">https://leetcode.com/problems/3sum-closest/description/</a><br>Given an array nums of n integers and an integer target, find three integers in nums such that the sum is closest to target. Return the sum of the three integers. You may assume that each input would have exactly one solution.</p>
+<p>Example:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Given array nums = [-1, 2, 1, -4], and target = 1.</span><br><span class="line">The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).</span><br></pre></td></tr></table></figure></p>
     
 
         <a href="/2018/08/16-3Sum-Closet/" class="post-more waves-effect waves-button">
@@ -624,58 +670,6 @@
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiThread/">MultiThread</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ThreadPool/">ThreadPool</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-Android插件化原理探索"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2017-05-16 22:01:00" datetime="2017-05-16T14:01:00.000Z"  itemprop="datePublished">2017-05-16</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2017/05/Android插件化原理探索/">Android插件化原理探索</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        <h2 id="代理模式（委托模式）"><a href="#代理模式（委托模式）" class="headerlink" title="代理模式（委托模式）"></a>代理模式（委托模式）</h2><p>限制对象的直接访问，保护内部对象；</p>
-<h3 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h3><p>AIDL中<code>asInterface</code>方法中有应用到静态代理，如果不在同一进程就会返回Proxy对象，而且几乎所有系统服务采用代理模式。</p>
-<h3 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h3><p>运行时指定代理类，实现<code>InvocationHandler</code>接口，重写invoke方法，通过<code>Proxy.newInstance</code>返回代理对象。分为jdk动态代理和cglib动态代理；</p>
-<ul>
-<li>jdk动态代理：基于类的反射机制，而且目标类基于同一的接口，Java 的继承机制注定了这些动态代理类们无法实现对 class 的动态代理；</li>
-<li>cglib动态代理：借助asm实现，没有jdk动态代理的限制；</li></ul>
-    
-
-        <a href="/2017/05/Android插件化原理探索/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AIDL/">AIDL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiProcess/">MultiProcess</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/插件化/">插件化</a></li></ul>
 
     </div>
     
