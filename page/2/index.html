@@ -141,6 +141,56 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-Java常用线程池理解"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-06-14 18:32:00" datetime="2017-06-14T10:32:00.000Z"  itemprop="datePublished">2017-06-14</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Java/">Java</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/06/Java常用线程池理解/">Java常用线程池理解</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="why-？"><a href="#why-？" class="headerlink" title="why ？"></a>why ？</h2><ul>
+<li>创建和销毁线程伴随着系统开销，如果频繁创建销毁线程，影响处理效率；（创建时间T1，执行任务T2，销毁T3。如果T1+T3&gt;T2，那就划不来）</li>
+<li>线程并发数量过多，抢占系统资源导致阻塞；（线程共享系统资源，如果同时执行线程过多，导致系统资源不多而产生阻塞）</li>
+<li>能对线程进行简单管理；（延时执行，定时循环执行）</li></ul>
+    
+
+        <a href="/2017/06/Java常用线程池理解/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiThread/">MultiThread</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ThreadPool/">ThreadPool</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-Android插件化原理探索"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -483,54 +533,6 @@
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-IPC通信机制理解实践"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2015-11-19 19:12:00" datetime="2015-11-19T11:12:00.000Z"  itemprop="datePublished">2015-11-19</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2015/11/IPC通信机制理解实践/">IPC通信机制理解实践</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        <h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>IPC含义为进程间通信或者跨进程通信，指的是两个进程之间进行数据交换的过程。线程是CPU调度的最小单元，也是一种有限的系统资源，而进程是指一个执行单元。在Android系统中，一个进程一般指一个应用。</p>
-<h2 id="多进程模式"><a href="#多进程模式" class="headerlink" title="多进程模式"></a>多进程模式</h2><h3 id="开启多进程模式"><a href="#开启多进程模式" class="headerlink" title="开启多进程模式"></a>开启多进程模式</h3><p>在Android中使用多进程只有一种方法，那就是在AndroidManifest.xml中指定<code>android:process</code>属性，除此之外并无其他办法。如下面的例子所示:<br></p>
-    
-
-        <a href="/2015/11/IPC通信机制理解实践/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Binder/">Binder</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IPC/">IPC</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiProcess/">MultiProcess</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
             <article id="post-顶层悬浮球分析与实现"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -579,11 +581,11 @@
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-OkHttp探索使用"
+            <article id="post-IPC通信机制理解实践"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
-        <time class="post-time" title="2015-09-16 20:12:00" datetime="2015-09-16T12:12:00.000Z"  itemprop="datePublished">2015-09-16</time>
+        <time class="post-time" title="2015-11-19 19:12:00" datetime="2015-11-19T11:12:00.000Z"  itemprop="datePublished">2015-11-19</time>
 
         
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
@@ -597,7 +599,7 @@
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2015/09/OkHttp探索使用/">OkHttp探索使用</a>
+      <a class="post-title-link" href="/2015/11/IPC通信机制理解实践/">IPC通信机制理解实践</a>
     </h3>
   
 
@@ -607,28 +609,18 @@
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        <p>为Android和Java应用设计并且支持SPDY和HTTP请求的客户端。</p>
-<h2 id="Calls"><a href="#Calls" class="headerlink" title="Calls"></a>Calls</h2><h3 id="Requests-请求"><a href="#Requests-请求" class="headerlink" title="Requests(请求)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Request.html" target="_blank" rel="noopener">Requests(请求)</a></h3><p>每个HTTP请求包含了URL、METHOD和一系列头部信息。当然，头部也可以包含指定类型的数据流。</p>
-<h3 id="Responses-响应"><a href="#Responses-响应" class="headerlink" title="Responses(响应)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Response.html" target="_blank" rel="noopener">Responses(响应)</a></h3><p>带有状态码，Header和一些可选信息的对请求的响应。</p>
-<h3 id="Calls-调用"><a href="#Calls-调用" class="headerlink" title="Calls(调用)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Call.html" target="_blank" rel="noopener">Calls(调用)</a></h3><p>调用能够以Synchronous(同步)或者Asynchronous(异步)的形式被执行:</p>
-<ul>
-<li>Synchronous：请求线程直到响应能够可读时才会释放阻塞；</li>
-<li>Asynchronous：请求线程能够将请求进行入队操作，直到响应发生时以回调接口的形式返回。</li>
-</ul>
-<h2 id="Connections"><a href="#Connections" class="headerlink" title="Connections"></a>Connections</h2><h3 id="URLS-统一资源定位符"><a href="#URLS-统一资源定位符" class="headerlink" title="URLS(统一资源定位符)"></a><a href="http://developer.android.com/reference/java/net/URL.html" target="_blank" rel="noopener">URLS(统一资源定位符)</a></h3><p>URLs对于HTTP和互联网世界来说是至关重要的，除了成为通用的、web世界里唯一命名的解决方案，它们同时也描述了如何获取web资源。</p>
-<h3 id="Addresses-地址"><a href="#Addresses-地址" class="headerlink" title="Addresses(地址)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Address.html" target="_blank" rel="noopener">Addresses(地址)</a></h3><p>地址描述了一个web服务器和一切对于连接到服务器必要的静态配置信息，比如端口号，HTTPS设置等。共享同一地址的URL同样也共享同一的TCP连接，这样做的好处是：更低的延迟、更高的吞吐量和低消耗电量。OkHttp使用自动重用HTTP/1.x协议的连接和多路复用HTTP/2和SPDY的连接的ConnectionPool（连接池）。</p>
-<h3 id="Routes-路由"><a href="#Routes-路由" class="headerlink" title="Routes(路由)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Route.html" target="_blank" rel="noopener">Routes(路由)</a></h3><p>路由提供连接到web服务器的必要的动态信息。对于一个地址来说可能存在着多条路由选择。</p>
-<h3 id="Connections-连接"><a href="#Connections-连接" class="headerlink" title="Connections(连接)"></a><a href="http://square.github.io/okhttp/javadoc/com/squareup/okhttp/Connection.html" target="_blank" rel="noopener">Connections(连接)</a></h3><p>如果使用OkHttp进行请求的话，它会这么做：<br></p>
+        <h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>IPC含义为进程间通信或者跨进程通信，指的是两个进程之间进行数据交换的过程。线程是CPU调度的最小单元，也是一种有限的系统资源，而进程是指一个执行单元。在Android系统中，一个进程一般指一个应用。</p>
+<h2 id="多进程模式"><a href="#多进程模式" class="headerlink" title="多进程模式"></a>多进程模式</h2><h3 id="开启多进程模式"><a href="#开启多进程模式" class="headerlink" title="开启多进程模式"></a>开启多进程模式</h3><p>在Android中使用多进程只有一种方法，那就是在AndroidManifest.xml中指定<code>android:process</code>属性，除此之外并无其他办法。如下面的例子所示:<br></p>
     
 
-        <a href="/2015/09/OkHttp探索使用/" class="post-more waves-effect waves-button">
+        <a href="/2015/11/IPC通信机制理解实践/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
     
     <div class="post-footer">
         
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Okhttp/">Okhttp</a></li></ul>
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Binder/">Binder</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IPC/">IPC</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiProcess/">MultiProcess</a></li></ul>
 
     </div>
     
