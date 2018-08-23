@@ -141,6 +141,58 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-资源热修复探究-Part2"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-07-21 21:43:00" datetime="2017-07-21T13:43:00.000Z"  itemprop="datePublished">2017-07-21</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/07/资源热修复探究-Part2/">资源热修复探究(Part2)</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="资源热修复原理"><a href="#资源热修复原理" class="headerlink" title="资源热修复原理"></a>资源热修复原理</h2><h3 id="InstantRun分两步"><a href="#InstantRun分两步" class="headerlink" title="InstantRun分两步"></a>InstantRun分两步</h3><ol>
+<li>构造新的 AssetManager，并反射调用 addAssetPath，把完整资源包加入到 AssetManager 中，这样得到一个含有所有新资源的 AssetManager；</li>
+<li>找到所有之前引用到原有 AssetManager 地方，通过反射，把引用处替换为新的 AssetManager；<br>addAssetPath 在 native 层由 c++ 实现，通过传入资源包路径，先得到 resources.arsc，然后解析它的格式，存放在底层的 AssetManager 的 mResources 成员中：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mutable</span> ResTable* mResources;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>mResources 是一个 ResTable 结构体，其成员 mPackageGroups 为资源包的实体，包含所有解析过的资源包的集合，任何一个资源包都含有 resources.arsc，它记录了所有资源 id 分配情况以及资源中的所有字符串，以二进制形式存储，底层的AssetManager就是用来解析这个文件，把相关信息存储到 mPackageGroups 中。<br></p>
+    
+
+        <a href="/2017/07/资源热修复探究-Part2/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HotFix/">HotFix</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ResourceHotFix/">ResourceHotFix</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-代码热修复探究-Part1"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -596,57 +648,6 @@
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HotFix/">HotFix</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiDex/">MultiDex</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-数据结构之排序算法"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2016-04-09 18:32:00" datetime="2016-04-09T10:32:00.000Z"  itemprop="datePublished">2016-04-09</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/DataStructure/">DataStructure</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/04/数据结构之排序算法/">数据结构之排序算法</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><ul>
-<li>概念<br>假设含有n个记录的序列为{r1..rn}，其对应关键字{k1..kn}，确定1…n的一种排列p1..pn,使得其关键字按照kp1..kpn呈非递增或者非递减关系，这样操作称为排序。</li>
-<li>稳定性<br>假设ki=kj且排序前的序列中ri领先于rj，如12果排序后ri仍领先于rj，则称排序方法稳定。</li>
-</ul>
-<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>主要分为内排序和外排序。<br>影响到性能的因素：1.时间 2.辅助空间 3.算法复杂性；<br>内排序主要分为：插入、交换、选择和归并排序；<br></p>
-    
-
-        <a href="/2016/04/数据结构之排序算法/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DataStructure/">DataStructure</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Sort/">Sort</a></li></ul>
 
     </div>
     
