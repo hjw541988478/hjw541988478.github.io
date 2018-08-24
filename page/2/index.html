@@ -141,6 +141,61 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-SO库热修复探究-Part3"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-07-25 21:50:00" datetime="2017-07-25T13:50:00.000Z"  itemprop="datePublished">2017-07-25</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/07/SO库热修复探究-Part3/">SO库热修复探究(Part3)</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="SO-库加载原理"><a href="#SO-库加载原理" class="headerlink" title="SO 库加载原理"></a>SO 库加载原理</h2><p>Java 提供两个接口加载 so 库：</p>
+<ul>
+<li><code>System.loadLibrary(String libName)</code>：参数为so库名称，位于 apk 压缩文件中的 libs 目录，最后复制到 apk 安装目录下；</li>
+<li><p><code>System.load(String pathName)</code>：参数为 so 库在磁盘中完整的路径，可以加载自定义外部 so 库文件；<br>其实最终都会调用 nativeLoad 这个 native 方法，这个方法参数为 so 库在磁盘中完整路径名。在 JNI 编程中，动态注册的 native 方法必须实现 JNI_OnLoad 方法，同时实现一个 JNINativeMethod[ ] 数组，静态注册的 native 方法必须是 Java+类完整路径+方法名 的格式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">native</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> -&gt;<span class="params">(JNI_OnLoad nativeMethods[] 匹配映射)</span> -&gt; 动态注册 <span class="keyword">void</span> <span class="title">test</span><span class="params">(env,jobject)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">native</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> -&gt;<span class="params">(<span class="number">1.</span> test第一次执行dvmResolvedNativeCass <span class="number">2.</span> hashtable中查找匹配findMethodInLib)</span> -&gt; 静态注册 <span class="keyword">void</span> Java_包名_类名<span class="title">_test</span><span class="params">(env,jobject)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>动态注册的 native 方法映射通过加载 so 库过程中调用 JNI_OnLoad 方法调用完成；</p>
+</li>
+<li>静态注册的 native 方法映射在 native 方法第一次执行的时候完成映射，当然前提是 so 库已经 load 过。</li></ul>
+    
+
+        <a href="/2017/07/SO库热修复探究-Part3/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HotFix/">HotFix</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SoLibHotFix/">SoLibHotFix</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-资源热修复探究-Part2"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -607,60 +662,12 @@
 
         </li>
     
-        <li class="post-list-item fade">
-            <article id="post-MultiDex65535探索"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2016-07-03 19:22:00" datetime="2016-07-03T11:22:00.000Z"  itemprop="datePublished">2016-07-03</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/07/MultiDex65535探索/">MultiDex65535探索</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><blockquote>
-<p>UNEXPECTED TOP-LEVEL EXCEPTION: java.lang.IllegalArgumentException: method ID not in [0, 0xffff]: 65536<br>Dex文件中保存所有classes的方法个数的变量范围值在<code>0~65535</code>之间，但随着业务一直在增长，引入到的库以及业务代码越来越多，超过这个限制只是时间问题。<br>一般来说 APK 安装的流程大多是这样构成的，首先复制apk文件到<code>data/app</code>目录下，然后解压扫描安装包将dex文件安装到<code>data/dalvik-cache</code>目录下，同时在<code>data/data</code>目录下创建以APK包名的应用数据目录。由于5.0及以上版本ART模式的存在，app第一次安装之后会进行一次预编译，如果这时候发现了<code>classes(..N).dex</code>文件的存在就会将他们最终合成为一个<code>.oat</code>的文件。<br></p></blockquote>
-    
-
-        <a href="/2016/07/MultiDex65535探索/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HotFix/">HotFix</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MultiDex/">MultiDex</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
     </ul>
 
     
 <nav id="page-nav">
     <div class="inner">
-    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
+    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
     </div>
 </nav>
 
