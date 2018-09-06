@@ -141,6 +141,54 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-LeakCanary源码浅析"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2017-03-02 20:22:00" datetime="2017-03-02T12:22:00.000Z"  itemprop="datePublished">2017-03-02</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/03/LeakCanary源码浅析/">LeakCanary源码浅析</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        <h2 id="两步使用"><a href="#两步使用" class="headerlink" title="两步使用"></a>两步使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  debugCompile &apos;com.squareup.leakcanary:leakcanary-android:1.5.1&apos;</span><br><span class="line">  releaseCompile &apos;com.squareup.leakcanary:leakcanary-android-no-op:1.5.1&apos;</span><br><span class="line">  testCompile &apos;com.squareup.leakcanary:leakcanary-android-no-op:1.5.1&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleApplication</span> <span class="keyword">extends</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line">     <span class="meta">@Override</span> </span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate();</span><br><span class="line">        <span class="keyword">if</span> (LeakCanary.isInAnalyzerProcess(<span class="keyword">this</span>)) &#123;</span><br><span class="line">        <span class="comment">// This process is dedicated to LeakCanary for heap analysis.</span></span><br><span class="line">        <span class="comment">// You should not init your app in this process.</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      LeakCanary.install(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    
+
+        <a href="/2017/03/LeakCanary源码浅析/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LeanCanary/">LeanCanary</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MemeoryLeak/">MemeoryLeak</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-Java线程常用场景"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -583,53 +631,6 @@
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CustomView/">CustomView</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RecyclerView/">RecyclerView</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-Android传感器编程之摇一摇"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2015-08-26 19:54:01" datetime="2015-08-26T11:54:01.000Z"  itemprop="datePublished">2015-08-26</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android/">Android</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2015/08/Android传感器编程之摇一摇/">Android传感器编程之摇一摇</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>摇一摇功能目前在很多Android的应用都有用到，大多数的目的是增强与用户的交互，同时也增加了趣味性。本质上来看，通过对加速传感器感知手机在X轴、Y轴和Z轴上加速度的变化，在三者的值达到设定的阈值的时候，便触发事件，进行业务上的逻辑调用，同时使用振动传感器产生振动事件。<br>对于加速度传感器和振动传感器的使用，需要预先在配置文件中声明权限：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:name=&quot;android.hardware.sensor.accelerometer&quot; /&gt; # 加速度传感器</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.VIBRATE&quot;/&gt;  # 振动传感器</span><br></pre></td></tr></table></figure></p>
-    
-
-        <a href="/2015/08/Android传感器编程之摇一摇/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Sensor/">Sensor</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vibrator/">Vibrator</a></li></ul>
 
     </div>
     

@@ -14,25 +14,25 @@
     
     
     
-    <title>27. Remove Element | Garvin 杂记</title>
+    <title>28. Implement strStr() | Garvin 杂记</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#3F51B5">
     
     
     <meta name="keywords" content="TwoPointers">
-    <meta name="description" content="问题https://leetcode.com/problems/remove-element/description/Given an array nums and a value val, remove all instances of that value in-place and return the new length. Do not allocate extra space for a">
+    <meta name="description" content="问题Implement strStr(). Return the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack. Example 1:12Input: haystack = &amp;quot;hello&amp;quot;, needle = &amp;quot;ll&amp;quot;O">
 <meta name="keywords" content="TwoPointers">
 <meta property="og:type" content="article">
-<meta property="og:title" content="27. Remove Element">
-<meta property="og:url" content="https://hjw541988478.github.io/2018/08/27-Remove-Element/index.html">
+<meta property="og:title" content="28. Implement strStr()">
+<meta property="og:url" content="https://hjw541988478.github.io/2018/09/28-Implement-strStr/index.html">
 <meta property="og:site_name" content="Garvin 杂记">
-<meta property="og:description" content="问题https://leetcode.com/problems/remove-element/description/Given an array nums and a value val, remove all instances of that value in-place and return the new length. Do not allocate extra space for a">
+<meta property="og:description" content="问题Implement strStr(). Return the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack. Example 1:12Input: haystack = &amp;quot;hello&amp;quot;, needle = &amp;quot;ll&amp;quot;O">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-08-29T09:41:50.343Z">
+<meta property="og:updated_time" content="2018-09-06T09:58:19.222Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="27. Remove Element">
-<meta name="twitter:description" content="问题https://leetcode.com/problems/remove-element/description/Given an array nums and a value val, remove all instances of that value in-place and return the new length. Do not allocate extra space for a">
+<meta name="twitter:title" content="28. Implement strStr()">
+<meta name="twitter:description" content="问题Implement strStr(). Return the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack. Example 1:12Input: haystack = &amp;quot;hello&amp;quot;, needle = &amp;quot;ll&amp;quot;O">
     
         <link rel="alternate" type="application/atom+xml" title="Garvin 杂记" href="/atom.xml">
     
@@ -106,7 +106,7 @@
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
         </a>
-        <div class="flex-col header-title ellipsis">27. Remove Element</div>
+        <div class="flex-col header-title ellipsis">28. Implement strStr()</div>
         
         <div class="search-wrap" id="search-wrap">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
@@ -128,11 +128,11 @@
 <header class="content-header post-header">
 
     <div class="container fade-scale">
-        <h1 class="title">27. Remove Element</h1>
+        <h1 class="title">28. Implement strStr()</h1>
         <h5 class="subtitle">
             
-                <time datetime="2018-08-29T09:37:50.000Z" itemprop="datePublished" class="page-time">
-  2018-08-29
+                <time datetime="2018-09-06T09:51:48.000Z" itemprop="datePublished" class="page-time">
+  2018-09-06
 </time>
 
 
@@ -158,13 +158,13 @@
     </aside>
 
 
-<article id="post-27-Remove-Element"
+<article id="post-28-Implement-strStr"
   class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
-        <h1 class="post-card-title">27. Remove Element</h1>
+        <h1 class="post-card-title">28. Implement strStr()</h1>
         <div class="post-meta">
-            <time class="post-time" title="2018-08-29 17:37:50" datetime="2018-08-29T09:37:50.000Z"  itemprop="datePublished">2018-08-29</time>
+            <time class="post-time" title="2018-09-06 17:51:48" datetime="2018-09-06T09:51:48.000Z"  itemprop="datePublished">2018-09-06</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Leetcode/">Leetcode</a></li></ul>
@@ -179,15 +179,15 @@
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><a href="https://leetcode.com/problems/remove-element/description/" target="_blank" rel="noopener">https://leetcode.com/problems/remove-element/description/</a><br>Given an array nums and a value val, remove all instances of that value in-place and return the new length.</p>
-<p>Do not allocate extra space for another array, you must do this by modifying the input array in-place with O(1) extra memory.</p>
-<p>The order of elements can be changed. It doesn’t matter what you leave beyond the new length.</p>
-<p>Example 1:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Given nums = [3,2,2,3], val = 3,</span><br><span class="line"></span><br><span class="line">Your function should return length = 2, with the first two elements of nums being 2.</span><br><span class="line"></span><br><span class="line">It doesn&apos;t matter what you leave beyond the returned length.</span><br></pre></td></tr></table></figure></p>
-<p>Example 2:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Given nums = [0,1,2,2,3,0,4,2], val = 2,</span><br><span class="line"></span><br><span class="line">Your function should return length = 5, with the first five elements of nums containing 0, 1, 3, 0, and 4.</span><br><span class="line"></span><br><span class="line">Note that the order of those five elements can be arbitrary.</span><br><span class="line"></span><br><span class="line">It doesn&apos;t matter what values are set beyond the returned length.</span><br></pre></td></tr></table></figure></p>
-<a id="more"></a>
-<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>方法一：首先能想到的，从前往后或者从后往前遍历，遇到需要删除的数字，后面的数组整体向前移动一位，直至遍历结束；<br>方法二：使用两个指针，一个用来遍历原数组，另一个记录处理后的结果数组下标，遇到不一样的时候，直接替换后一个指针位置，然后指针位置++；</p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">removeElement</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = nums.length;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = nums.length - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i --) &#123;</span><br><span class="line">        <span class="keyword">if</span> (val == nums[i]) &#123;</span><br><span class="line">            len --;</span><br><span class="line">            <span class="keyword">if</span> (i != nums.length - <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j =  i + <span class="number">1</span>; j &lt; nums.length; j ++) &#123;</span><br><span class="line">                    nums[j - <span class="number">1</span>] = nums[j];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">removeElement1</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; nums.length; j++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (nums[j] != val) &#123;</span><br><span class="line">            nums[i++] = nums[j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+            <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>Implement strStr().</p>
+<p>Return the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.</p>
+<p>Example 1:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: haystack = &quot;hello&quot;, needle = &quot;ll&quot;</span><br><span class="line">Output: 2</span><br></pre></td></tr></table></figure></p>
+<p>Example 2:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: haystack = &quot;aaaaa&quot;, needle = &quot;bba&quot;</span><br><span class="line">Output: -1</span><br></pre></td></tr></table></figure></p>
+<p>Clarification:</p>
+<p>What should we return when needle is an empty string? This is a great question to ask during an interview.</p>
+<p>For the purpose of this problem, we will return 0 when needle is an empty string. This is consistent to C’s strstr() and Java’s indexOf().<br><a id="more"></a></p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>使用两个游标逐个比较，如果不匹配则跳到上次开始比较位置的下一个，直至比较结束。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> res = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (needle == <span class="keyword">null</span> || needle.length() == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (haystack != <span class="keyword">null</span> &amp;&amp; haystack.length() &lt; needle.length()) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">boolean</span> flag = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; haystack.length(); ) &#123;</span><br><span class="line">        <span class="keyword">if</span> (haystack.charAt(i) == needle.charAt(j)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (j == <span class="number">0</span>) &#123;</span><br><span class="line">                res = i;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (j == needle.length() - <span class="number">1</span>) &#123;</span><br><span class="line">                flag = <span class="keyword">true</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            i ++;</span><br><span class="line">            j ++;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            i = res != -<span class="number">1</span> ? res + <span class="number">1</span>: i + <span class="number">1</span>;</span><br><span class="line">            res = -<span class="number">1</span>;</span><br><span class="line">            j = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> flag ? res : -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         </div>
 
         <blockquote class="post-copyright">
@@ -196,7 +196,7 @@
         
 
         
-        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2018/08/27-Remove-Element/" target="_blank" rel="external">https://hjw541988478.github.io/2018/08/27-Remove-Element/</a>
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2018/09/28-Implement-strStr/" target="_blank" rel="external">https://hjw541988478.github.io/2018/09/28-Implement-strStr/</a>
         
     </div>
     
@@ -227,7 +227,7 @@
 <div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2018/08/27-Remove-Element/&title=《27. Remove Element》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2018/09/28-Implement-strStr/&title=《28. Implement strStr()》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -237,22 +237,23 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2018/08/27-Remove-Element/&title=《27. Remove Element》 — Garvin 杂记&source=问题https://leetcode.com/problems/remove-element/description/Given an array num..." data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2018/09/28-Implement-strStr/&title=《28. Implement strStr()》 — Garvin 杂记&source=问题Implement strStr().
+Return the index of the first occurrence of needle in h..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2018/08/27-Remove-Element/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2018/09/28-Implement-strStr/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《27. Remove Element》 — Garvin 杂记&url=https://hjw541988478.github.io/2018/08/27-Remove-Element/&via=https://hjw541988478.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《28. Implement strStr()》 — Garvin 杂记&url=https://hjw541988478.github.io/2018/09/28-Implement-strStr/&via=https://hjw541988478.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2018/08/27-Remove-Element/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2018/09/28-Implement-strStr/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -272,21 +273,14 @@
     </div>
 
     
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2018/09/28-Implement-strStr/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">28. Implement strStr()</h4>
-      </a>
-    </div>
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
   
 
   
     <div class="waves-block waves-effect next">
-      <a href="/2018/08/24-Swap-Nodes-in-Pairs/" id="post-next" class="post-nav-link">
+      <a href="/2018/08/27-Remove-Element/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">24. Swap Nodes in Pairs</h4>
+        <h4 class="title">27. Remove Element</h4>
       </a>
     </div>
   
@@ -407,7 +401,7 @@
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2018/08/27-Remove-Element/&title=《27. Remove Element》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://hjw541988478.github.io/2018/09/28-Implement-strStr/&title=《28. Implement strStr()》 — Garvin 杂记&pic=https://hjw541988478.github.io/img/avatar.jpg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -417,22 +411,23 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2018/08/27-Remove-Element/&title=《27. Remove Element》 — Garvin 杂记&source=问题https://leetcode.com/problems/remove-element/description/Given an array num..." data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://hjw541988478.github.io/2018/09/28-Implement-strStr/&title=《28. Implement strStr()》 — Garvin 杂记&source=问题Implement strStr().
+Return the index of the first occurrence of needle in h..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2018/08/27-Remove-Element/" data-title=" Facebook">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://hjw541988478.github.io/2018/09/28-Implement-strStr/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《27. Remove Element》 — Garvin 杂记&url=https://hjw541988478.github.io/2018/08/27-Remove-Element/&via=https://hjw541988478.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《28. Implement strStr()》 — Garvin 杂记&url=https://hjw541988478.github.io/2018/09/28-Implement-strStr/&via=https://hjw541988478.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2018/08/27-Remove-Element/" data-title=" Google+">
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://hjw541988478.github.io/2018/09/28-Implement-strStr/" data-title=" Google+">
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
@@ -443,7 +438,7 @@
 <div class="page-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
-    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACLUlEQVR42u3awY7DIAxF0f7/T2ekrrpo0X02IyXmsoqqDHBYeGyc1wuP6z0+nz/H+ncyJ/l9w5AhQ8ZjGddy8KnJ++t3yNH8PCYZMmQcwOBBdr3wers8cMdBWYYMGTKWgDRk863LkCFDxq6AWwvBt/u/IUOGjNszyNQ8gNau8DhYhgwZpzH2Lrn3+d/7GzJkyLg94wpH2tQkK27YlQwZMkYz1oUoKR1rSVvaSEDhWIYMGaMZPOSRkpUsTGYgxypDhowTGDyc8YKTJ5RpUP55BDJkyBjN6FyodUIzb2HGF3MyZMg4gJGmfWSxtDRNL+NkyJAxm8Gvxnh7oB9S1+t+eZYhQ8YBjLRJWUv7+GxxkSxDhowDGP1N1BoM/U/TZMiQcQKDl6npdX8toUzv+WXIkHEao5bApR9s7S1ugw8vZMiQ8VhG/wqsXwbzJBJluDJkyBjH4IUiuqAPn0mRnFJlyJAxj8E31yk4axdnZDYZMmScwOBLkonW7/BEs9hgkCFDxlBGet3Pk7+0DO5cycmQIeMERm2jtbKTB+u4iJUhQ8ZQRjoF2VytIco/CwsyXBkyZIxgXOGITwgcVnpMX/5KhgwZoxl8pMuk76Q8GTJknMYgQbZzQun58SCOugcyZMgYxKgF2bTpmH7AwZNLGTJkyKi1J9NPOmpBXIYMGTJ4YOVbrBW9qD0gQ4aM0QxSxKZtg1qyyOcp1uIyZMh4IKN/l8XTwXSeTqCXIUPGCMYfrjWyUApiE/sAAAAASUVORK5CYII=" alt="微信分享二维码">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJklEQVR42u3aUY6DMAxFUfa/aWYBFeE+G0bCuXxVbQU5fFjOc44DX+fFxX9Nn3W8ccmQIeOzjHN5/f6H89bPWn/D1yZDhox9GOvCt7711X0Ir1asZciQIYMwSEEkyPTVyJAhQwZhpFtNUnBJmyhDhgwZvFw+tVntBHkyZMjYjZGG9f/5+ZX5hgwZMj7FOMOrtvnshG5oVTJkyBjN4AWON2d9fLoeGTJkzGaQEC0Nv9LRJonSbmAyZMjYgEGKaS3wqt0/PfAhQ4aMHRhpS8eDfl6OCQO1hjJkyBjK6B/PItvRzq83T5QhQ8ZoRno4rHOY7KmXFcxaZciQMYJRO2JVG092WsObO8uQIWM0I731GwtNx6g3k1gZMmSMY6ThWtoI1r6J20QZMmRsyagNAPjYcl1eW4ctZMiQMZrBo/nOMTIe95M7X54ZkSFDxiBGbVl8AJnGeZ3XJ0OGjKmMNBTjQRghpQPOmzMjMmTIGMroLIX/J93u1hpHGTJkzGbUimyad6X/4dGeDBky9mHwjWs6aCRjAE59bP8tQ4aMDzJ4iMZjMjIkqIVxN62hDBkyBjHO8Ooc/+KA+IiGDBkyRjNq29RinoeLbDo8kCFDxg6MN4psbUPbGqbKkCFjAwYvfE81fLW2D81gZciQISNs4wibF3EZMmTI4Evkj+TRGx8wXG5iZciQMZpRO7zVic/SlvGxuE2GDBkfZPSzrDREI6NKjpEhQ8Zoxh/+MKh2OcTZxgAAAABJRU5ErkJggg==" alt="微信分享二维码">
 </div>
 
 
